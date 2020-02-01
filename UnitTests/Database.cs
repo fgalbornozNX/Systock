@@ -9,9 +9,9 @@ namespace UnitTests
     [TestClass]
     public class Database
     {
-        readonly DAOFactory daoFactory = DAOFactory.Instancia();
-        readonly Usuario user = new Usuario("Add testing", "Test Password", DateTime.Today);
-        readonly Area area = new Area("Area de pruebas");
+        readonly DAOFactory daoFactory =    DAOFactory.Instancia();
+        readonly Usuario    user =          new Usuario("Add testing", "Test Password", DateTime.Today);
+        readonly Area       area =          new Area("Area de pruebas");
 
         [TestMethod]
         public void ConnectDB()

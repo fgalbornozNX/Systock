@@ -12,6 +12,9 @@ namespace SyStock.AccesoDatos
         /// </summary>
         private static DAOFactory _instancia = null;
         
+        /// <summary>
+        /// Singleton. An instance of DAOFactory
+        /// </summary>
         public static DAOFactory Instancia()
         {
             if (_instancia == null)
@@ -30,8 +33,18 @@ namespace SyStock.AccesoDatos
         public abstract IEntregaDAO EntregaDAO { get; }
         public abstract IRenglonDAO RenglonDAO { get; }
 
+        /// <summary>
+        /// Initialize a connection towards the database
+        /// </summary>
+        /// <returns>True if not errors encounter</returns>
         public abstract bool IniciarConexion();
+
+        /// <summary>
+        /// Ends a connection with the database
+        /// </summary>
+        /// <returns>True if not errors encounter</returns>
         public abstract bool FinalizarConexion();
+
         public abstract void IniciarTransaccion();
         public abstract void Commit();
         public abstract void RollBack();
