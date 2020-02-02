@@ -42,17 +42,27 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         public Usuario Verificar(string pNombre, string pContraseña)
         {
             DAOFactory factory = DAOFactory.Instancia();
+            Usuario user;
+            int idUser;
 
             try
             {
                 factory.IniciarConexion();
                 IUsuarioDAO _usuarioDAO = factory.UsuarioDAO;
-                int idUser = _usuarioDAO.Verificar(pNombre, pContraseña);
-                return _usuarioDAO.Obtener(idUser);
+                idUser = _usuarioDAO.Verificar(pNombre, pContraseña);  //Trae el id del Usuario o -1 si no lo encontró
+                if (idUser == -1) {
+                    return null;
+                }
+                else {
+                    user = _usuarioDAO.Obtener(idUser);
+                    return user; 
+                }
             }
-            catch (Exception)
+            catch (DAOException e)
             {
-                return null;
+                idUser = -1;
+                user = null;
+                throw new LogicaException(e.Message);
             }
             finally
             {
