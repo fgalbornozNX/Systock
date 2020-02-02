@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SyStock.Entidades
 {
@@ -14,6 +10,7 @@ namespace SyStock.Entidades
         DateTime _fechaAlta;
         DateTime _fechaBaja;
         int _idGrupo;
+        int _idCreadoPor;
 
         /// <summary>
         /// Representa un usuario Administrador de la aplicación
@@ -35,6 +32,17 @@ namespace SyStock.Entidades
             _fechaAlta = pFechaAlta;
             _fechaBaja = pFechaBaja;
             _idGrupo = pIdGrupo;
+        }
+
+        public PersonaAutorizada(int pIdPersona, string pNombre, string pContraseña, DateTime pFechaAlta, DateTime pFechaBaja, int pIdGrupo, int pIdCreadoPor)
+        {
+            _idPersona = pIdPersona;
+            _nombre = pNombre;
+            _contraseña = pContraseña;
+            _fechaAlta = pFechaAlta;
+            _fechaBaja = pFechaBaja;
+            _idGrupo = pIdGrupo;
+            _idCreadoPor = pIdCreadoPor;
         }
 
         /// <summary>
@@ -86,6 +94,12 @@ namespace SyStock.Entidades
         {
             get { return _idGrupo; }
             set { _idGrupo = value; }
+        }
+
+        public int IdCreador
+        {
+            get { return _idCreadoPor; }
+            set { _idCreadoPor = value; }
         }
     }
 }

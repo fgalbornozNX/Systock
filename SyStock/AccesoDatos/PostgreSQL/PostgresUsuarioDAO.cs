@@ -143,7 +143,7 @@ namespace SyStock.AccesoDatos.PostgreSQL
                         string pass = Convert.ToString(fila["contrasena"]);
                         DateTime fechaAlta = Convert.ToDateTime(fila["fechaAlta"]);
                         DateTime fechaBaja = DateTime.MinValue;
-                        if (Convert.ToDateTime(fila["fechaBaja"]) != null)
+                        if (fila["fechaBaja"] != DBNull.Value)
                             fechaBaja = Convert.ToDateTime(fila["fechaBaja"]);
                         int idCreador = Convert.ToInt32(fila["idCreadoPor"]);
 
@@ -234,7 +234,7 @@ namespace SyStock.AccesoDatos.PostgreSQL
                         string pass = Convert.ToString(fila["contrasena"]);
                         DateTime fechaAlta = Convert.ToDateTime(fila["fechaAlta"]);
                         DateTime fechaBaja = DateTime.MinValue;
-                        if (Convert.ToDateTime(fila["fechaBaja"]) != null)
+                        if (fila["fechaBaja"] != DBNull.Value)
                             fechaBaja = Convert.ToDateTime(fila["fechaBaja"]);
                         int idCreador = Convert.ToInt32(fila["idCreadoPor"]);
 
