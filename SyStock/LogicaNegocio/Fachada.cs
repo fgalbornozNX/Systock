@@ -110,29 +110,28 @@ namespace SyStock.LogicaNegocio
 
         public int VerificarUsuario(string pNombre, string pContraseña)
         {
-            if (pNombre == string.Empty)
+            if (string.IsNullOrEmpty(pNombre))
             {
                 pNombre =_controladorUsuario.Obtener(this._idUsuarioLogeado).Nombre;
             }
             string hash = Utilidades.Encriptar(string.Concat(pNombre, pContraseña));
-            Usuario _usuario = _controladorUsuario.Verificar(pNombre, hash);
+            Usuario _usuario = _controladorUsuario.Verificar(pNombre, hash); //Trae un objeto nulo si no lo encontró
+
             //Verifica si el usuario esta en la bd
-            if (_usuario.IdUsuario == 0)
+            switch (_usuario)
             {
-                return 1;
-            }
-            else
-            {
-                if (_usuario.FechaAlta != _usuario.FechaBaja)
-                {
-                    return 2;
-                }
-                else
-                {
-                    this.IDUsuarioLogeado = _usuario.IdUsuario;
-                    return 3;
-                }
-                    
+                case null:
+                    return 1; //Devuelve 1 si no lo encuentra
+                default:
+                    if (_usuario.FechaBaja != DateTime.MinValue)
+                    {
+                        return 2; //Esta dado de baja
+                    }
+                    else
+                    {
+                        this.IDUsuarioLogeado = _usuario.IdUsuario;
+                        return 3; //Puede loguearse
+                    }
             }
         }
 

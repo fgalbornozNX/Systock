@@ -59,33 +59,45 @@ namespace SyStock.UI
         private void Button_Aceptar_Click(object sender, EventArgs e)
         {
             //Verifica que se ingrese nombre de usuario
-            if (this.textBox_nombre.Text == "")
-                MessageBox.Show("Falta ingresar Nombre");
-            else
+            switch (this.textBox_nombre.Text)
             {
-                //Verifica que se ingrese contraseña
-                if (this.textBox_contraseña.Text == "")
-                    MessageBox.Show("Falta ingresar Contraseña");
-                else
-                {
-                    //Verifica si el usuario esta en la bd
-                    int _usuarioLogueado = controlador.VerificarUsuario(this.textBox_nombre.Text, this.textBox_contraseña.Text);
-                    switch (_usuarioLogueado)
+                case "":
+                    MessageBox.Show("Falta ingresar Nombre");
+                    break;
+                default:
                     {
-                        case 1:
-                            MessageBox.Show("Usuario o contraseña incorrecta");
-                            break;
+                        //Verifica que se ingrese contraseña
+                        switch (this.textBox_contraseña.Text)
+                        {
+                            case "":
+                                MessageBox.Show("Falta ingresar Contraseña");
+                                break;
+                            default:
+                                {
+                                    //Verifica si el usuario esta en la bd
+                                    int _usuarioLogueado = controlador.VerificarUsuario(this.textBox_nombre.Text, this.textBox_contraseña.Text);
+                                    switch (_usuarioLogueado)
+                                    {
+                                        case 1:
+                                            MessageBox.Show("Usuario o contraseña incorrecta");
+                                            break;
 
-                        case 2:
-                            MessageBox.Show("Usuario dado de baja");
-                            break;
+                                        case 2:
+                                            MessageBox.Show("Usuario dado de baja");
+                                            break;
 
-                        default:
-                            app_access = true;
-                            this.Close();
-                            break;
+                                        default:
+                                            app_access = true;
+                                            this.Close();
+                                            break;
+                                    }
+
+                                    break;
+                                }
+                        }
+
+                        break;
                     }
-                }
             }
         }
     }
