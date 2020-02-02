@@ -6,6 +6,7 @@ namespace SyStock.AccesoDatos.PostgreSQL
     /// <summary>
     /// Implementation of DAOFactory for postgreSQL
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "Temporally ignored. Not prioritary")]
     public class PostgresDAOFactory : DAOFactory
     {
         /// <summary>
@@ -194,6 +195,11 @@ namespace SyStock.AccesoDatos.PostgreSQL
             {
                 _transaction.Rollback();
             }
+        }
+
+        public void Dispose()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Npgsql;
 using SyStock.Entidades;
 using System.Data;
 
 namespace SyStock.AccesoDatos.PostgreSQL
 {
+    /// <summary>
+    /// Postgresql implementation for Data Access Object "Insumo"
+    /// </summary>
     public class PostgresInsumoDAO : IInsumoDAO
     {
         private readonly NpgsqlConnection _conexion;
@@ -19,9 +19,9 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Agregar un nuevo insumo
+        /// Allows add a new "Insumo" to the database
         /// </summary>
-        /// <param name="pInsumo">Insumo a agregar</param>
+        /// <param name="pInsumo">Insumo to be added</param>
         public void Agregar(Insumo pInsumo)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -37,6 +37,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
             comando.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Verify the existence of an "Insumo"
+        /// </summary>
+        /// <param name="pNombre">name to search by</param>
         public int VerificarNombre(string pNombre)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -55,10 +59,9 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Obtener un determinado insumo
+        /// Obtain an "Insumo". Search by ID
         /// </summary>
-        /// <param name="pIdCategoria">Id insumo a buscar</param>
-        /// <returns></returns>
+        /// <param name="pIdInsumo">ID to search by</param>
         public Insumo Obtener(int pIdInsumo)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -78,6 +81,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
             return _insumo;
         }
 
+        /// <summary>
+        /// Obtain an "Insumo". Search by name
+        /// </summary>
+        /// <param name="pNombreInsumo">name to search by</param>
         public Insumo Obtener(string pNombreInsumo)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -98,9 +105,9 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Modificar un insumo
+        /// Modify all field in an "Insumo"
         /// </summary>
-        /// <param name="pInsumo">Insumo a modificar</param>
+        /// <param name="pInsumo">Insumo with all filled fields</param>
         public void Modificar(Insumo pInsumo)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -115,9 +122,9 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Listar los insumos
+        /// Generate a list of "Insumo" objects
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A list containing all available "Insumo" entries</returns>
         public List<Insumo> Listar()
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -137,6 +144,11 @@ namespace SyStock.AccesoDatos.PostgreSQL
             return _listaInsumos;
         }
 
+        /// <summary>
+        /// Generate a list of "Insumo" objects that match a category
+        /// </summary>
+        /// <param name="idCategoria">category's ID to search by</param>
+        /// <returns>A list containint all matching "Insumo" entries</returns>
         public List<Insumo> Listar(int idCategoria)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();

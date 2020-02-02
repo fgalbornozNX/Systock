@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Npgsql;
 using SyStock.Entidades;
 using System.Data;
 
 namespace SyStock.AccesoDatos.PostgreSQL
 {
+    /// <summary>
+    /// Postgresql implementation for Data Access Object "Entrega"
+    /// </summary>
     public class PostgresEntregaDAO : IEntregaDAO
     {
         private readonly NpgsqlConnection _conexion;
@@ -18,6 +18,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
             _conexion = pConexion;
         }
 
+        /// <summary>
+        /// Allows add a new "Entrega" to the database
+        /// </summary>
+        /// <param name="pEntrega">Entrega to be added</param>
         public void Agregar(EntregaInsumos pEntrega)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -30,6 +34,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
             comando.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Obtain an "Engtrega" by his ID
+        /// </summary>
+        /// <param name="pIdEntrega">ID to search by</param>
         public EntregaInsumos Obtener(int pIdEntrega)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -49,6 +57,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
             return _entrega;
         }
 
+        /// <summary>
+        /// Generate a list of EntregaInsumos objects
+        /// </summary>
+        /// <returns>A list containing all EntregaInsumos objects</returns>
         public List<EntregaInsumos> Listar()
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();

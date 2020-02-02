@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Npgsql;
 using SyStock.Entidades;
 using System.Data;
 
 namespace SyStock.AccesoDatos.PostgreSQL
 {
+    /// <summary>
+    /// Postgresql implementation for Data Access Object "Categoria"
+    /// </summary>
     public class PostgresCategoriaDAO: ICategoriaDAO
     {
         private readonly NpgsqlConnection _conexion;
@@ -19,9 +19,9 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Agregar una nueva categoría
+        /// Allows add a new "Categoria" to the database
         /// </summary>
-        /// <param name="pCategoria">Categoría a agregar</param>
+        /// <param name="pCategoria">Categoria to be added</param>
         public void Agregar(Categoria pCategoria)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -35,10 +35,9 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Obtener una determinada categoría
+        /// Obtain a "Categoria" by his ID
         /// </summary>
-        /// <param name="pIdCategoria">Id categoria a buscar</param>
-        /// <returns></returns>
+        /// <param name="pIdCategoria">ID to search by</param>
         public Categoria Obtener(int pIdCategoria)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -58,6 +57,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
             return _categoria;
         }
 
+        /// <summary>
+        /// Obtain a "Categoria" bi his name
+        /// </summary>
+        /// <param name="pNombre">name to search by</param>
         public Categoria Obtener(string pNombre)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -78,9 +81,9 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Modificar una categoría
+        /// Modify all fields in a "Categoria"
         /// </summary>
-        /// <param name="pCategoria">Categoría a modificar</param>
+        /// <param name="pCategoria">Categoria object with filled fields</param>
         public void Modificar(Categoria pCategoria)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -91,6 +94,11 @@ namespace SyStock.AccesoDatos.PostgreSQL
             comando.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Checks the existence of a "Categoria" by his name
+        /// </summary>
+        /// <param name="pNombre">name to match the search</param>
+        /// <returns>ID of the Categoria. -1 if error</returns>
         public int VerificarNombre(string pNombre)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -109,9 +117,9 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Listar las categorias
+        /// Generate a list of all available "Categoria" objects
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A list containing all Categoria objects</returns>
         public List<Categoria> Listar()
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();

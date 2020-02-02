@@ -9,6 +9,9 @@ using System.Data;
 
 namespace SyStock.AccesoDatos.PostgreSQL
 {
+    /// <summary>
+    /// Postgresql implementation for Data Access Object "Grupo"
+    /// </summary>
     public class PostgresGrupoDAO: IGrupoDAO
     {
         private readonly NpgsqlConnection _conexion;
@@ -18,6 +21,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
             _conexion = pConexion;
         }
 
+        /// <summary>
+        /// Allows add a new "Grupo" to the database
+        /// </summary>
+        /// <param name="pGrupo">Grupo to be added</param>
         public void Agregar(Grupo pGrupo)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -31,6 +38,12 @@ namespace SyStock.AccesoDatos.PostgreSQL
             comando.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Verify the existence of a "Grupo" in an "Area"
+        /// </summary>
+        /// <param name="pNombre">Grupo's name to search by</param>
+        /// <param name="idArea">Area's ID</param>
+        /// <returns></returns>
         public int VerificarNombre(string pNombre, int pIdArea)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -48,6 +61,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
             }
         }
 
+        /// <summary>
+        /// Obtain an "Grupo" by his ID
+        /// </summary>
+        /// <param name="pIdGrupo">ID to search by</param>
         public Grupo Obtener(int pIdGrupo)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -67,6 +84,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
             return _grupo;
         }
 
+        /// <summary>
+        /// Obtain an "Grupo" by his name
+        /// </summary>
+        /// <param name="pNombre">name to search by</param>
         public Grupo Obtener(string pNombre)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -86,6 +107,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
             return _grupo;
         }
 
+        /// <summary>
+        /// Modify all fields of an "Grupo"
+        /// </summary>
+        /// <param name="pGrupo">Grupo object with all filled fields</param>
         public void Modificar(Grupo pGrupo)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -96,6 +121,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
             comando.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Generate a list of "Grupo" objects
+        /// </summary>
+        /// <returns>A list containing objects of class Grupo</returns>
         public List<Grupo> Listar()
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -115,6 +144,11 @@ namespace SyStock.AccesoDatos.PostgreSQL
             return _listaGrupo;
         }
 
+        /// <summary>
+        /// Generate a list of "Grupo" objects in an "Area"
+        /// </summary>
+        /// <param name="idArea">Area's ID to match the search</param>
+        /// <returns>A list containing all matching objects</returns>
         public List<Grupo> Listar(int idArea)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();

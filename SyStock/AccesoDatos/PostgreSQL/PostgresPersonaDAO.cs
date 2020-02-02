@@ -1,35 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Npgsql;
-using SyStock.AccesoDatos;
 using SyStock.Entidades;
 using System.Data;
 
 namespace SyStock.AccesoDatos.PostgreSQL
 {
+    /// <summary>
+    /// Postgresql implementation for Data Access Object "PersonaAutorizada"
+    /// </summary>
     public class PostgresPersonaDAO: IPersonaAutorizadaDAO
     {
         /// <summary>
-        /// Conexión con la Base de Datos
+        /// Represent the conecction towards the database
         /// </summary>
         private readonly NpgsqlConnection _conexion;
 
-        /// <summary>
-        /// Conecta a la base de datos con los usuarios
-        /// </summary>
-        /// <param name="pConexion"></param>
         public PostgresPersonaDAO(NpgsqlConnection pConexion)
         {
             _conexion = pConexion;
         }
 
         /// <summary>
-        /// Permite agregar un nuevo usuario
+        /// Allows add a new "Persona" to the database
         /// </summary>
-        /// <param name="pUsuario">Datos del usuario</param>
+        /// <param name="pPersona">Persona to be added</param>
         public void Agregar(PersonaAutorizada pPersona)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -45,10 +40,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Verificar si el nombre de la persona ya existe
+        /// Verify the existence of an "Persona" by field "nombre"
         /// </summary>
-        /// <param name="pNombre">Nombre de la persona</param>
-        /// <returns>Devuelve el ID si existe, -1 si esta disponible</returns>
+        /// <param name="pNombre">"nombre" to be checked</param>
+        /// <returns></returns>
         public int VerificarNombre(string pNombre)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -66,9 +61,11 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Verifica si el usuario y contraseña coinciden
+        /// Verify the user credentials in the database
         /// </summary>
-        /// <returns> ID de usuario, devuelve -1 si no lo encuentra</returns>
+        /// <param name="pNombre">"Persona"s name</param>
+        /// <param name="pContraseña">password to be checked</param>
+        /// <returns>Persona's ID in the database. -1 if error</returns>
         public int Verificar(string pNombre, string pContraseña)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -81,9 +78,9 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Listar Personas
+        /// Generate a list of "Persona" objects
         /// </summary>
-        /// <returns>Lista de Personas</returns>
+        /// <returns>A list containing objects of class PersonaAutorizada</returns>
         public List<PersonaAutorizada> Listar()
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -104,10 +101,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Listar Personas
+        /// Generate a list of "Persona" objects in a group
         /// </summary>
-        /// <param name="idGrupo">ID del Grupo a listar</param>
-        /// <returns>Lista de Personas en un grupo</returns>
+        /// <param name="idGrupo">ID of the group</param>
+        /// <returns></returns>
         public List<PersonaAutorizada> Listar(int idGrupo)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -128,10 +125,9 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Obtener una determinada Persona
+        /// Obtain an "Persona" by his ID
         /// </summary>
-        /// <param name="idPersona">ID de la Persona</param>
-        /// <returns>Devuelve la Persona encontrada, si ID == 0 es null</returns>
+        /// <param name="pIdPersona">ID to search by</param>
         public PersonaAutorizada Obtener(int idPersona)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -152,10 +148,9 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Obtener una determinada persona
+        /// Obtain an "Persona" by his field "nombre"
         /// </summary>
-        /// <param name="pNombre">Nombre de la persona</param>
-        /// <returns>Devuelve la Persona encontrada, si ID == 0 es null</returns>
+        /// <param name="pNombre">to search by</param>
         public PersonaAutorizada Obtener(string pNombre)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -176,9 +171,9 @@ namespace SyStock.AccesoDatos.PostgreSQL
         }
 
         /// <summary>
-        /// Modificar datos persona
+        /// Modify all fields for a "Persona" 
         /// </summary>
-        /// <param name="pPersona">Persona a modificar</param>
+        /// <param name="pPersona">Persona with all filled fields</param>
         public void Modificar(PersonaAutorizada pPersona)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();

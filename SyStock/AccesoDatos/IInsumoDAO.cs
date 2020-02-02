@@ -18,7 +18,6 @@ namespace SyStock.AccesoDatos
         /// Verify the existence of an "Insumo"
         /// </summary>
         /// <param name="pNombre">name to search by</param>
-        /// <returns></returns>
         int VerificarNombre(string pNombre);
         
         /// <summary>

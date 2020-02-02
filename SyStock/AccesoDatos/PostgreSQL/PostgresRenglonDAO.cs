@@ -6,8 +6,14 @@ using System.Data;
 
 namespace SyStock.AccesoDatos.PostgreSQL
 {
+    /// <summary>
+    /// Postgresql implementation for Data Access Object "Renglon"
+    /// </summary>
     public class PostgresRenglonDAO: IRenglonDAO
     {
+        /// <summary>
+        /// Represent the conecction towards the database
+        /// </summary>
         private readonly NpgsqlConnection _conexion;
 
         public PostgresRenglonDAO(NpgsqlConnection pConexion)
@@ -15,6 +21,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
             _conexion = pConexion;
         }
 
+        /// <summary>
+        /// Allows add a new "Renglon" to the database
+        /// </summary>
+        /// <param name="pRenglon">Renglon to be added</param>
         public void Agregar(RenglonEntrega pRenglon)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -27,6 +37,11 @@ namespace SyStock.AccesoDatos.PostgreSQL
             comando.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Obtain an "Renglon" bi his ID
+        /// </summary>
+        /// <param name="pIdRenglon">ID to search by</param>
+        /// <returns>Renglon</returns>
         public RenglonEntrega Obtener(int pIdRenglon)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -46,6 +61,10 @@ namespace SyStock.AccesoDatos.PostgreSQL
             return _renglon;
         }
 
+        /// <summary>
+        /// Modify all field to an "Renglon"
+        /// </summary>
+        /// <param name="pRenglon">Renglon object with all filled fields</param>
         public void Modificar(RenglonEntrega pRenglon)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -56,6 +75,11 @@ namespace SyStock.AccesoDatos.PostgreSQL
             comando.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Generate a list of "RenglonEntrega" objects
+        /// </summary>
+        /// <param name="idEntrega">ID to search by</param>
+        /// <returns>A list containing objects of class RenglonEntrega</returns>
         public List<RenglonEntrega> Listar(int idEntrega)
         {
             NpgsqlCommand comando = this._conexion.CreateCommand();
