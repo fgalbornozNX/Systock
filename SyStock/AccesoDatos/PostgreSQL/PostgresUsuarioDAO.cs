@@ -36,18 +36,16 @@ namespace SyStock.AccesoDatos.PostgreSQL
 
             try
             {
-                string query = "INSERT INTO \"Usuario\"(nombre,contrasena, \"fechaAlta\", \"idCreadoPor\") VALUES(@nombre,@contrasena,@fechaalta,@idadmin)";
+                string query = "INSERT INTO \"Usuario\" (nombre,contrasena, \"fechaAlta\", \"idCreadoPor\") VALUES (@nombre,@contrasena,@fechaalta,@idadmin)";
 
-                using (NpgsqlCommand comando = this._conexion.CreateCommand())
-                {
-                    comando.CommandText = query;
-                    comando.Parameters.AddWithValue("@nombre", pUsuario.Nombre);
-                    comando.Parameters.AddWithValue("@contrasena", pUsuario.Contraseña);
-                    comando.Parameters.AddWithValue("@fechaalta", pUsuario.FechaAlta);
-                    comando.Parameters.AddWithValue("@idadmin", pUsuario.IdUsuarioAdmin);
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+                comando.Parameters.AddWithValue("@nombre", pUsuario.Nombre);
+                comando.Parameters.AddWithValue("@contrasena", pUsuario.Contraseña);
+                comando.Parameters.AddWithValue("@fechaalta", pUsuario.FechaAlta);
+                comando.Parameters.AddWithValue("@idadmin", pUsuario.IdUsuarioAdmin);
 
-                    comando.ExecuteNonQuery();
-                }
+                comando.ExecuteNonQuery();
             }
             catch (PostgresException e)
             {

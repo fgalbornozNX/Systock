@@ -97,6 +97,7 @@
     <Compile Include="LogicaNegocio\ClasedeDominio\ControladorRenglones.cs" />
     <Compile Include="LogicaNegocio\ClasedeDominio\ControladorUsuario.cs" />
     <Compile Include="LogicaNegocio\Fachada.cs" />
+    <Compile Include="LogicaNegocio\LogicaException.cs" />
     <Compile Include="LogicaNegocio\Utilidades.cs" />
     <Compile Include="UI\Listar.cs" />
     <Compile Include="UI\ModificarPersona.cs">

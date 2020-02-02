@@ -27,16 +27,30 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pPersona">Persona to be added</param>
         public void Agregar(PersonaAutorizada pPersona)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
+            if (pPersona == null)
+                throw new ArgumentNullException(nameof(pPersona));
 
-            comando.CommandText = "INSERT INTO \"Persona\"(nombre,contrasena, \"fechaAlta\", \"fechaBaja\", \"idGrupo\") VALUES(@nombre,@contrasena,@fechaalta,@fechabaja,@idarea)";
-            comando.Parameters.AddWithValue("@nombre", pPersona.Nombre);
-            comando.Parameters.AddWithValue("@contrasena", pPersona.Contraseña);
-            comando.Parameters.AddWithValue("@fechaalta", pPersona.FechaAlta);
-            comando.Parameters.AddWithValue("@fechabaja", pPersona.FechaAlta);
-            comando.Parameters.AddWithValue("@idarea", pPersona.IdGrupo);
+            try
+            {
+                string query = "INSERT INTO \"Persona\"(nombre,contrasena, \"fechaAlta\", \"idGrupo\") VALUES(@nombre,@contrasena,@fechaalta,@fechabaja,@idarea)";
 
-            comando.ExecuteNonQuery();
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+                comando.Parameters.AddWithValue("@nombre", pPersona.Nombre);
+                comando.Parameters.AddWithValue("@contrasena", pPersona.Contraseña);
+                comando.Parameters.AddWithValue("@fechaalta", pPersona.FechaAlta);
+                comando.Parameters.AddWithValue("@idarea", pPersona.IdGrupo);
+
+                comando.ExecuteNonQuery();
+            }
+            catch(PostgresException e)
+            {
+                throw new DAOException("Error al agregar Persona: " + e.Message);
+            }
+            catch(NpgsqlException e)
+            {
+                throw new DAOException("Error al agregar Persona: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -183,6 +197,65 @@ namespace SyStock.AccesoDatos.PostgreSQL
             comando.Parameters.AddWithValue("@contrasena", pPersona.Contraseña);
             comando.Parameters.AddWithValue("@fechaBaja", Convert.ToString(pPersona.FechaBaja));
             comando.ExecuteNonQuery();
+        }
+
+        /// <summary>
+        /// Modify a "Persona"s field "nombre". Search by ID
+        /// </summary>
+        /// <param name="id">ID to match</param>
+        /// <param name="nombre">New "nombre" for the finded "id"</param>
+        void ModificarNombre(int id, string nombre)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Modify a "Persona"s field "fechaAlta". Search by "nombre"
+        /// </summary>
+        /// <param name="idPersona">to search by</param>
+        /// <param name="fecha">new value to the field "fechaAlta"</param>
+        void ModificarFechaAlta(int idPersona, DateTime fecha)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Modify a "Persona"s field "fechaBaja". Search by "nombre"
+        /// </summary>
+        /// <param name="idPersona">to search by</param>
+        /// <param name="fecha">new value to the field "fechaBaja"</param>
+        void ModificarFechaBaja(int idPersona, DateTime fecha)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Modify the password for a given "Persona"s "nombre"
+        /// </summary>
+        /// <param name="idPersona">to search by</param>
+        /// <param name="pass">new password</param>
+        void ModificarContrasena(int idPersona, string pass)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Modify the group for a given "Persona"
+        /// </summary>
+        /// <param name="idPersona">ID to search by</param>
+        /// <param name="idGrupo">new "Grupo"s ID</param>
+        void ModificarGrupo(int idPersona, int idGrupo)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Delete a "Persona" from the database
+        /// </summary>
+        /// <param name="id">to search by</param>
+        void EliminarPersona(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

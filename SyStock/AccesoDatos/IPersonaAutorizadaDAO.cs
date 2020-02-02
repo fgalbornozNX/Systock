@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SyStock.Entidades;
+using System;
 
 namespace SyStock.AccesoDatos
 {
@@ -59,5 +60,46 @@ namespace SyStock.AccesoDatos
         /// </summary>
         /// <param name="pPersona">Persona with all filled fields</param>
         void Modificar(PersonaAutorizada pPersona);
+
+        /// <summary>
+        /// Modify a "Persona"s field "nombre". Search by ID
+        /// </summary>
+        /// <param name="id">ID to match</param>
+        /// <param name="nombre">New "nombre" for the finded "id"</param>
+        void ModificarNombre(int id, string nombre);
+
+        /// <summary>
+        /// Modify a "Persona"s field "fechaAlta". Search by "nombre"
+        /// </summary>
+        /// <param name="idPersona">to search by</param>
+        /// <param name="fecha">new value to the field "fechaAlta"</param>
+        void ModificarFechaAlta(int idPersona, DateTime fecha);
+
+        /// <summary>
+        /// Modify a "Persona"s field "fechaBaja". Search by "nombre"
+        /// </summary>
+        /// <param name="idPersona">to search by</param>
+        /// <param name="fecha">new value to the field "fechaBaja"</param>
+        void ModificarFechaBaja(int idPersona, DateTime fecha);
+
+        /// <summary>
+        /// Modify the password for a given "Persona"s "nombre"
+        /// </summary>
+        /// <param name="idPersona">to search by</param>
+        /// <param name="pass">new password</param>
+        void ModificarContrasena(int idPersona, string pass);
+
+        /// <summary>
+        /// Modify the group for a given "Persona"
+        /// </summary>
+        /// <param name="idPersona">ID to search by</param>
+        /// <param name="idGrupo">new "Grupo"s ID</param>
+        void ModificarGrupo(int idPersona, int idGrupo);
+
+        /// <summary>
+        /// Delete a "Persona" from the database
+        /// </summary>
+        /// <param name="id">to search by</param>
+        void EliminarPersona(int id);
     }
 }
