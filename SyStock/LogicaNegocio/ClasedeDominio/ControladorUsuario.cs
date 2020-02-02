@@ -50,10 +50,13 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 factory.IniciarConexion();
                 IUsuarioDAO _usuarioDAO = factory.UsuarioDAO;
                 idUser = _usuarioDAO.Verificar(pNombre, pContraseña);  //Trae el id del Usuario o -1 si no lo encontró
+                factory.FinalizarConexion();
+                
                 if (idUser == -1) {
                     return null;
                 }
                 else {
+                    factory.IniciarConexion();
                     user = _usuarioDAO.Obtener(idUser);
                     return user; 
                 }
