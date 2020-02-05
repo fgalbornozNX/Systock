@@ -74,40 +74,58 @@ namespace SyStock.UI
             }
         }
 
+        /// <summary>
+        /// Método del boton Agregar Usuario
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Agregar_Click(object sender, EventArgs e)
         {
-            //Comprueba que se ingrese nombre de usuario
-            if (this.textBox_nombre.Text == string.Empty)
+            try
             {
-                MessageBox.Show("Falta ingresar Nombre");
-            }
-            else
-            {
-                //Comprueba que se ingresa contraseña
-                if (this.textBox_contraseña.Text == string.Empty)
+                //Comprueba que se ingrese nombre de usuario
+                if (string.IsNullOrEmpty(this.textBox_nombre.Text))
                 {
-                    MessageBox.Show("Falta ingresar Contraseña");
+                    MessageBox.Show("Falta ingresar Nombre");
                 }
                 else
                 {
-                    _usuario = _controlador.AgregarUsuario(this.textBox_nombre.Text, this.textBox_contraseña.Text, this.checkBox1.Checked);
-
-                    if (_usuario != null)
+                    //Comprueba que se ingresa contraseña
+                    if (string.IsNullOrEmpty(this.textBox_contraseña.Text))
                     {
-                        MessageBox.Show("Agregado con éxito");
-                        this.textBox_nombre.Clear();
-                        this.textBox_contraseña.Clear();
-                        this.checkBox1.Checked = false;
-
-                        _listaUsuarios.Add(_usuario);
-                        RefrescarDataGrid();
+                        MessageBox.Show("Falta ingresar Contraseña");
                     }
                     else
-                        MessageBox.Show("El nombre de usuario ya existe");
+                    {
+                        _usuario = _controlador.AgregarUsuario(this.textBox_nombre.Text, this.textBox_contraseña.Text, this.checkBox1.Checked);
+
+                        if (_usuario != null)
+                        {
+                            MessageBox.Show("Agregado con éxito");
+                            this.textBox_nombre.Clear();
+                            this.textBox_contraseña.Clear();
+                            this.checkBox1.Checked = false;
+
+                            _listaUsuarios.Add(_usuario);
+                            RefrescarDataGrid();
+                        }
+                        else
+                            MessageBox.Show("El nombre de usuario ya existe");
+                    }
                 }
+            }
+
+            catch (LogicaException ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
+        /// <summary>
+        /// Método para modificar los datos de un Usuario
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Modificar_Click(object sender, EventArgs e)
         {
             V_UsuarioModificar v_modificarUsuario = new V_UsuarioModificar()
@@ -120,22 +138,34 @@ namespace SyStock.UI
             RefrescarDataGrid();
         }
 
+        /// <summary>
+        /// Método para dar de baja un Usuario
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Eliminar_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("¿Seguro que desea eliminar a " + _listaUsuarios[idColumna].Nombre + " de la lista?", "Confirmación", MessageBoxButtons.YesNo);
-            if (result == DialogResult.Yes)
+            try
             {
-                bool _eliminar = false;
-                _eliminar = _controlador.EliminarUsuario(_listaUsuarios[idColumna].Nombre);
-                if (_eliminar)
+                DialogResult result = MessageBox.Show("¿Seguro que desea eliminar a " + _listaUsuarios[idColumna].Nombre + " de la lista?", "Confirmación", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
                 {
-                    RefrescarDataGrid();
+                    bool _eliminar = false;
+                    _eliminar = _controlador.EliminarUsuario(_listaUsuarios[idColumna].Nombre);
+                    if (_eliminar)
+                    {
+                        RefrescarDataGrid();
+                    }
+                    else
+                    {
+                        MessageBox.Show("El usuario " + _listaUsuarios[idColumna].Nombre + " ya se encuentra dado de baja");
+                    }
+
                 }
-                else
-                {
-                    MessageBox.Show("El usuario " + _listaUsuarios[idColumna].Nombre + " ya se encuentra dado de baja");
-                }
-                
+            }
+            catch (LogicaException ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 

@@ -10,6 +10,11 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
 {
     public class ControladorUsuario
     {
+        /// <summary>
+        /// Mètodo para agregar un nuevo Usuario
+        /// </summary>
+        /// <param name="pUsuario">Usuario a agregar</param>
+        /// <returns>Devuelve -1 si lo agregó o el Id del Usuario si existe ese nombre</returns>
         public int Agregar(Usuario pUsuario)
         {
             DAOFactory factory = DAOFactory.Instancia();
@@ -28,10 +33,10 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 return idUsuario;
 
             }
-            catch (DAOException)
+            catch (DAOException e)
             {
                 factory.RollBack();
-                return -1;
+                throw new LogicaException(e.Message);
             }
             finally
             {
@@ -39,6 +44,12 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
+        /// <summary>
+        /// Verifica los datos del usuario
+        /// </summary>
+        /// <param name="pNombre">Nombre del Usuario</param>
+        /// <param name="pContraseña">Contraeña del Usuario</param>
+        /// <returns>Usuario validado. Null si no son válidos</returns>
         public Usuario Verificar(string pNombre, string pContraseña)
         {
             DAOFactory factory = DAOFactory.Instancia();
@@ -73,6 +84,10 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
+        /// <summary>
+        /// Método para listar los Usuarios
+        /// </summary>
+        /// <returns>Lista de Usuarios. Null si no existen usuarios</returns>
         public List<Usuario> Listar()
         {
             DAOFactory factory = DAOFactory.Instancia();
@@ -85,10 +100,11 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 _listaUsuarios = _usuarioDAO.Listar();
                 return _listaUsuarios;
             }
-            catch (Exception)
+            catch (DAOException e)
             {
                 _listaUsuarios.Clear();
-                return _listaUsuarios;
+                factory.RollBack();
+                throw new LogicaException(e.Message);
             }
             finally
             {
@@ -96,6 +112,11 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
+        /// <summary>
+        /// Obtiene un determinado Usuario por ID
+        /// </summary>
+        /// <param name="pIdUsuario">Id del Usuario a buscar</param>
+        /// <returns>Usuario encontrado. Null si no lo encontró</returns>
         public Usuario Obtener(int pIdUsuario)
         {
             DAOFactory factory = DAOFactory.Instancia();
@@ -108,9 +129,11 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 _usuario = _usuarioDAO.Obtener(pIdUsuario);
                 return _usuario;
             }
-            catch (Exception)
+            catch (DAOException e)
             {
-                return null;
+                factory.RollBack();
+                throw new LogicaException(e.Message);
+
             }
             finally
             {
@@ -118,6 +141,11 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
+        /// <summary>
+        /// Obtiene un determinado Usuario por Nombre
+        /// </summary>
+        /// <param name="pNombreUsuario">Nombre del Usuario</param>
+        /// <returns>Usuario encontrado. Null si no lo encontró</returns>
         public Usuario Obtener(string pNombreUsuario)
         {
             DAOFactory factory = DAOFactory.Instancia();
@@ -130,9 +158,10 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 _usuario = _usuarioDAO.Obtener(pNombreUsuario);
                 return _usuario;
             }
-            catch (Exception)
+            catch (DAOException e)
             {
-                return null;
+                factory.RollBack();
+                throw new LogicaException(e.Message);
             }
             finally
             {
@@ -140,6 +169,10 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
+        /// <summary>
+        /// Método para modificar los datos del Usuario
+        /// </summary>
+        /// <param name="pUsuario"> Usuario a modificar</param>
         public void Modificar(Usuario pUsuario)
         {
             DAOFactory factory = DAOFactory.Instancia();
@@ -154,9 +187,10 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 _usuarioDAO.ModificarFechaBaja(pUsuario.Nombre, pUsuario.FechaBaja);
                 //_usuarioDAO.Modificar(pUsuario);
             }
-            catch (DAOException)
+            catch (DAOException e)
             {
                 factory.RollBack();
+                throw new LogicaException(e.Message);
             }
             finally
             {

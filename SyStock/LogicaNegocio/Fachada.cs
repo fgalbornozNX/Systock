@@ -40,6 +40,14 @@ namespace SyStock.LogicaNegocio
         }
 
         #region CONTROLADOR USUARIO
+
+        /// <summary>
+        /// Método para agrega un Usuario
+        /// </summary>
+        /// <param name="pNombre">Nombre de Usario</param>
+        /// <param name="pContraseña">Contraseña del Usuario</param>
+        /// <param name="EsAdmin">True si es admin, False si no lo es</param>
+        /// <returns>Usuario agregado. Null si no se puede agregar</returns>
         public Usuario AgregarUsuario(string pNombre, string pContraseña, bool EsAdmin)
         {
             string hash = Utilidades.Encriptar(string.Concat(pNombre, pContraseña));
@@ -64,10 +72,17 @@ namespace SyStock.LogicaNegocio
             }
         }
 
+        /// <summary>
+        /// Método para modificar un usuario
+        /// </summary>
+        /// <param name="pUsuario">Usuario a modificar</param>
+        /// <param name="pContraseñaAntigua">Contraseña antigua</param>
+        /// <param name="pContraseñaNueva">Nueva contraseña</param>
+        /// <returns></returns>
         public bool ModificarUsuario(Usuario pUsuario, string pContraseñaAntigua, string pContraseñaNueva)
         {
             Usuario _usuario = new Usuario("", "", DateTime.Now);
-            if(pUsuario.IdUsuario == 0)
+            if (pUsuario.IdUsuario == 0)
             {
                 _usuario = _controladorUsuario.Obtener(this.IDUsuarioLogeado);
             }
@@ -91,6 +106,11 @@ namespace SyStock.LogicaNegocio
             }
         }
 
+        /// <summary>
+        /// Método para eliminar un usuario
+        /// </summary>
+        /// <param name="pNombreUsuario">Nombre del usuario a eliminar</param>
+        /// <returns>Devuelve True si fue eliminado. False si no se pudo eliminar</returns>
         public bool EliminarUsuario(string pNombreUsuario)
         {
             Usuario _usuario = new Usuario("", "", DateTime.Now);
@@ -108,6 +128,12 @@ namespace SyStock.LogicaNegocio
             
         }
 
+        /// <summary>
+        /// Método para verificar si un usuario existe
+        /// </summary>
+        /// <param name="pNombre">Nombre del Usuario</param>
+        /// <param name="pContraseña">Contraseña del Usuario</param>
+        /// <returns>Devuelve el usuario. Null si no lo encontró</returns>
         public int VerificarUsuario(string pNombre, string pContraseña)
         {
             if (string.IsNullOrEmpty(pNombre))
@@ -135,6 +161,10 @@ namespace SyStock.LogicaNegocio
             }
         }
 
+        /// <summary>
+        /// Verifica si el usuario registrado es Administrador
+        /// </summary>
+        /// <returns>Devuelve True si es Administrado. False si no lo es</returns>
         public bool EsAdmin()
         {
             Usuario _usuario = _controladorUsuario.Obtener(this.IDUsuarioLogeado);
@@ -148,6 +178,10 @@ namespace SyStock.LogicaNegocio
 }
         }
 
+        /// <summary>
+        /// Mètodo para listar los Usuarios
+        /// </summary>
+        /// <returns>Devuelve una lista de Usuarios</returns>
         public List<Usuario> ListarUsuarios()
         {
             return _controladorUsuario.Listar();
