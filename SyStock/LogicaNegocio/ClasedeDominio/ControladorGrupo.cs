@@ -10,6 +10,11 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
 {
     public class ControladorGrupo
     {
+        /// <summary>
+        /// Método para agregar un grupo
+        /// </summary>
+        /// <param name="pGrupo">Grupo a agregar</param>
+        /// <returns>Devuelve -1 si agregó el Grupo. sino el valor del Id del grupo ya existente</returns>
         public int Agregar(Grupo pGrupo)
         {
             DAOFactory factory = DAOFactory.Instancia();
@@ -27,10 +32,10 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 }
                 return idGrupo;
             }
-            catch (DAOException)
+            catch (DAOException e)
             {
                 factory.RollBack();
-                return -2;
+                throw new LogicaException(e.Message);
             }
             finally
             {
@@ -38,6 +43,11 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
+        /// <summary>
+        /// Método para modificar un grupo
+        /// </summary>
+        /// <param name="pGrupo">Grupo a modificar</param>
+        /// <returns>Devuelve true si logró modificarlo</returns>
         public bool Modificar(Grupo pGrupo)
         {
             DAOFactory factory = DAOFactory.Instancia();
@@ -49,10 +59,11 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 _grupoDAO.Modificar(pGrupo);
                 return true;
             }
-            catch (DAOException)
+
+            catch (DAOException e)
             {
                 factory.RollBack();
-                return false;
+                throw new LogicaException(e.Message);
             }
             finally
             {
@@ -60,6 +71,10 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
+        /// <summary>
+        /// Método para listar los grupos
+        /// </summary>
+        /// <returns>Lista de grupos</returns>
         public List<Grupo> Listar()
         {
             DAOFactory factory = DAOFactory.Instancia();
@@ -72,10 +87,10 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 _listaGrupo = _GrupoDAO.Listar();
                 return _listaGrupo;
             }
-            catch (Exception)
+            catch (DAOException e)
             {
-                _listaGrupo.Clear();
-                return _listaGrupo;
+                factory.RollBack();
+                throw new LogicaException(e.Message);
             }
             finally
             {
@@ -83,6 +98,11 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
+        /// <summary>
+        /// Método para listar los grupos
+        /// </summary>
+        /// <param name="idArea">Id del Área de os grupos a listar</param>
+        /// <returns>Lista de grupos para una determinada Área</returns>
         public List<Grupo> Listar(int idArea)
         {
             DAOFactory factory = DAOFactory.Instancia();
@@ -95,10 +115,10 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 _listaGrupo = _grupoDAO.Listar(idArea);
                 return _listaGrupo;
             }
-            catch (Exception)
+            catch (DAOException e)
             {
-                _listaGrupo.Clear();
-                return _listaGrupo;
+                factory.RollBack();
+                throw new LogicaException(e.Message);
             }
             finally
             {
@@ -106,6 +126,11 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
+        /// <summary>
+        /// Método para obtener un grupo dependiendo del nombre
+        /// </summary>
+        /// <param name="pNombre">Nombre del grupo</param>
+        /// <returns>Devuelve el grupo. Null si no lo encontró</returns>
         public Grupo Obtener(string pNombre)
         {
             DAOFactory factory = DAOFactory.Instancia();
@@ -118,9 +143,10 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 _Grupo = _GrupoDAO.Obtener(pNombre);
                 return _Grupo;
             }
-            catch (Exception)
+            catch (DAOException e)
             {
-                return null;
+                factory.RollBack();
+                throw new LogicaException(e.Message);
             }
             finally
             {
@@ -128,6 +154,11 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
+        /// <summary>
+        /// Método para obtener un grupo dependiendo del ID
+        /// </summary>
+        /// <param name="pId">ID del grupo</param>
+        /// <returns>Devuelve el grupo. Null si no lo encontró</returns>
         public Grupo Obtener(int pId)
         {
             DAOFactory factory = DAOFactory.Instancia();
@@ -140,9 +171,10 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 _Grupo = _GrupoDAO.Obtener(pId);
                 return _Grupo;
             }
-            catch (Exception)
+            catch (DAOException e)
             {
-                return null;
+                factory.RollBack();
+                throw new LogicaException(e.Message);
             }
             finally
             {
