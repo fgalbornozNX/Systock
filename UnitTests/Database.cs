@@ -229,6 +229,7 @@ namespace UnitTests
         private bool EliminarArea()
         {
             throw new NotImplementedException();
+            // prueba
         }
         #endregion
 
