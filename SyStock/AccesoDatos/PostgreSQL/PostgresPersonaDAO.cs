@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Npgsql;
 using SyStock.Entidades;
-using SyStock.AccesoDatos;
 using System.Data;
 
 namespace SyStock.AccesoDatos.PostgreSQL
@@ -144,7 +143,7 @@ namespace SyStock.AccesoDatos.PostgreSQL
                             fechaBaja = Convert.ToDateTime(fila["fechaBaja"]);
                         int idCreador = Convert.ToInt32(fila["idCreadoPor"]);
 
-                        _listaPersona.Add(new PersonaAutorizada(id, nombre, pass, fechaAlta, fechaBaja, idGrupo));
+                        _listaPersona.Add(new PersonaAutorizada(id, nombre, pass, fechaAlta, fechaBaja, idGrupo, idCreador));
                     }
                     tabla.Dispose();
                 }
@@ -163,25 +162,48 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <summary>
         /// Generate a list of "Persona" objects in a group
         /// </summary>
-        /// <param name="idGrupo">ID of the group</param>
+        /// <param name="pIdGrupo">ID of the group</param>
         /// <returns></returns>
-        public List<PersonaAutorizada> Listar(int idGrupo)
+        public List<PersonaAutorizada> Listar(int pIdGrupo)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Persona\" WHERE \"idGrupo\" = '" + idGrupo + "'";
-
+            string query = "SELECT * FROM \"Persona\" WHERE \"idGrupo\" = '" + pIdGrupo + "'";
             List<PersonaAutorizada> _listaPersona = new List<PersonaAutorizada>();
 
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
-                foreach (DataRow fila in tabla.Rows)
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _listaPersona.Add(new PersonaAutorizada(Convert.ToInt32(fila["idPersona"]), Convert.ToString(fila["nombre"]), Convert.ToString(fila["contrasena"]), Convert.ToDateTime(fila["fechaAlta"]), Convert.ToDateTime(fila["fechaBaja"]), Convert.ToInt32(fila["idGrupo"])));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int id = Convert.ToInt32(fila["idPersona"]);
+                        int idGrupo = Convert.ToInt32(fila["idGrupo"]);
+                        string nombre = Convert.ToString(fila["nombre"]);
+                        string pass = Convert.ToString(fila["contrasena"]);
+                        DateTime fechaAlta = Convert.ToDateTime(fila["fechaAlta"]);
+                        DateTime fechaBaja = DateTime.MinValue;
+                        if (fila["fechaBaja"] != DBNull.Value)
+                            fechaBaja = Convert.ToDateTime(fila["fechaBaja"]);
+                        int idCreador = Convert.ToInt32(fila["idCreadoPor"]);
+
+                        _listaPersona.Add(new PersonaAutorizada(id, nombre, pass, fechaAlta, fechaBaja, idGrupo, idCreador));
+                    }
+                    tabla.Dispose();
                 }
+                return _listaPersona;
             }
-            return _listaPersona;
+            catch(PostgresException e)
+            {
+                throw new DAOException("Error al listar las personas autorizadas: " + e.Message);
+            }
+            catch(NpgsqlException e)
+            {
+                throw new DAOException("Error al listar las personas autorizadas: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -190,21 +212,45 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pIdPersona">ID to search by</param>
         public PersonaAutorizada Obtener(int idPersona)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Persona\" WHERE \"idPersona\" = '" + idPersona + "'";
-            PersonaAutorizada _PersonaRetira = new PersonaAutorizada(0, "", "", DateTime.Today, DateTime.Today, 0);
+            string query = "SELECT * FROM \"Persona\" WHERE \"idPersona\" = '" + idPersona + "'";
+            PersonaAutorizada _PersonaRetira = null;
 
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
-
-                foreach (DataRow fila in tabla.Rows)
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+                
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _PersonaRetira = new PersonaAutorizada(Convert.ToInt32(fila["idPersona"]), Convert.ToString(fila["nombre"]), Convert.ToString(fila["contrasena"]), Convert.ToDateTime(fila["fechaAlta"]), Convert.ToDateTime(fila["fechaBaja"]), Convert.ToInt32(fila["idGrupo"]));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int id = Convert.ToInt32(fila["idPersona"]);
+                        int idGrupo = Convert.ToInt32(fila["idGrupo"]);
+                        string nombre = Convert.ToString(fila["nombre"]);
+                        string pass = Convert.ToString(fila["contrasena"]);
+                        DateTime fechaAlta = Convert.ToDateTime(fila["fechaAlta"]);
+                        DateTime fechaBaja = DateTime.MinValue;
+                        if (fila["fechaBaja"] != DBNull.Value)
+                            fechaBaja = Convert.ToDateTime(fila["fechaBaja"]);
+                        int idCreador = Convert.ToInt32(fila["idCreadoPor"]);
+
+                        _PersonaRetira = new PersonaAutorizada(id, nombre, pass, fechaAlta, fechaBaja, idGrupo, idCreador);
+                    }
+                    tabla.Dispose();
                 }
+                return _PersonaRetira;
             }
-            return _PersonaRetira;
+            catch(PostgresException e)
+            {
+                throw new DAOException("Error al obtener la persona autorizada: " + e.Message);
+            }
+            catch(NpgsqlException e)
+            {
+                throw new DAOException("Error al obtener la persona autorizada: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -213,21 +259,45 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pNombre">to search by</param>
         public PersonaAutorizada Obtener(string pNombre)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Persona\" WHERE nombre = '" + pNombre + "'";
-            PersonaAutorizada _PersonaRetira = new PersonaAutorizada(0, "", "", DateTime.Today, DateTime.Today, 0);
+            string query = "SELECT * FROM \"Persona\" WHERE nombre = '" + pNombre + "'";
+            PersonaAutorizada _PersonaRetira = null;
 
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
 
-                foreach (DataRow fila in tabla.Rows)
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _PersonaRetira = new PersonaAutorizada(Convert.ToInt32(fila["idPersona"]), Convert.ToString(fila["nombre"]), Convert.ToString(fila["contrasena"]), Convert.ToDateTime(fila["fechaAlta"]), Convert.ToDateTime(fila["fechaBaja"]), Convert.ToInt32(fila["idGrupo"]));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int id = Convert.ToInt32(fila["idPersona"]);
+                        int idGrupo = Convert.ToInt32(fila["idGrupo"]);
+                        string nombre = Convert.ToString(fila["nombre"]);
+                        string pass = Convert.ToString(fila["contrasena"]);
+                        DateTime fechaAlta = Convert.ToDateTime(fila["fechaAlta"]);
+                        DateTime fechaBaja = DateTime.MinValue;
+                        if (fila["fechaBaja"] != DBNull.Value)
+                            fechaBaja = Convert.ToDateTime(fila["fechaBaja"]);
+                        int idCreador = Convert.ToInt32(fila["idCreadoPor"]);
+
+                        _PersonaRetira = new PersonaAutorizada(id,nombre,pass,fechaAlta,fechaBaja,idGrupo,idCreador);
+                    }
+                    tabla.Dispose();
                 }
+                return _PersonaRetira;
             }
-            return _PersonaRetira;
+            catch(PostgresException e)
+            {
+                throw new DAOException("Error al intentar obtener los datos de la persona \"" + pNombre + "\": " + e.Message);
+            }
+            catch(NpgsqlException e)
+            {
+                throw new DAOException("Error al intentar obtener los datos de la persona \"" + pNombre + "\": " + e.Message);
+            }
         }
 
         /// <summary>
@@ -236,13 +306,29 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pPersona">Persona with all filled fields</param>
         public void Modificar(PersonaAutorizada pPersona)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "UPDATE \"Persona\" SET nombre = @nombre, contrasena = @contrasena, \"fechaBaja\" = @fechaBaja WHERE \"idPersona\" = '" + pPersona.IdPersona + "'";
+            if (pPersona == null)
+                throw new ArgumentNullException(nameof(pPersona));
 
-            comando.Parameters.AddWithValue("@nombre", pPersona.Nombre);
-            comando.Parameters.AddWithValue("@contrasena", pPersona.Contraseña);
-            comando.Parameters.AddWithValue("@fechaBaja", Convert.ToString(pPersona.FechaBaja));
-            comando.ExecuteNonQuery();
+            string query = "UPDATE \"Persona\" SET nombre = @nombre, contrasena = @contrasena, \"fechaBaja\" = @fechaBaja WHERE \"idPersona\" = '" + pPersona.IdPersona + "'";
+
+            try
+            {
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                comando.Parameters.AddWithValue("@nombre", pPersona.Nombre);
+                comando.Parameters.AddWithValue("@contrasena", pPersona.Contraseña);
+                comando.Parameters.AddWithValue("@fechaBaja", Convert.ToString(pPersona.FechaBaja));
+                comando.ExecuteNonQuery();
+            }
+            catch(PostgresException e)
+            {
+                throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
+            }
+            catch(NpgsqlException e)
+            {
+                throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -252,7 +338,24 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="nombre">New "nombre" for the finded "id"</param>
         public void ModificarNombre(int id, string nombre)
         {
-            throw new NotImplementedException();
+            string query = "UPDATE \"Persona\" SET nombre = @var WHERE \"idPersona\" = '" + id + "'";
+
+            try
+            {
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                comando.Parameters.AddWithValue("@var", nombre);
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -262,7 +365,24 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="fecha">new value to the field "fechaAlta"</param>
         public void ModificarFechaAlta(int idPersona, DateTime fecha)
         {
-            throw new NotImplementedException();
+            string query = "UPDATE \"Persona\" SET \"fechaAlta\" = @var WHERE \"idPersona\" = '" + idPersona + "'";
+
+            try
+            {
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                comando.Parameters.AddWithValue("@var", fecha);
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -272,7 +392,24 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="fecha">new value to the field "fechaBaja"</param>
         public void ModificarFechaBaja(int idPersona, DateTime fecha)
         {
-            throw new NotImplementedException();
+            string query = "UPDATE \"Persona\" SET \"fechaBaja\" = @var WHERE \"idPersona\" = '" + idPersona + "'";
+
+            try
+            {
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                comando.Parameters.AddWithValue("@var", fecha);
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -282,7 +419,24 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pass">new password</param>
         public void ModificarContrasena(int idPersona, string pass)
         {
-            throw new NotImplementedException();
+            string query = "UPDATE \"Persona\" SET contrasena = @var WHERE \"idPersona\" = '" + idPersona + "'";
+
+            try
+            {
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                comando.Parameters.AddWithValue("@var", pass);
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -292,7 +446,24 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="idGrupo">new "Grupo"s ID</param>
         public void ModificarGrupo(int idPersona, int idGrupo)
         {
-            throw new NotImplementedException();
+            string query = "UPDATE \"Persona\" SET \"idGrupo\" = @var WHERE \"idPersona\" = '" + idPersona + "'";
+
+            try
+            {
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                comando.Parameters.AddWithValue("@var", idGrupo);
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -301,7 +472,22 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="id">to search by</param>
         public void EliminarPersona(int id)
         {
-            throw new NotImplementedException();
+            string query = "DELETE FROM \"Persona\" WHERE \"idPersona\" = '" + id + "'";
+
+            using NpgsqlCommand comando = this._conexion.CreateCommand();
+            try
+            {
+                comando.CommandText = query;
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al intentar eliminar un usuario: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al intentar eliminar un usuario: " + e.Message);
+            }
         }
     }
 }
