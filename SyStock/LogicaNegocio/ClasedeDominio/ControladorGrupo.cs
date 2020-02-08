@@ -23,7 +23,20 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             {
                 factory.IniciarConexion();
                 IGrupoDAO _grupoDAO = factory.GrupoDAO;
-                int idGrupo = _grupoDAO.VerificarNombre(pGrupo.Nombre, pGrupo.IdArea);
+                int idGrupo = -1;
+
+                List<Grupo> listaGrupos = new List<Grupo>();
+                listaGrupos = _grupoDAO.Listar(pGrupo.IdArea);
+
+
+                for (int i = 0; i < listaGrupos.Count; i++)
+                {
+                    if (listaGrupos[i].Nombre.ToUpper() == pGrupo.Nombre.ToUpper())
+                    {
+                        idGrupo = listaGrupos[i].IdGrupo;
+                    }
+                }
+
                 factory.FinalizarConexion();
                 if (idGrupo == -1)
                 {
@@ -56,8 +69,32 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             {
                 factory.IniciarConexion();
                 IGrupoDAO _grupoDAO = factory.GrupoDAO;
-                _grupoDAO.Modificar(pGrupo);
-                return true;
+
+                int idGrupo = -1;
+
+                List<Grupo> listaGrupos = new List<Grupo>();
+                listaGrupos = _grupoDAO.Listar(pGrupo.IdArea);
+
+
+                for (int i = 0; i < listaGrupos.Count; i++)
+                {
+                    if ((listaGrupos[i].Nombre.ToUpper() == pGrupo.Nombre.ToUpper()) && (listaGrupos[i].IdGrupo != pGrupo.IdGrupo))
+                    {
+                        idGrupo = listaGrupos[i].IdGrupo;
+                    }
+                }
+
+                factory.FinalizarConexion();
+                if (idGrupo == -1)
+                {
+                    factory.IniciarConexion();
+                    _grupoDAO.Modificar(pGrupo);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }  
             }
 
             catch (DAOException e)

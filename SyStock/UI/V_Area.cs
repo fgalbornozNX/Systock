@@ -109,13 +109,13 @@ namespace SyStock.UI
             {
                 if (_grupo)
                 {
-                    if (this.textBox_grupo.Text == string.Empty)
+                    if (string.IsNullOrEmpty(this.textBox_grupo.Text))
                     {
                         MessageBox.Show("Falta ingresar nombre de grupo");
                     }
                     else
                     {
-                        if (Controlador.ModificarGrupo(_nombre, this.textBox_grupo.Text.ToUpper()))
+                        if (Controlador.ModificarGrupo(_nombre, this.textBox_grupo.Text))
                         {
                             this.Button_Agregar.Text = "Agregar";
                             ActivarTodo();
@@ -123,7 +123,7 @@ namespace SyStock.UI
                         }
                         else
                         {
-                            MessageBox.Show("Ocurrió un problema, inténtelo nuevamente");
+                            MessageBox.Show("Nombre de grupo ya existente");
                         }
                     }
                 }
@@ -143,7 +143,7 @@ namespace SyStock.UI
                         }
                         else
                         {
-                            MessageBox.Show("Ocurrió un problema, inténtelo nuevamente");
+                            MessageBox.Show("Nombre de área ya existente");
                         }
                     }
                 }
@@ -173,11 +173,11 @@ namespace SyStock.UI
         {
             try
             {
-                int idArea = Controlador.AgregarArea(this.comboBox_area.Text.ToUpper());
+                int idArea = Controlador.AgregarArea(this.comboBox_area.Text);
                 switch (idArea)
                 {
                     case -1:
-                        AgregarGrupo(this.comboBox_area.Text.ToUpper(), this.comboBox_area.Text.ToUpper(), false);
+                        AgregarGrupo(this.comboBox_area.Text, this.comboBox_area.Text, false);
                         break;
                     default:
                         MessageBox.Show("Nombre de área ya existente");
@@ -198,15 +198,15 @@ namespace SyStock.UI
         {
             try
             {
-                int idArea = Controlador.AgregarArea(this.comboBox_area.Text.ToUpper());
+                int idArea = Controlador.AgregarArea(this.comboBox_area.Text);
                 switch (idArea)
                 {
                     case -1:
-                        AgregarGrupo(this.comboBox_area.Text.ToUpper(), this.comboBox_area.Text.ToUpper(), true);
-                        AgregarGrupo(this.textBox_grupo.Text.ToUpper(), this.comboBox_area.Text.ToUpper(), false);
+                        AgregarGrupo(this.comboBox_area.Text, this.comboBox_area.Text, true);
+                        AgregarGrupo(this.textBox_grupo.Text, this.comboBox_area.Text, false);
                         break;
                     default:
-                        AgregarGrupo(this.textBox_grupo.Text.ToUpper(), this.comboBox_area.Text.ToUpper(), false);
+                        AgregarGrupo(this.textBox_grupo.Text, this.comboBox_area.Text, false);
                         break;
                 }
             }
