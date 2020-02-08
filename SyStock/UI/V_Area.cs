@@ -26,12 +26,20 @@ namespace SyStock.UI
 
         private string _nombre = "";
 
+        /// <summary>
+        /// Método para cargar la ventana
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void V_Area_Load(object sender, EventArgs e)
         {
             RefrescarAreas();
             RefrescarGrupos();
         }
 
+        /// <summary>
+        /// Actualiza el listado de áreas
+        /// </summary>
         private void RefrescarAreas()
         {
             _listar.Areas(this.comboBox_area);
@@ -41,10 +49,13 @@ namespace SyStock.UI
             _listar.Areas(this.comboBox_areaPersona);
         }
 
+        /// <summary>
+        /// Actualiza el listado de grupos
+        /// </summary>
         private void RefrescarGrupos()
         {
             _listar.Grupo(this.comboBox_grupoPersona);
-            if (this.comboBox_filtrarArea.Text == string.Empty)
+            if (string.IsNullOrEmpty(this.comboBox_filtrarArea.Text))
             {
                 _listar.Grupo(this.listBox_grupos);
             }
@@ -55,16 +66,26 @@ namespace SyStock.UI
             this.checkBox1.Checked = false;
         }
 
+        /// <summary>
+        /// Método para cerrar la ventana
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Cancelar_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
+        /// <summary>
+        /// Método para el botón "agregar" área
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Agregar_Click(object sender, EventArgs e)
         {
             if (this.Button_Agregar.Text == "Agregar")
             {
-                if (this.comboBox_area.Text == string.Empty)
+                if (string.IsNullOrEmpty(this.comboBox_area.Text))
                 {
                     MessageBox.Show("Falta ingresar nombre de Área");
                 }
@@ -88,13 +109,13 @@ namespace SyStock.UI
             {
                 if (_grupo)
                 {
-                    if (this.textBox_grupo.Text == string.Empty)
+                    if (string.IsNullOrEmpty(this.textBox_grupo.Text))
                     {
                         MessageBox.Show("Falta ingresar nombre de grupo");
                     }
                     else
                     {
-                        if (Controlador.ModificarGrupo(_nombre, this.textBox_grupo.Text.ToUpper()))
+                        if (Controlador.ModificarGrupo(_nombre, this.textBox_grupo.Text))
                         {
                             this.Button_Agregar.Text = "Agregar";
                             ActivarTodo();
@@ -102,7 +123,7 @@ namespace SyStock.UI
                         }
                         else
                         {
-                            MessageBox.Show("Ocurrió un problema, inténtelo nuevamente");
+                            MessageBox.Show("Nombre de grupo ya existente");
                         }
                     }
                 }
@@ -122,13 +143,18 @@ namespace SyStock.UI
                         }
                         else
                         {
-                            MessageBox.Show("Ocurrió un problema, inténtelo nuevamente");
+                            MessageBox.Show("Nombre de área ya existente");
                         }
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Método para activar o desactivar agregar grupo
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CheckBox1_CheckedChanged(object sender, EventArgs e)
         {
             this.textBox_grupo.Text = string.Empty;
@@ -140,92 +166,139 @@ namespace SyStock.UI
                 this.textBox_grupo.Enabled = false;
         }
 
+        /// <summary>
+        /// Método para agregar una nueva área
+        /// </summary>
         private void AgregarArea()
         {
-            int idArea = Controlador.AgregarArea(this.comboBox_area.Text.ToUpper());
-            switch (idArea)
+            try
+            {
+                int idArea = Controlador.AgregarArea(this.comboBox_area.Text);
+                switch (idArea)
                 {
-                case -1:
-                    AgregarGrupo(this.comboBox_area.Text.ToUpper(), this.comboBox_area.Text.ToUpper(), false);
-                    break;
-                case -2:
-                    MessageBox.Show("Ocurrió un error, inténtelo nuevamente");
-                    break;
-                default:
-                    MessageBox.Show("Nombre de área ya existente");
-                    break;
+                    case -1:
+                        AgregarGrupo(this.comboBox_area.Text, this.comboBox_area.Text, false);
+                        break;
+                    default:
+                        MessageBox.Show("Nombre de área ya existente");
+                        break;
+                }
             }
+            catch (LogicaException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
 
+        /// <summary>
+        /// Método para agregar un área y un grupo
+        /// </summary>
         private void AgregarAreaGrupo()
         {
-            int idArea = Controlador.AgregarArea(this.comboBox_area.Text.ToUpper());
-            switch (idArea)
+            try
             {
-                case -1:
-                    AgregarGrupo(this.comboBox_area.Text.ToUpper(), this.comboBox_area.Text.ToUpper(), true);
-                    AgregarGrupo(this.textBox_grupo.Text.ToUpper(), this.comboBox_area.Text.ToUpper(), false);
-                    break;
-                case -2:
-                    MessageBox.Show("Ocurrió un error, inténtelo nuevamente");
-                    break;
-                default:
-                    AgregarGrupo(this.textBox_grupo.Text.ToUpper(), this.comboBox_area.Text.ToUpper(), false);
-                    break;
+                int idArea = Controlador.AgregarArea(this.comboBox_area.Text);
+                switch (idArea)
+                {
+                    case -1:
+                        AgregarGrupo(this.comboBox_area.Text, this.comboBox_area.Text, true);
+                        AgregarGrupo(this.textBox_grupo.Text, this.comboBox_area.Text, false);
+                        break;
+                    default:
+                        AgregarGrupo(this.textBox_grupo.Text, this.comboBox_area.Text, false);
+                        break;
+                }
+            }
+            catch (LogicaException ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
+        /// <summary>
+        /// Método para agregar un grupo
+        /// </summary>
+        /// <param name="grupo">Nombre del grupo a agregar</param>
+        /// <param name="area">Nombre del área a agregar</param>
+        /// <param name="AgregarAmbos">False para agregar solo un grupo</param>
         private void AgregarGrupo(string grupo, string area, bool AgregarAmbos)
         {
-            int idGrupo = Controlador.AgregarGrupo(grupo, area);
-            switch (idGrupo)
+            try
             {
-                case -1:
-                    if (!AgregarAmbos)
-                    {
-                        MessageBox.Show("Agregado con éxito");
-                    }
-                    break;
-                case -2:
-                    MessageBox.Show("Ocurrió un error, inténtelo nuevamente");
-                    break;
-                default:
-                    MessageBox.Show("Nombre de grupo ya existente");
-                    break;
+                int idGrupo = Controlador.AgregarGrupo(grupo, area);
+                switch (idGrupo)
+                {
+                    case -1:
+                        if (!AgregarAmbos)
+                        {
+                            MessageBox.Show("Agregado con éxito");
+                        }
+                        break;
+                    default:
+                        MessageBox.Show("Nombre de grupo ya existente");
+                        break;
+                }
+            }
+            catch (LogicaException ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
+        /// <summary>
+        /// Actualiza el listado de grupos
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ComboBox_filtrarArea_SelectedIndexChanged(object sender, EventArgs e)
         {
             RefrescarGrupos();
         }
 
+        /// <summary>
+        /// Método para agregar una nueva persona 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_AgregarPersona_Click(object sender, EventArgs e)
         {
-            if ((this.textBox_nombrePersona.Text == string.Empty) || (this.comboBox_grupoPersona.Text == string.Empty))
+            try
             {
-                MessageBox.Show("Falta ingresar datos obligatorios");
-            }
-            else
-            {
-                string _contraseña = "";
-                V_ingresarPassword v_pass = new V_ingresarPassword()
+                if ((this.textBox_nombrePersona.Text == string.Empty) || (this.comboBox_grupoPersona.Text == string.Empty))
                 {
-                    _nombre = this.textBox_nombrePersona.Text,
-                };
-                v_pass.ShowDialog(this);
-                _contraseña = v_pass._contraseña;
-                if (v_pass._guardar)
-                {
-                    Controlador.AgregarPersona(this.textBox_nombrePersona.Text.ToUpper(), _contraseña, this.comboBox_grupoPersona.Text.ToUpper());
+                    MessageBox.Show("Falta ingresar datos obligatorios");
                 }
-                this.Show();
-                this.comboBox_areaPersona.Text = "";
-                this.comboBox_grupoPersona.Text = "";
-                this.textBox_nombrePersona.Text = "";
+                else
+                {
+                    string _contraseña = "";
+                    V_ingresarPassword v_pass = new V_ingresarPassword()
+                    {
+                        _nombre = this.textBox_nombrePersona.Text,
+                    };
+                    v_pass.ShowDialog(this);
+                    _contraseña = v_pass._contraseña;
+                    if (v_pass._guardar)
+                    {
+                        Controlador.AgregarPersona(this.textBox_nombrePersona.Text.ToUpper(), _contraseña, this.comboBox_grupoPersona.Text.ToUpper());
+                    }
+                    this.Show();
+                    this.comboBox_areaPersona.Text = "";
+                    this.comboBox_grupoPersona.Text = "";
+                    this.textBox_nombrePersona.Text = "";
+                }
+            }
+            catch (LogicaException ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
+        /// <summary>
+        /// Método para listar las personas dependiendo del área y grupo seleccionado
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ComboBox_areaPersona_SelectedIndexChanged(object sender, EventArgs e)
         {
             _listar.Grupo(comboBox_grupoPersona, comboBox_areaPersona);
@@ -240,6 +313,10 @@ namespace SyStock.UI
             }
         }
 
+        /// <summary>
+        /// Método para modificar una determinada área
+        /// </summary>
+        /// <param name="pNombre">Nombre del área</param>
         private void ActivarModificarArea(string pNombre)
         {
             this.comboBox_area.Enabled = true;
@@ -250,6 +327,10 @@ namespace SyStock.UI
             _grupo = false;
         }
 
+        /// <summary>
+        /// Método para modificar un determinado grupo
+        /// </summary>
+        /// <param name="pNombre">Nombre del grupo</param>
         private void ActivarModificarGrupo(string pNombre)
         {
             this.comboBox_area.Enabled = false;
@@ -259,6 +340,9 @@ namespace SyStock.UI
             _grupo = true;
         }
 
+        /// <summary>
+        /// Desactiva los campos para agregar una persona
+        /// </summary>
         private void DesactivarPersona()
         {
             comboBox_areaPersona.Enabled = false;
@@ -266,6 +350,9 @@ namespace SyStock.UI
             textBox_nombrePersona.Enabled = false;
         }
 
+        /// <summary>
+        /// Método para lipiar la ventana
+        /// </summary>
         private void ActivarTodo()
         {
             this.comboBox_area.Text = "";
@@ -283,6 +370,11 @@ namespace SyStock.UI
             tabControl1.Enabled = true;
         }
 
+        /// <summary>
+        /// Método para modificar una determinada área o grupo
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_modificar_Click(object sender, EventArgs e)
         {
             this.button_AgregarPersona.Enabled = false;
@@ -308,17 +400,21 @@ namespace SyStock.UI
             this.Button_modificar.Enabled = false;
         }
 
-        private void ListBox_areas_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            this.Button_modificar.Enabled = true;
-
-        }
-
+        /// <summary>
+        /// Método para activar el bóton de modificar un determinado grupo
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ListBox_grupos_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.Button_modificar.Enabled = true;
         }
 
+        /// <summary>
+        /// Método para activar el bóton de modificar una determinada área
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ListBox_area_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.Button_modificar.Enabled = true;

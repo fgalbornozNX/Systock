@@ -250,12 +250,24 @@ namespace SyStock.LogicaNegocio
         #endregion
 
         #region CONTROLADOR AREA
+
+        /// <summary>
+        /// Método para agregar un área
+        /// </summary>
+        /// <param name="pNombreArea">Nómbre del área a agregar</param>
+        /// <returns>Devuelve -1 si logra agregarla, o sino el ID del Área</returns>
         public int AgregarArea(string pNombreArea)
         {
             Area _area = new Area(pNombreArea);
             return _controladorArea.Agregar(_area);
         }
 
+        /// <summary>
+        /// Método para modificar un área
+        /// </summary>
+        /// <param name="nombreAntigua">Nombre de la área a modificar</param>
+        /// <param name="nombreNuevo">Nuevo nombre del área</param>
+        /// <returns>Devuelve true si o modificò. False en caso contrario</returns>
         public bool ModificarArea(string nombreAntigua, string nombreNuevo)
         {
             Area _area = new Area("");
@@ -264,6 +276,10 @@ namespace SyStock.LogicaNegocio
             return _controladorArea.Modificar(_area);
         }
 
+        /// <summary>
+        /// Método para listar las áreas
+        /// </summary>
+        /// <returns>Devuelve una lista de áreas</returns>
         public List<Area> ListarArea()
         {
             return _controladorArea.Listar();
@@ -271,6 +287,13 @@ namespace SyStock.LogicaNegocio
         #endregion
 
         #region CONTROLADOR GRUPO
+
+        /// <summary>
+        /// Método para agregar un´grupo
+        /// </summary>
+        /// <param name="pNombreGrupo">Nombre del grupo</param>
+        /// <param name="pNombreArea">Nombre del área al q se le asignará el grupo</param>
+        /// <returns>Devuelve -1 si agregó el Grupo. sino el valor del Id del grupo ya existente</returns>
         public int AgregarGrupo(string pNombreGrupo, string pNombreArea)
         {
             Area _area = _controladorArea.Obtener(pNombreArea);
@@ -278,6 +301,12 @@ namespace SyStock.LogicaNegocio
             return _controladorGrupo.Agregar(_grupo);
         }
 
+        /// <summary>
+        /// Método para modificar un grupo
+        /// </summary>
+        /// <param name="nombreAntigua">Nombre del grupo</param>
+        /// <param name="nombreNuevo">Nuevo nombre del grupo</param>
+        /// <returns>Devuelve true si logró modificarlo</returns>
         public bool ModificarGrupo(string nombreAntigua, string nombreNuevo)
         {
             Grupo _grupo = new Grupo("",true,0,0);
@@ -286,11 +315,20 @@ namespace SyStock.LogicaNegocio
              return _controladorGrupo.Modificar(_grupo);
         }
 
+        /// <summary>
+        /// Método para listar los grupos
+        /// </summary>
+        /// <returns>Lista de grupos</returns>
         public List<Grupo> ListarGrupos()
         {
             return _controladorGrupo.Listar();
         }
 
+        /// <summary>
+        /// Método para listar los grupos
+        /// </summary>
+        /// <param name="pArea">Id del Área de os grupos a listar</param>
+        /// <returns>Lista de grupos para una determinada Área</returns>
         public List<Grupo> ListarGrupos(string pArea)
         {
             Area _area = new Area("");

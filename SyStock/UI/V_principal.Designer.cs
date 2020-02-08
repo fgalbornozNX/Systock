@@ -211,7 +211,7 @@
             this.groupBox1.Size = new System.Drawing.Size(585, 106);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Detalles Usuario Retira";
+            this.groupBox1.Text = "Persona";
             // 
             // Button_AgregarArea
             // 
@@ -315,7 +315,7 @@
             this.groupBox3.Size = new System.Drawing.Size(585, 141);
             this.groupBox3.TabIndex = 9;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Insumos";
+            this.groupBox3.Text = "Bienes";
             // 
             // comboBox_cantidad
             // 
@@ -341,9 +341,9 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(10, 50);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(47, 13);
+            this.label5.Size = new System.Drawing.Size(44, 13);
             this.label5.TabIndex = 10;
-            this.label5.Text = "Nombre:";
+            this.label5.Text = "Insumo:";
             // 
             // comboBox_nombre
             // 
