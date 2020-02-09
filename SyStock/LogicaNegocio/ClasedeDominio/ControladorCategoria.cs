@@ -164,5 +164,37 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 factory.FinalizarConexion();
             }
         }
+
+        public bool Eliminar(Categoria pCategoria)
+        {
+            DAOFactory factory = DAOFactory.Instancia();
+
+            try
+            {
+                factory.IniciarConexion();
+                ICategoriaDAO _categoriaDAO = factory.CategoriaDAO;
+
+                if (pCategoria.Estado)
+                {
+                    pCategoria.Estado = false;
+                    factory.IniciarConexion();
+                    _categoriaDAO.Modificar(pCategoria);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (DAOException e)
+            {
+                factory.RollBack();
+                throw new LogicaException(e.Message);
+            }
+            finally
+            {
+                factory.FinalizarConexion();
+            }
+        }
     }
 }

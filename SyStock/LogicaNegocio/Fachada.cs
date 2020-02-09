@@ -203,6 +203,11 @@ namespace SyStock.LogicaNegocio
             return _controladorCategoria.Modificar(_categoria);
         }
 
+        public bool EliminarCategoria(Categoria pCategoria)
+        {
+            return _controladorCategoria.Eliminar(pCategoria);
+        }
+
         public List<Categoria> ListarCategorias()
         {
             return _controladorCategoria.Listar();

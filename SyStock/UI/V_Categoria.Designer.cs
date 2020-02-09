@@ -69,7 +69,7 @@
             this.button_Agregar.Location = new System.Drawing.Point(228, 16);
             this.button_Agregar.Name = "button_Agregar";
             this.button_Agregar.Size = new System.Drawing.Size(85, 42);
-            this.button_Agregar.TabIndex = 4;
+            this.button_Agregar.TabIndex = 2;
             this.button_Agregar.Text = "Agregar";
             this.button_Agregar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.button_Agregar.UseVisualStyleBackColor = true;
@@ -82,7 +82,7 @@
             this.textBox_nombre.Location = new System.Drawing.Point(74, 28);
             this.textBox_nombre.Name = "textBox_nombre";
             this.textBox_nombre.Size = new System.Drawing.Size(148, 20);
-            this.textBox_nombre.TabIndex = 3;
+            this.textBox_nombre.TabIndex = 1;
             // 
             // label3
             // 
@@ -141,7 +141,7 @@
             this.Button_Cancelar.Location = new System.Drawing.Point(345, 283);
             this.Button_Cancelar.Name = "Button_Cancelar";
             this.Button_Cancelar.Size = new System.Drawing.Size(92, 39);
-            this.Button_Cancelar.TabIndex = 4;
+            this.Button_Cancelar.TabIndex = 6;
             this.Button_Cancelar.Text = "Cancelar";
             this.Button_Cancelar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.Button_Cancelar.UseVisualStyleBackColor = true;
@@ -165,7 +165,7 @@
             this.Button_Aceptar.Location = new System.Drawing.Point(247, 283);
             this.Button_Aceptar.Name = "Button_Aceptar";
             this.Button_Aceptar.Size = new System.Drawing.Size(92, 39);
-            this.Button_Aceptar.TabIndex = 2;
+            this.Button_Aceptar.TabIndex = 5;
             this.Button_Aceptar.Text = "Aceptar";
             this.Button_Aceptar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.Button_Aceptar.UseVisualStyleBackColor = true;
@@ -177,7 +177,7 @@
             this.Button_Eliminar.Location = new System.Drawing.Point(279, 16);
             this.Button_Eliminar.Name = "Button_Eliminar";
             this.Button_Eliminar.Size = new System.Drawing.Size(44, 42);
-            this.Button_Eliminar.TabIndex = 1;
+            this.Button_Eliminar.TabIndex = 4;
             this.Button_Eliminar.UseVisualStyleBackColor = true;
             this.Button_Eliminar.Click += new System.EventHandler(this.Button_Eliminar_Click);
             // 
@@ -199,6 +199,8 @@
             // 
             this.Categoría.HeaderText = "Categoría";
             this.Categoría.Name = "Categoría";
+            this.Categoría.ReadOnly = true;
+            this.Categoría.Width = 380;
             // 
             // V_Categoria
             // 
@@ -209,6 +211,7 @@
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.groupBox2);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(400, 300);
             this.Name = "V_Categoria";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Categoria";

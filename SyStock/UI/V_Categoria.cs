@@ -46,6 +46,7 @@ namespace SyStock.UI
         private void RefrescarDataGrid()
         {
             this.dataGridView1.Rows.Clear();
+            //_listar.Areas(this.comboBox_area);
             _listaCategorias = Controlador.ListarCategorias();
             this.dataGridView1.ColumnHeadersVisible = true;
 
@@ -117,7 +118,7 @@ namespace SyStock.UI
                 {
                     if (string.IsNullOrEmpty(this.textBox_nombre.Text))
                     {
-                        MessageBox.Show("Falta ingresar nombre de área");
+                        MessageBox.Show("Falta ingresar nombre de categoría");
                     }
                     else
                     {
@@ -126,9 +127,7 @@ namespace SyStock.UI
                             this.button_Agregar.Text = "Agregar";
                             MessageBox.Show("Modificado con éxito");
                             RefrescarDataGrid();
-                            this.dataGridView1.Enabled = false;
-                            this.Button_Editar.Enabled = false;
-                            this.Button_Eliminar.Enabled = false;
+                            this.dataGridView1.Enabled = true;
                         }
                         else
                         {
@@ -151,7 +150,28 @@ namespace SyStock.UI
         /// <param name="e"></param>
         private void Button_Eliminar_Click(object sender, EventArgs e)
         {
+            try
+            {
+                DialogResult result = MessageBox.Show("¿Seguro que deseas Eliminar esta Categoría?", "Confirmación", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    if (Controlador.EliminarCategoria(_categoria))
+                    {
+                        MessageBox.Show("Categoría dada de baja");
+                    }
+                    else
+                    {
+                        MessageBox.Show("La categoría ya está dada de baja");
+                    }
 
+                    this.Button_Editar.Enabled = false;
+                    this.Button_Eliminar.Enabled = false;
+                }
+            }
+            catch (LogicaException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         /// <summary>
