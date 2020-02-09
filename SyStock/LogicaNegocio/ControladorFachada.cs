@@ -218,14 +218,16 @@ namespace SyStock.LogicaNegocio
 
         public bool ModificarInsumo(Insumo pInsumo)
         {
-            return ControladorInsumo.Modificar(pInsumo);  
+            ControladorInsumo.Modificar(pInsumo);
+            return true;
         }
 
         public bool SumarStock(string pNombre, int pCantidad)
         {
             Insumo _insumo = ControladorInsumo.Obtener(pNombre);
             _insumo.Cantidad += pCantidad;
-            return ControladorInsumo.Modificar(_insumo);
+            ControladorInsumo.Modificar(_insumo);
+            return true;
         }
 
         public bool RestarStock(Insumo pIns)
@@ -234,7 +236,8 @@ namespace SyStock.LogicaNegocio
             _insumo = ControladorInsumo.Obtener(pIns.IdInsumo);
             int cantidadActual = _insumo.Cantidad - pIns.Cantidad;
             _insumo.Cantidad = cantidadActual;
-            return ControladorInsumo.Modificar(_insumo);
+            ControladorInsumo.Modificar(_insumo);
+            return true;
         }
 
         public List<Insumo> ListarInsumos()
@@ -375,7 +378,8 @@ namespace SyStock.LogicaNegocio
             _personaAutorizada = ControladorPersona.Obtener(pNombre);
             string hash = Utilidades.Encriptar(string.Concat(pNombre, pContraseña));
             _personaAutorizada.Contraseña = hash;
-            return ControladorPersona.Modificar(_personaAutorizada);
+            ControladorPersona.Modificar(_personaAutorizada);
+            return true;
         }
 
         public bool ModificarPersona(string pNombreAntiguo, string pNombreNuevo, string pContraseña)
@@ -385,7 +389,8 @@ namespace SyStock.LogicaNegocio
             string hash = Utilidades.Encriptar(string.Concat(pNombreNuevo, pContraseña));
             _personaAutorizada.Nombre = pNombreNuevo;
             _personaAutorizada.Contraseña = hash;
-            return ControladorPersona.Modificar(_personaAutorizada);
+            ControladorPersona.Modificar(_personaAutorizada);
+            return true;
         }
 
         public List<PersonaAutorizada> ListarPersonas()
