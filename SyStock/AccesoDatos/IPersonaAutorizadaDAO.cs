@@ -54,12 +54,20 @@ namespace SyStock.AccesoDatos
         /// </summary>
         /// <param name="pNombre">to search by</param>
         PersonaAutorizada Obtener(string pNombre);
-        
+
+        #region [Deprecated] Modificar
+
+        /*
+
         /// <summary>
         /// Modify all fields for a "Persona" 
         /// </summary>
         /// <param name="pPersona">Persona with all filled fields</param>
         void Modificar(PersonaAutorizada pPersona);
+
+        */
+
+        #endregion
 
         /// <summary>
         /// Modify a "Persona"s field "nombre". Search by ID

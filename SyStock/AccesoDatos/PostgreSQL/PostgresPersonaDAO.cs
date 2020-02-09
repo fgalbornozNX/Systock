@@ -9,7 +9,7 @@ namespace SyStock.AccesoDatos.PostgreSQL
     /// <summary>
     /// Postgresql implementation for Data Access Object "PersonaAutorizada"
     /// </summary>
-    public class PostgresPersonaDAO: IPersonaAutorizadaDAO
+    public class PostgresPersonaDAO : IPersonaAutorizadaDAO
     {
         /// <summary>
         /// Represent the conecction towards the database
@@ -43,11 +43,11 @@ namespace SyStock.AccesoDatos.PostgreSQL
 
                 comando.ExecuteNonQuery();
             }
-            catch(PostgresException e)
+            catch (PostgresException e)
             {
                 throw new DAOException("Error al agregar Persona: " + e.Message);
             }
-            catch(NpgsqlException e)
+            catch (NpgsqlException e)
             {
                 throw new DAOException("Error al agregar Persona: " + e.Message);
             }
@@ -66,18 +66,18 @@ namespace SyStock.AccesoDatos.PostgreSQL
             {
                 using NpgsqlCommand comando = this._conexion.CreateCommand();
                 comando.CommandText = query;
-                
+
                 using NpgsqlDataReader reader = comando.ExecuteReader();
                 if (reader.Read())
                     return Int32.Parse(reader[0].ToString());
                 else
                     return -1;
             }
-            catch(PostgresException e)
+            catch (PostgresException e)
             {
                 throw new DAOException("Error al verificar el nombre de la persona autorizada: " + e.Message);
             }
-            catch(NpgsqlException e)
+            catch (NpgsqlException e)
             {
                 throw new DAOException("Error al verificar el nombre de la persona autorizada: " + e.Message);
             }
@@ -92,7 +92,7 @@ namespace SyStock.AccesoDatos.PostgreSQL
         public int Verificar(string pNombre, string pContraseña)
         {
             string query = "SELECT \"idPersona\" FROM \"Persona\" WHERE \"nombre\" = '" + pNombre + "' and contrasena = '" + pContraseña + "'";
-            
+
             try
             {
                 using NpgsqlCommand comando = this._conexion.CreateCommand();
@@ -103,11 +103,11 @@ namespace SyStock.AccesoDatos.PostgreSQL
                 else
                     return -1;
             }
-            catch(PostgresException e)
+            catch (PostgresException e)
             {
                 throw new DAOException("Error al verificar credenciales de la persona autorizada para el retiro: " + e.Message);
             }
-            catch(NpgsqlException e)
+            catch (NpgsqlException e)
             {
                 throw new DAOException("Error al verificar credenciales de la persona autorizada para el retiro: " + e.Message);
             }
@@ -149,11 +149,11 @@ namespace SyStock.AccesoDatos.PostgreSQL
                 }
                 return _listaPersona;
             }
-            catch(PostgresException e)
+            catch (PostgresException e)
             {
                 throw new DAOException("Error al generar lista de personas: " + e.Message);
             }
-            catch(NpgsqlException e)
+            catch (NpgsqlException e)
             {
                 throw new DAOException("Error al generar lista de personas: " + e.Message);
             }
@@ -196,11 +196,11 @@ namespace SyStock.AccesoDatos.PostgreSQL
                 }
                 return _listaPersona;
             }
-            catch(PostgresException e)
+            catch (PostgresException e)
             {
                 throw new DAOException("Error al listar las personas autorizadas: " + e.Message);
             }
-            catch(NpgsqlException e)
+            catch (NpgsqlException e)
             {
                 throw new DAOException("Error al listar las personas autorizadas: " + e.Message);
             }
@@ -219,7 +219,7 @@ namespace SyStock.AccesoDatos.PostgreSQL
             {
                 using NpgsqlCommand comando = this._conexion.CreateCommand();
                 comando.CommandText = query;
-                
+
                 using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
                     DataTable tabla = new DataTable();
@@ -243,11 +243,11 @@ namespace SyStock.AccesoDatos.PostgreSQL
                 }
                 return _PersonaRetira;
             }
-            catch(PostgresException e)
+            catch (PostgresException e)
             {
                 throw new DAOException("Error al obtener la persona autorizada: " + e.Message);
             }
-            catch(NpgsqlException e)
+            catch (NpgsqlException e)
             {
                 throw new DAOException("Error al obtener la persona autorizada: " + e.Message);
             }
@@ -284,22 +284,25 @@ namespace SyStock.AccesoDatos.PostgreSQL
                             fechaBaja = Convert.ToDateTime(fila["fechaBaja"]);
                         int idCreador = Convert.ToInt32(fila["idCreadoPor"]);
 
-                        _PersonaRetira = new PersonaAutorizada(id,nombre,pass,fechaAlta,fechaBaja,idGrupo,idCreador);
+                        _PersonaRetira = new PersonaAutorizada(id, nombre, pass, fechaAlta, fechaBaja, idGrupo, idCreador);
                     }
                     tabla.Dispose();
                 }
                 return _PersonaRetira;
             }
-            catch(PostgresException e)
+            catch (PostgresException e)
             {
                 throw new DAOException("Error al intentar obtener los datos de la persona \"" + pNombre + "\": " + e.Message);
             }
-            catch(NpgsqlException e)
+            catch (NpgsqlException e)
             {
                 throw new DAOException("Error al intentar obtener los datos de la persona \"" + pNombre + "\": " + e.Message);
             }
         }
 
+        #region [Deprecated] Modificar
+
+        /*
         /// <summary>
         /// Modify all fields for a "Persona" 
         /// </summary>
@@ -321,15 +324,18 @@ namespace SyStock.AccesoDatos.PostgreSQL
                 comando.Parameters.AddWithValue("@fechaBaja", Convert.ToString(pPersona.FechaBaja));
                 comando.ExecuteNonQuery();
             }
-            catch(PostgresException e)
+            catch (PostgresException e)
             {
                 throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
             }
-            catch(NpgsqlException e)
+            catch (NpgsqlException e)
             {
                 throw new DAOException("Error al intentar modificar datos de la persona: " + e.Message);
             }
         }
+        */
+
+        #endregion
 
         /// <summary>
         /// Modify a "Persona"s field "nombre". Search by ID
