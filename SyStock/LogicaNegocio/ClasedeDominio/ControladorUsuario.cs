@@ -14,18 +14,21 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// <returns>Devuelve -1 si lo agregó o el Id del Usuario si existe ese nombre</returns>
         public static int Agregar(Usuario pUsuario)
         {
+            if ((pUsuario == null) || (pUsuario.Nombre.Length == 0))
+                throw new ArgumentNullException(nameof(pUsuario));
+
             DAOFactory factory = DAOFactory.Instancia();
 
             try
             {
                 factory.IniciarConexion();
-                IUsuarioDAO _usuarioDAO = factory.UsuarioDAO;
-                int idUsuario = _usuarioDAO.VerificarNombre(pUsuario.Nombre);
+                int idUsuario = factory.UsuarioDAO.VerificarNombre(pUsuario.Nombre);
                 factory.FinalizarConexion();
+
                 if (idUsuario == -1)
                 {
                     factory.IniciarConexion();
-                    _usuarioDAO.Agregar(pUsuario);
+                    factory.UsuarioDAO.Agregar(pUsuario);
                 }
                 return idUsuario;
 
@@ -50,34 +53,31 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         public static Usuario Verificar(string pNombre, string pContraseña)
         {
             DAOFactory factory = DAOFactory.Instancia();
-            Usuario user;
-            int idUser;
+            Usuario user = null;
+            int idUser = -1;
 
             try
             {
                 factory.IniciarConexion();
-                IUsuarioDAO _usuarioDAO = factory.UsuarioDAO;
-                idUser = _usuarioDAO.Verificar(pNombre, pContraseña);  //Trae el id del Usuario o -1 si no lo encontró
-                factory.FinalizarConexion();
-                
-                if (idUser == -1) {
+                idUser = factory.UsuarioDAO.Verificar(pNombre, pContraseña);  //Trae el id del Usuario o -1 si no lo encontró
+
+                if (idUser != -1)
+                {
+                    user = factory.UsuarioDAO.Obtener(idUser);
+                    factory.FinalizarConexion();
+                    return user;
+                }
+                else
+                {
+                    factory.FinalizarConexion();
                     return null;
                 }
-                else {
-                    factory.IniciarConexion();
-                    user = _usuarioDAO.Obtener(idUser);
-                    return user; 
-                }
+                    
             }
             catch (DAOException e)
             {
-                idUser = -1;
-                user = null;
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
