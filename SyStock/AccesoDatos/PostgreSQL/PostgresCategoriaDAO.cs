@@ -24,14 +24,30 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pCategoria">Categoria to be added</param>
         public void Agregar(Categoria pCategoria)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
+            if (pCategoria == null)
+                throw new ArgumentNullException(nameof(pCategoria));
 
-            comando.CommandText = "INSERT INTO \"Categoria\"(nombre, estado, \"idUsuario\") VALUES(@nombre,@estado,@idusuario)";
-            comando.Parameters.AddWithValue("@nombre", pCategoria.Nombre);
-            comando.Parameters.AddWithValue("@estado", pCategoria.Estado);
-            comando.Parameters.AddWithValue("@idusuario", pCategoria.IdUsuario);
+            string query = "INSERT INTO \"Categoria\" (nombre, estado, \"idUsuario\") VALUES (@nombre,@estado,@idusuario)";
 
-            comando.ExecuteNonQuery();
+            try
+            {
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+
+                comando.CommandText = query;
+                comando.Parameters.AddWithValue("@nombre", pCategoria.Nombre);
+                comando.Parameters.AddWithValue("@estado", pCategoria.Estado);
+                comando.Parameters.AddWithValue("@idusuario", pCategoria.IdUsuario);
+
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al agregar categoría: " + e.Message);
+            }
+            catch(NpgsqlException e)
+            {
+                throw new DAOException("Error al agregar categoría: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -40,21 +56,40 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pIdCategoria">ID to search by</param>
         public Categoria Obtener(int pIdCategoria)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Categoria\" WHERE \"idCategoria\" = '" + pIdCategoria + "'";
-            Categoria _categoria = new Categoria("", true, 0);
+            string query = "SELECT * FROM \"Categoria\" WHERE \"idCategoria\" = '" + pIdCategoria + "'";
+            Categoria categoria = null;
 
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
 
-                foreach (DataRow fila in tabla.Rows)
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _categoria = new Categoria(Convert.ToInt32(fila["idCategoria"]), Convert.ToString(fila["nombre"]), Convert.ToBoolean(fila["estado"]), Convert.ToInt32(fila["idUsuario"]));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int _id = Convert.ToInt32(fila["idCategoria"]);
+                        int _idUser = Convert.ToInt32(fila["idUsuario"]);
+                        bool _estado = Convert.ToBoolean(fila["estado"]);
+                        string _nombre = Convert.ToString(fila["nombre"]);
+
+                        categoria = new Categoria(_id, _nombre, _estado, _idUser);
+                    }
+                    tabla.Dispose();
                 }
+                return categoria;
             }
-            return _categoria;
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al obtener categoría: " + e.Message);
+            }
+            catch(NpgsqlException e)
+            {
+                throw new DAOException("Error al obtener categoría: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -63,21 +98,40 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pNombre">name to search by</param>
         public Categoria Obtener(string pNombre)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Categoria\" WHERE nombre = '" + pNombre + "'";
-            Categoria _categoria = new Categoria("", true, 0);
+            string query = "SELECT * FROM \"Categoria\" WHERE nombre = '" + pNombre + "'";
+            Categoria categoria = null;
 
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
 
-                foreach (DataRow fila in tabla.Rows)
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _categoria = new Categoria(Convert.ToInt32(fila["idCategoria"]), Convert.ToString(fila["nombre"]), Convert.ToBoolean(fila["estado"]), Convert.ToInt32(fila["idUsuario"]));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int _id = Convert.ToInt32(fila["idCategoria"]);
+                        int _idUser = Convert.ToInt32(fila["idUsuario"]);
+                        bool _estado = Convert.ToBoolean(fila["estado"]);
+                        string _nombre = Convert.ToString(fila["nombre"]);
+
+                        categoria = new Categoria(_id, _nombre, _estado, _idUser);
+                    }
+                    tabla.Dispose();
                 }
+                return categoria;
             }
-            return _categoria;
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al obtener categoría: " + e.Message);
+            }
+            catch(NpgsqlException e)
+            {
+                throw new DAOException("Error al obtener categoría: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -86,12 +140,28 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pCategoria">Categoria object with filled fields</param>
         public void Modificar(Categoria pCategoria)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "UPDATE \"Categoria\" SET nombre = @nombre, estado = @estado WHERE \"idCategoria\" = '" + pCategoria.IdCategoria + "'";
+            if (pCategoria == null)
+                throw new ArgumentNullException(nameof(pCategoria));
 
-            comando.Parameters.AddWithValue("@nombre", pCategoria.Nombre);
-            comando.Parameters.AddWithValue("@estado", pCategoria.Estado);
-            comando.ExecuteNonQuery();
+            string query = "UPDATE \"Categoria\" SET nombre = @nombre, estado = @estado WHERE \"idCategoria\" = '" + pCategoria.IdCategoria + "'";
+
+            try
+            {
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                comando.Parameters.AddWithValue("@nombre", pCategoria.Nombre);
+                comando.Parameters.AddWithValue("@estado", pCategoria.Estado);
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al modificar categoría: " + e.Message);
+            }
+            catch(NpgsqlException e)
+            {
+                throw new DAOException("Error al modificar categoría: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -101,18 +171,28 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <returns>ID of the Categoria. -1 if error</returns>
         public int VerificarNombre(string pNombre)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
+            string query = "SELECT \"idCategoria\" FROM \"Categoria\" WHERE \"nombre\" = '" + pNombre + "'";
 
-            comando.CommandText = "SELECT \"idCategoria\" FROM \"Categoria\" WHERE \"nombre\" = '" + pNombre + "'";
-            NpgsqlDataReader reader = comando.ExecuteReader();
-            if (reader.Read())
+            try
             {
-                return Int32.Parse(reader[0].ToString());
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                using (NpgsqlDataReader reader = comando.ExecuteReader())
+                {
+                    if (reader.Read())
+                        return Int32.Parse(reader[0].ToString());
+                    else
+                        return -1;
+                }
             }
-
-            else
+            catch (PostgresException e)
             {
-                return -1;
+                throw new DAOException("Error al intentar verificar el nombre de la categoría: " + e.Message);
+            }
+            catch(NpgsqlException e)
+            {
+                throw new DAOException("Error al intentar verificar el nombre de la categoría: " + e.Message);
             }
         }
 
@@ -122,21 +202,39 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <returns>A list containing all Categoria objects</returns>
         public List<Categoria> Listar()
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Categoria\"";
+            string query = "SELECT * FROM \"Categoria\"";
+            List<Categoria> listaCategoria = new List<Categoria>();
 
-            List<Categoria> _listaCategoria = new List<Categoria>();
-
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
-                foreach (DataRow fila in tabla.Rows)
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _listaCategoria.Add(new Categoria(Convert.ToInt32(fila["idCategoria"]), Convert.ToString(fila["nombre"]), Convert.ToBoolean(fila["estado"]), Convert.ToInt32(fila["idUsuario"])));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int _id = Convert.ToInt32(fila["idCategoria"]);
+                        int _idUser = Convert.ToInt32(fila["idUsuario"]);
+                        bool _estado = Convert.ToBoolean(fila["estado"]);
+                        string _nombre = Convert.ToString(fila["nombre"]);
+
+                        listaCategoria.Add(new Categoria(_id,_nombre,_estado,_idUser));
+                    }
+                    tabla.Dispose();
                 }
+                return listaCategoria;
             }
-            return _listaCategoria;
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al listar categorías: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al listar categorías: " + e.Message);
+            }
         }
     }
 }
