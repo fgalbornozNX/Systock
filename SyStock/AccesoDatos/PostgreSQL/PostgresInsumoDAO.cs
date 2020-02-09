@@ -24,17 +24,33 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pInsumo">Insumo to be added</param>
         public void Agregar(Insumo pInsumo)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
+            if (pInsumo == null)
+                throw new ArgumentNullException(nameof(pInsumo));
 
-            comando.CommandText = "INSERT INTO \"Insumo\"(nombre, descripcion, cantidad, \"cantidadMinima\", estado, \"idCategoria\") VALUES(@nombre,@descripcion,@cantidad,@cantidadminima,@estado,@idCategoria)";
-            comando.Parameters.AddWithValue("@nombre", pInsumo.Nombre);
-            comando.Parameters.AddWithValue("@descripcion", pInsumo.Descripcion);
-            comando.Parameters.AddWithValue("@cantidad", pInsumo.Cantidad);
-            comando.Parameters.AddWithValue("@cantidadminima", pInsumo.CantidadMinima);
-            comando.Parameters.AddWithValue("@estado", pInsumo.Estado);
-            comando.Parameters.AddWithValue("@idCategoria", pInsumo.IdCategoria);
+            string query = "INSERT INTO \"Insumo\" (nombre, descripcion, cantidad, \"cantidadMinima\", estado, \"idCategoria\") VALUES (@nombre,@descripcion,@cantidad,@cantidadminima,@estado,@idCategoria)";
 
-            comando.ExecuteNonQuery();
+            try
+            {
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+
+                comando.CommandText = query;
+                comando.Parameters.AddWithValue("@nombre", pInsumo.Nombre);
+                comando.Parameters.AddWithValue("@descripcion", pInsumo.Descripcion);
+                comando.Parameters.AddWithValue("@cantidad", pInsumo.Cantidad);
+                comando.Parameters.AddWithValue("@cantidadminima", pInsumo.CantidadMinima);
+                comando.Parameters.AddWithValue("@estado", pInsumo.Estado);
+                comando.Parameters.AddWithValue("@idCategoria", pInsumo.IdCategoria);
+
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al agregar insumo: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al agregar insumo: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -43,18 +59,26 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pNombre">name to search by</param>
         public int VerificarNombre(string pNombre)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
+            string query = "SELECT \"idInsumo\" FROM \"Insumo\" WHERE \"nombre\" = '" + pNombre + "'";
 
-            comando.CommandText = "SELECT \"idInsumo\" FROM \"Insumo\" WHERE \"nombre\" = '" + pNombre + "'";
-            NpgsqlDataReader reader = comando.ExecuteReader();
-            if (reader.Read())
+            try
             {
-                return Int32.Parse(reader[0].ToString());
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                using NpgsqlDataReader reader = comando.ExecuteReader();
+                if (reader.Read())
+                    return Int32.Parse(reader[0].ToString());
+                else
+                    return -1;
             }
-
-            else
+            catch (PostgresException e)
             {
-                return -1;
+                throw new DAOException("Error al verificar existencia de insumo: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al verificar existencia de insumo: " + e.Message);
             }
         }
 
@@ -64,21 +88,43 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pIdInsumo">ID to search by</param>
         public Insumo Obtener(int pIdInsumo)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Insumo\" WHERE \"idInsumo\" = '" + pIdInsumo + "'";
-            Insumo _insumo = new Insumo("", "", 0, 0, true, 0);
+            string query = "SELECT * FROM \"Insumo\" WHERE \"idInsumo\" = '" + pIdInsumo + "'";
+            Insumo insumo = null;
 
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
 
-                foreach (DataRow fila in tabla.Rows)
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _insumo = new Insumo(Convert.ToInt32(fila["idInsumo"]), Convert.ToString(fila["nombre"]), Convert.ToString(fila["descripcion"]), Convert.ToInt32(fila["cantidad"]), Convert.ToInt32(fila["cantidadMinima"]), Convert.ToBoolean(fila["estado"]), Convert.ToInt32(fila["idCategoria"]));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int _cantidad = Convert.ToInt32(fila[""]);
+                        int _cantidadMin = Convert.ToInt32(fila[""]);
+                        int _idCategoria = Convert.ToInt32(fila[""]);
+                        int _idInsumo = Convert.ToInt32(fila[""]);
+                        bool _estado = Convert.ToBoolean(fila[""]);
+                        string _nombre = Convert.ToString(fila[""]);
+                        string _descripcion = Convert.ToString(fila[""]);
+
+                        insumo = new Insumo(_idInsumo, _nombre, _descripcion, _cantidad, _cantidadMin, _estado, _idCategoria);
+                    }
+                    tabla.Dispose();
                 }
+                return insumo;
             }
-            return _insumo;
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al obtener insumo: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al obtener insumo: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -87,21 +133,43 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pNombreInsumo">name to search by</param>
         public Insumo Obtener(string pNombreInsumo)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Insumo\" WHERE nombre = '" + pNombreInsumo + "'";
-            Insumo _insumo = new Insumo("", "", 0, 0, true, 0);
+            string query = "SELECT * FROM \"Insumo\" WHERE nombre = '" + pNombreInsumo + "'";
+            Insumo insumo = null;
 
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
-
-                foreach (DataRow fila in tabla.Rows)
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+                
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _insumo = new Insumo(Convert.ToInt32(fila["idInsumo"]), Convert.ToString(fila["nombre"]), Convert.ToString(fila["descripcion"]), Convert.ToInt32(fila["cantidad"]), Convert.ToInt32(fila["cantidadMinima"]), Convert.ToBoolean(fila["estado"]), Convert.ToInt32(fila["idCategoria"]));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int _cantidad = Convert.ToInt32(fila[""]);
+                        int _cantidadMin = Convert.ToInt32(fila[""]);
+                        int _idCategoria = Convert.ToInt32(fila[""]);
+                        int _idInsumo = Convert.ToInt32(fila[""]);
+                        bool _estado = Convert.ToBoolean(fila[""]);
+                        string _nombre = Convert.ToString(fila[""]);
+                        string _descripcion = Convert.ToString(fila[""]);
+
+                        insumo = new Insumo(_idInsumo, _nombre, _descripcion, _cantidad, _cantidadMin, _estado, _idCategoria);
+                    }
+                    tabla.Dispose();
                 }
+                return insumo;
             }
-            return _insumo;
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al obtener insumo: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al obtener insumo: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -110,15 +178,32 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pInsumo">Insumo with all filled fields</param>
         public void Modificar(Insumo pInsumo)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "UPDATE \"Insumo\" SET nombre = @nombre, descripcion = @descripcion, cantidad = @cantidad, \"cantidadMinima\" = @minima, estado = @estado WHERE \"idInsumo\" = '" + pInsumo.IdInsumo + "'";
+            if (pInsumo == null)
+                throw new ArgumentNullException(nameof(pInsumo));
 
-            comando.Parameters.AddWithValue("@nombre", pInsumo.Nombre);
-            comando.Parameters.AddWithValue("@descripcion", pInsumo.Descripcion);
-            comando.Parameters.AddWithValue("@cantidad", pInsumo.Cantidad);
-            comando.Parameters.AddWithValue("@minima", pInsumo.CantidadMinima);
-            comando.Parameters.AddWithValue("@estado", pInsumo.Estado);
-            comando.ExecuteNonQuery();
+            string query = "UPDATE \"Insumo\" SET nombre = @nombre, descripcion = @descripcion, cantidad = @cantidad, \"cantidadMinima\" = @minima, estado = @estado, \"idCategoria\" = @idCategoria WHERE \"idInsumo\" = '" + pInsumo.IdInsumo + "'";
+
+            try
+            {
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                comando.Parameters.AddWithValue("@nombre", pInsumo.Nombre);
+                comando.Parameters.AddWithValue("@descripcion", pInsumo.Descripcion);
+                comando.Parameters.AddWithValue("@cantidad", pInsumo.Cantidad);
+                comando.Parameters.AddWithValue("@minima", pInsumo.CantidadMinima);
+                comando.Parameters.AddWithValue("@estado", pInsumo.Estado);
+                comando.Parameters.AddWithValue("@idCategoria", pInsumo.IdCategoria);
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al modificar insumo: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al modificar insumo: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -127,21 +212,43 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <returns>A list containing all available "Insumo" entries</returns>
         public List<Insumo> Listar()
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Insumo\"";
+            string query = "SELECT * FROM \"Insumo\"";
+            List<Insumo> listaInsumos = new List<Insumo>();
 
-            List<Insumo> _listaInsumos = new List<Insumo>();
-
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
-                foreach (DataRow fila in tabla.Rows)
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _listaInsumos.Add(new Insumo(Convert.ToInt32(fila["idInsumo"]), Convert.ToString(fila["nombre"]), Convert.ToString(fila["descripcion"]), Convert.ToInt32(fila["cantidad"]), Convert.ToInt32(fila["cantidadMinima"]), Convert.ToBoolean(fila["estado"]), Convert.ToInt32(fila["idCategoria"])));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int _cantidad = Convert.ToInt32(fila[""]);
+                        int _cantidadMin = Convert.ToInt32(fila[""]);
+                        int _idCategoria = Convert.ToInt32(fila[""]);
+                        int _idInsumo = Convert.ToInt32(fila[""]);
+                        bool _estado = Convert.ToBoolean(fila[""]);
+                        string _nombre = Convert.ToString(fila[""]);
+                        string _descripcion = Convert.ToString(fila[""]);
+
+                        listaInsumos.Add(new Insumo(_idInsumo, _nombre, _descripcion, _cantidad, _cantidadMin, _estado, _idCategoria));
+                    }
+                    tabla.Dispose();
                 }
+                return listaInsumos;
             }
-            return _listaInsumos;
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al listar insumos: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al listar insumos: " + e.Message);
+            }
+
         }
 
         /// <summary>
@@ -151,21 +258,42 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <returns>A list containint all matching "Insumo" entries</returns>
         public List<Insumo> Listar(int idCategoria)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Insumo\" WHERE \"idCategoria\" = '" + idCategoria + "'";
+            string query = "SELECT * FROM \"Insumo\" WHERE \"idCategoria\" = '" + idCategoria + "'";
+            List<Insumo> listaInsumos = new List<Insumo>();
 
-            List<Insumo> _listaInsumos = new List<Insumo>();
-
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
-                foreach (DataRow fila in tabla.Rows)
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _listaInsumos.Add(new Insumo(Convert.ToInt32(fila["idInsumo"]), Convert.ToString(fila["nombre"]), Convert.ToString(fila["descripcion"]), Convert.ToInt32(fila["cantidad"]), Convert.ToInt32(fila["cantidadMinima"]), Convert.ToBoolean(fila["estado"]), Convert.ToInt32(fila["idCategoria"])));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int _cantidad = Convert.ToInt32(fila[""]);
+                        int _cantidadMin = Convert.ToInt32(fila[""]);
+                        int _idCategoria = Convert.ToInt32(fila[""]);
+                        int _idInsumo = Convert.ToInt32(fila[""]);
+                        bool _estado = Convert.ToBoolean(fila[""]);
+                        string _nombre = Convert.ToString(fila[""]);
+                        string _descripcion = Convert.ToString(fila[""]);
+
+                        listaInsumos.Add(new Insumo(_idInsumo, _nombre, _descripcion, _cantidad, _cantidadMin, _estado, _idCategoria));
+                    }
+                    tabla.Dispose();
                 }
+                return listaInsumos;
             }
-            return _listaInsumos;
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al listar insumos: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al listar insumos: " + e.Message);
+            }
         }
     }
 }
