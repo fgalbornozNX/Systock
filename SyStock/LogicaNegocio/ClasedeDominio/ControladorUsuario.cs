@@ -53,28 +53,22 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         public static Usuario Verificar(string pNombre, string pContraseña)
         {
             DAOFactory factory = DAOFactory.Instancia();
-            Usuario user = null;
-            int idUser = -1;
+            Usuario usuario = null;
 
             try
             {
                 factory.IniciarConexion();
-                idUser = factory.UsuarioDAO.Verificar(pNombre, pContraseña);  //Trae el id del Usuario o -1 si no lo encontró
+                int idUser = factory.UsuarioDAO.Verificar(pNombre, pContraseña);  //Trae el id del Usuario o -1 si no lo encontró
                 factory.FinalizarConexion();
 
                 if (idUser != -1)
                 {
                     factory.IniciarConexion();
-                    user = factory.UsuarioDAO.Obtener(idUser);
+                    usuario = factory.UsuarioDAO.Obtener(idUser);
                     factory.FinalizarConexion();
-                    return user;
                 }
-                else
-                {
-                    factory.FinalizarConexion();
-                    return null;
-                }
-                    
+
+                return usuario;    
             }
             catch (DAOException e)
             {
@@ -95,8 +89,9 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             try
             {
                 factory.IniciarConexion();
-                IUsuarioDAO _usuarioDAO = factory.UsuarioDAO;
-                _listaUsuarios = _usuarioDAO.Listar();
+                _listaUsuarios = factory.UsuarioDAO.Listar();
+                factory.FinalizarConexion();
+
                 return _listaUsuarios;
             }
             catch (DAOException e)
@@ -104,10 +99,6 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 _listaUsuarios.Clear();
                 factory.RollBack();
                 throw new LogicaException(e.Message);
-            }
-            finally
-            {
-                factory.FinalizarConexion();
             }
         }
 
@@ -123,20 +114,16 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             try
             {
                 factory.IniciarConexion();
-                IUsuarioDAO _usuarioDAO = factory.UsuarioDAO;
-                Usuario _usuario = new Usuario(0, "", "", DateTime.Today, DateTime.Today, 0);
-                _usuario = _usuarioDAO.Obtener(pIdUsuario);
-                return _usuario;
+                Usuario usuario = factory.UsuarioDAO.Obtener(pIdUsuario);
+                factory.FinalizarConexion();
+
+                return usuario;
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
@@ -152,19 +139,16 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             try
             {
                 factory.IniciarConexion();
-                IUsuarioDAO _usuarioDAO = factory.UsuarioDAO;
-                Usuario _usuario = new Usuario(0, "", "", DateTime.Today, DateTime.Today, 0);
-                _usuario = _usuarioDAO.Obtener(pNombreUsuario);
-                return _usuario;
+                Usuario usuario = factory.UsuarioDAO.Obtener(pNombreUsuario);
+                factory.FinalizarConexion();
+
+                return usuario;
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
@@ -174,26 +158,25 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// <param name="pUsuario"> Usuario a modificar</param>
         public static void Modificar(Usuario pUsuario)
         {
+            if ((pUsuario == null) || (pUsuario.IdUsuario < 1))
+                throw new ArgumentNullException(nameof(pUsuario));
+
             DAOFactory factory = DAOFactory.Instancia();
 
             try
             {
                 factory.IniciarConexion();
-                IUsuarioDAO _usuarioDAO = factory.UsuarioDAO;
-                _usuarioDAO.ModificarNombre(pUsuario.IdUsuario, pUsuario.Nombre);
-                _usuarioDAO.ModificarContrasena(pUsuario.Nombre, pUsuario.Contraseña);
-                _usuarioDAO.ModificarFechaAlta(pUsuario.Nombre, pUsuario.FechaAlta);
-                _usuarioDAO.ModificarFechaBaja(pUsuario.Nombre, pUsuario.FechaBaja);
-                //_usuarioDAO.Modificar(pUsuario);
+                factory.UsuarioDAO.ModificarNombre(pUsuario.IdUsuario, pUsuario.Nombre);
+                factory.UsuarioDAO.ModificarContrasena(pUsuario.Nombre, pUsuario.Contraseña);
+                factory.UsuarioDAO.ModificarFechaAlta(pUsuario.Nombre, pUsuario.FechaAlta);
+                factory.UsuarioDAO.ModificarFechaBaja(pUsuario.Nombre, pUsuario.FechaBaja);
+                factory.FinalizarConexion();
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
     }
