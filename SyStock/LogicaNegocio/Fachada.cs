@@ -195,6 +195,14 @@ namespace SyStock.LogicaNegocio
             return _controladorCategoria.Agregar(_categoria);
         }
 
+        public bool ModificarCategoria(string nombreAntigua, string nombreNuevo)
+        {
+            Categoria _categoria = new Categoria("",true,this.IDUsuarioLogeado);
+            _categoria = _controladorCategoria.Obtener(nombreAntigua);
+            _categoria.Nombre = nombreNuevo;
+            return _controladorCategoria.Modificar(_categoria);
+        }
+
         public List<Categoria> ListarCategorias()
         {
             return _controladorCategoria.Listar();
