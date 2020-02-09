@@ -241,7 +241,7 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// Delete a "Categoria" from the database
         /// </summary>
         /// <param name="id">ID to search by</param>
-        void Eliminar(int id)
+        public void Eliminar(int id)
         {
             string query = "DELETE FROM \"Categoria\" WHERE \"idCategoria\" = '" + id + "'";
 
