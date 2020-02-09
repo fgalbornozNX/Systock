@@ -14,18 +14,17 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// <returns>Devuelve -1 si puede agregarla. Sino el ID de la categoría ya existente</returns>
         public static int Agregar(Categoria pCategoria)
         {
+            if ((pCategoria == null) || (pCategoria.Nombre.Length == 0))
+                throw new ArgumentNullException(nameof(pCategoria));
+
             DAOFactory factory = DAOFactory.Instancia();
+            int idCategoria = -1;
 
             try
             {
                 factory.IniciarConexion();
-                ICategoriaDAO _categoriaDAO = factory.CategoriaDAO;
-                
-                int idCategoria = -1;
-
-                List<Categoria> listaCategorias = new List<Categoria>();
-                listaCategorias = _categoriaDAO.Listar();
-
+                List<Categoria> listaCategorias = factory.CategoriaDAO.Listar();
+                factory.FinalizarConexion();
 
                 for (int i = 0; i < listaCategorias.Count; i++)
                 {
@@ -35,11 +34,11 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                     }
                 }
 
-                factory.FinalizarConexion();
                 if (idCategoria == -1)
                 {
                     factory.IniciarConexion();
-                    _categoriaDAO.Agregar(pCategoria);
+                    factory.CategoriaDAO.Agregar(pCategoria);
+                    factory.FinalizarConexion();
                 }
                 
                 return idCategoria;
@@ -47,37 +46,40 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
+        /// <summary>
+        /// Lista las Categorías existentes
+        /// </summary>
+        /// <returns>Lista con todas las categorías</returns>
         public static List<Categoria> Listar()
         {
             DAOFactory factory = DAOFactory.Instancia();
-            List<Categoria> _listaCategoria = new List<Categoria>();
 
             try
             {
                 factory.IniciarConexion();
-                ICategoriaDAO _categoriaDAO = factory.CategoriaDAO;
-                _listaCategoria = _categoriaDAO.Listar();
-                return _listaCategoria;
-            }
-            catch (Exception)
-            {
-                _listaCategoria.Clear();
-                return _listaCategoria;
-            }
-            finally
-            {
+                List<Categoria> listaCategoria = factory.CategoriaDAO.Listar();
                 factory.FinalizarConexion();
+
+                return listaCategoria;
+            }
+            catch (DAOException e)
+            {
+                factory.RollBack();
+                factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
+        /// <summary>
+        /// Obtiene una Categoría
+        /// </summary>
+        /// <param name="pNombre">Nombre a buscar</param>
+        /// <returns>Una Categoría cuyo nombre coincide con la búsqueda</returns>
         public static Categoria Obtener(string pNombre)
         {
             DAOFactory factory = DAOFactory.Instancia();
@@ -85,42 +87,63 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             try
             {
                 factory.IniciarConexion();
-                ICategoriaDAO _categoriaDAO = factory.CategoriaDAO;
-                Categoria _categoria = new Categoria(0, "", true, 0);
-                _categoria = _categoriaDAO.Obtener(pNombre);
-                return _categoria;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-            finally
-            {
+                Categoria categoria = factory.CategoriaDAO.Obtener(pNombre);
                 factory.FinalizarConexion();
+
+                return categoria;
+            }
+            catch (DAOException e)
+            {
+                factory.RollBack();
+                factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
         /// <summary>
-        /// Método para modificar una categoría
+        /// Obtiene una Categoría
         /// </summary>
-        /// <param name="pCategoria"></param>
-        /// <returns></returns>
-        public static bool Modificar(Categoria pCategoria)
+        /// <param name="idCategoria">ID a buscar</param>
+        /// <returns>Una Categoría cuyo ID coincide con la búsqueda</returns>
+        public static Categoria Obtener(int idCategoria)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
             try
             {
                 factory.IniciarConexion();
-                ICategoriaDAO _categoriaDAO = factory.CategoriaDAO;
+                Categoria categoria = factory.CategoriaDAO.Obtener(idCategoria);
+                factory.FinalizarConexion();
 
+                return categoria;
+            }
+            catch (DAOException e)
+            {
+                factory.RollBack();
+                factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
+            }
+        }
 
-                int idCategoria = -1;
-                string nombre = "";
+        /// <summary>
+        /// Modifica una Categoría
+        /// </summary>
+        /// <param name="pCategoria">Categoría con sus campos modificados, excepto su ID</param>
+        /// <returns>True si tiene éxito. False en caso contrario</returns>
+        public static bool Modificar(Categoria pCategoria)
+        {
+            if ((pCategoria == null) || (pCategoria.IdCategoria < 1))
+                throw new ArgumentNullException(nameof(pCategoria));
 
-                List<Categoria> listaCategorias = new List<Categoria>();
-                listaCategorias = _categoriaDAO.Listar();
+            DAOFactory factory = DAOFactory.Instancia();
+            int idCategoria = -1;
+            string nombre = string.Empty;
 
+            try
+            {
+                factory.IniciarConexion();
+                List<Categoria> listaCategorias = factory.CategoriaDAO.Listar();
+                factory.FinalizarConexion();
 
                 for (int i = 0; i < listaCategorias.Count; i++)
                 {
@@ -131,97 +154,157 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                     }
                 }
 
-                factory.FinalizarConexion();
                 if (((idCategoria == -1) && (idCategoria != pCategoria.IdCategoria)) || ((nombre != pCategoria.Nombre) && (idCategoria == pCategoria.IdCategoria)))
                 {
                     factory.IniciarConexion();
-                    _categoriaDAO.Modificar(pCategoria);
+                    factory.CategoriaDAO.Modificar(pCategoria);
+                    factory.FinalizarConexion();
+
                     return true;
                 }
                 else
                 {
                     if (idCategoria == pCategoria.IdCategoria)
-                    {
                         return true;
-                    }
                     else
-                    {
                         return false;
-                    }
-
                 }
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
-        public static bool Baja(Categoria pCategoria)
+        /// <summary>
+        /// Da de baja una Categoría existente
+        /// </summary>
+        /// <param name="idCategoria">ID de la categoría a dar de baja</param>
+        /// <returns>True si tiene éxito. False en caso contrario</returns>
+        public static bool Baja(int idCategoria)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
             try
             {
-                factory.IniciarConexion();
-                ICategoriaDAO _categoriaDAO = factory.CategoriaDAO;
+                Categoria cat = Obtener(idCategoria);
 
-                if (pCategoria.Estado)
+                if (cat.Estado == true)
+                {
+                    cat.Estado = false;
+                    factory.IniciarConexion();
+                    factory.CategoriaDAO.Modificar(cat);
+                    factory.FinalizarConexion();
+                    return true;
+                }
+                else
+                    return false;
+            }
+            catch (DAOException e)
+            {
+                factory.RollBack();
+                factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Da de baja una Categoría existente
+        /// </summary>
+        /// <param name="categoria">categoría a dar de baja</param>
+        /// <returns>True si tiene éxito. False en caso contrario</returns>
+        public static bool Baja(Categoria pCategoria)
+        {
+            if ((pCategoria == null) || (pCategoria.IdCategoria < 1))
+                throw new ArgumentNullException(nameof(pCategoria));
+
+            DAOFactory factory = DAOFactory.Instancia();
+
+            try
+            {
+                if (pCategoria.Estado == true)
                 {
                     pCategoria.Estado = false;
                     factory.IniciarConexion();
-                    _categoriaDAO.Modificar(pCategoria);
+                    factory.CategoriaDAO.Modificar(pCategoria);
+                    factory.FinalizarConexion();
                     return true;
                 }
                 else
-                {
                     return false;
-                }
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
-        public static bool Eliminar(Categoria pCategoria)
+        /// <summary>
+        /// Elimina una Categoría de la base de datos
+        /// </summary>
+        /// <param name="idCategoria">ID de la categoría a eliminar</param>
+        /// <returns>True si tiene éxito. False caso contrario</returns>
+        public static bool Eliminar(int idCategoria)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
             try
             {
-                factory.IniciarConexion();
-                ICategoriaDAO _categoriaDAO = factory.CategoriaDAO;
+                Categoria cat = Obtener(idCategoria);
 
-                if (!pCategoria.Estado)
+                if (cat.Estado == false)
                 {
                     factory.IniciarConexion();
-                    _categoriaDAO.Eliminar(pCategoria.IdCategoria);
+                    factory.CategoriaDAO.Eliminar(idCategoria);
+                    factory.FinalizarConexion();
+
                     return true;
                 }
                 else
-                {
                     return false;
-                }
             }
             catch (DAOException e)
             {
                 factory.RollBack();
+                factory.FinalizarConexion();
                 throw new LogicaException(e.Message);
             }
-            finally
+        }
+
+        /// <summary>
+        /// Elimina una Categoría de la base de datos
+        /// </summary>
+        /// <param name="pCategoria">Categoría a eliminar</param>
+        /// <returns>True si tiene éxito. False caso contrario</returns>
+        public static bool Eliminar(Categoria pCategoria)
+        {
+            if ((pCategoria == null) || (pCategoria.IdCategoria < 1))
+                throw new ArgumentNullException(nameof(pCategoria));
+
+            DAOFactory factory = DAOFactory.Instancia();
+
+            try
             {
+                if (pCategoria.Estado == false)
+                {
+                    factory.IniciarConexion();
+                    factory.CategoriaDAO.Eliminar(pCategoria.IdCategoria);
+                    factory.FinalizarConexion();
+
+                    return true;
+                }
+                else
+                    return false;
+            }
+            catch (DAOException e)
+            {
+                factory.RollBack();
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
     }

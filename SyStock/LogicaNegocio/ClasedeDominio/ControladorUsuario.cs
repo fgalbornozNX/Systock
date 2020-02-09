@@ -29,18 +29,16 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 {
                     factory.IniciarConexion();
                     factory.UsuarioDAO.Agregar(pUsuario);
+                    factory.FinalizarConexion();
                 }
-                return idUsuario;
 
+                return idUsuario;
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 

@@ -196,7 +196,6 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// Modifica los datos de una Persona
         /// </summary>
         /// <param name="pPersona">Persona con los datos actualizados. Busca por ID</param>
-        /// <returns>True en caso de éxito. False caso contrario</returns>
         public static void Modificar(PersonaAutorizada pPersona)
         {
             if ((pPersona == null) || (pPersona.IdPersona < 1))
