@@ -20,7 +20,7 @@ namespace SyStock.UI
         }
         
         #region Definir Variables
-        private readonly Fachada _controlador = Fachada.Instancia;
+        private readonly ControladorFachada _controlador = ControladorFachada.Instancia;
 
         private readonly Listar _listar = new Listar();
 

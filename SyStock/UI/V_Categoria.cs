@@ -32,7 +32,7 @@ namespace SyStock.UI
             this.Button_Eliminar.Enabled = false;
         }
 
-        private readonly Fachada Controlador = Fachada.Instancia;
+        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
 
         private List<Categoria> _listaCategorias;
 

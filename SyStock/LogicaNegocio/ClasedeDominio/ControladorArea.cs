@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using SyStock.AccesoDatos;
 using SyStock.Entidades;
 
 namespace SyStock.LogicaNegocio.ClasedeDominio
 {
-    public class ControladorArea
+    public static class ControladorArea
     {
         /// <summary>
         /// Método para agregar un área
         /// </summary>
         /// <param name="pArea">Área a agregar</param>
         /// <returns>Devuelve -1 si logra agregarla, o sino el ID del Área</returns>
-        public int Agregar(Area pArea)
+        public static int Agregar(Area pArea)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -60,7 +56,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// Método para listar las áreas
         /// </summary>
         /// <returns>Devuelve una lista de áreas, null si no encontró ninguna</returns>
-        public List<Area> Listar()
+        public static List<Area> Listar()
         {
             DAOFactory factory = DAOFactory.Instancia();
             List<Area> _listaArea = new List<Area>();
@@ -88,7 +84,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// </summary>
         /// <param name="pArea">Área a modificar</param>
         /// <returns>Devuelve true si o modificò. False en caso contrario</returns>
-        public bool Modificar(Area pArea)
+        public static bool Modificar(Area pArea)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -150,7 +146,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// </summary>
         /// <param name="pNombre">Nombde del área</param>
         /// <returns>Devuelve el área encontrada. Null en caso de no encontrarla</returns>
-        public Area Obtener(string pNombre)
+        public static Area Obtener(string pNombre)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -178,7 +174,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// </summary>
         /// <param name="pId">Id del área</param>
         /// <returns>Devuelve el área encontrada. Null en caso de no encontrarla</returns>
-        public Area Obtener(int pId)
+        public static Area Obtener(int pId)
         {
             DAOFactory factory = DAOFactory.Instancia();
 

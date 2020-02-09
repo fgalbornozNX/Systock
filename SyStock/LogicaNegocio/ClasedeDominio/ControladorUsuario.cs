@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SyStock.AccesoDatos;
 using SyStock.Entidades;
 
 namespace SyStock.LogicaNegocio.ClasedeDominio
 {
-    public class ControladorUsuario
+    public static class ControladorUsuario
     {
         /// <summary>
         /// Mètodo para agregar un nuevo Usuario
         /// </summary>
         /// <param name="pUsuario">Usuario a agregar</param>
         /// <returns>Devuelve -1 si lo agregó o el Id del Usuario si existe ese nombre</returns>
-        public int Agregar(Usuario pUsuario)
+        public static int Agregar(Usuario pUsuario)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -50,7 +47,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// <param name="pNombre">Nombre del Usuario</param>
         /// <param name="pContraseña">Contraeña del Usuario</param>
         /// <returns>Usuario validado. Null si no son válidos</returns>
-        public Usuario Verificar(string pNombre, string pContraseña)
+        public static Usuario Verificar(string pNombre, string pContraseña)
         {
             DAOFactory factory = DAOFactory.Instancia();
             Usuario user;
@@ -88,7 +85,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// Método para listar los Usuarios
         /// </summary>
         /// <returns>Lista de Usuarios. Null si no existen usuarios</returns>
-        public List<Usuario> Listar()
+        public static List<Usuario> Listar()
         {
             DAOFactory factory = DAOFactory.Instancia();
             List<Usuario> _listaUsuarios = new List<Usuario>();
@@ -117,7 +114,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// </summary>
         /// <param name="pIdUsuario">Id del Usuario a buscar</param>
         /// <returns>Usuario encontrado. Null si no lo encontró</returns>
-        public Usuario Obtener(int pIdUsuario)
+        public static Usuario Obtener(int pIdUsuario)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -146,7 +143,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// </summary>
         /// <param name="pNombreUsuario">Nombre del Usuario</param>
         /// <returns>Usuario encontrado. Null si no lo encontró</returns>
-        public Usuario Obtener(string pNombreUsuario)
+        public static Usuario Obtener(string pNombreUsuario)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -173,7 +170,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// Método para modificar los datos del Usuario
         /// </summary>
         /// <param name="pUsuario"> Usuario a modificar</param>
-        public void Modificar(Usuario pUsuario)
+        public static void Modificar(Usuario pUsuario)
         {
             DAOFactory factory = DAOFactory.Instancia();
 

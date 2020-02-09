@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SyStock.AccesoDatos;
 using SyStock.Entidades;
 
 namespace SyStock.LogicaNegocio.ClasedeDominio
 {
-    public class ControladorPersona
+    public static class ControladorPersona
     {
-        public int Agregar(PersonaAutorizada pPersona)
+        public static int Agregar(PersonaAutorizada pPersona)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -39,7 +36,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public int VerificarNombre(string pNombre)
+        public static int VerificarNombre(string pNombre)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -59,7 +56,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public int Verificar(string pNombre, string pContraseña)
+        public static int Verificar(string pNombre, string pContraseña)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -79,7 +76,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public List<PersonaAutorizada> Listar()
+        public static List<PersonaAutorizada> Listar()
         {
             DAOFactory factory = DAOFactory.Instancia();
             List<PersonaAutorizada> _listaPersona = new List<PersonaAutorizada>();
@@ -102,7 +99,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public List<PersonaAutorizada> Listar(int idGrupo)
+        public static List<PersonaAutorizada> Listar(int idGrupo)
         {
             DAOFactory factory = DAOFactory.Instancia();
             List<PersonaAutorizada> _listaPersonas = new List<PersonaAutorizada>();
@@ -125,7 +122,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public PersonaAutorizada Obtener(int pIdPersona)
+        public static PersonaAutorizada Obtener(int pIdPersona)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -147,7 +144,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public PersonaAutorizada Obtener(string pNombre)
+        public static PersonaAutorizada Obtener(string pNombre)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -169,7 +166,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public bool Modificar(PersonaAutorizada pPersona)
+        public static bool Modificar(PersonaAutorizada pPersona)
         {
             DAOFactory factory = DAOFactory.Instancia();
 

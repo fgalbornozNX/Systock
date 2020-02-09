@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SyStock.AccesoDatos;
 using SyStock.Entidades;
 
 namespace SyStock.LogicaNegocio.ClasedeDominio
 {
-    public class ControladorEntrega
+    public static class ControladorEntrega
     {
-        public int Agregar(EntregaInsumos pEntrega)
+        public static int Agregar(EntregaInsumos pEntrega)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -34,7 +32,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public List<EntregaInsumos> Listar()
+        public static List<EntregaInsumos> Listar()
         {
             DAOFactory factory = DAOFactory.Instancia();
             List<EntregaInsumos> _listaEntrega = new List<EntregaInsumos>();
@@ -57,7 +55,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public EntregaInsumos Obtener(int idEntrega)
+        public static EntregaInsumos Obtener(int idEntrega)
         {
             DAOFactory factory = DAOFactory.Instancia();
 

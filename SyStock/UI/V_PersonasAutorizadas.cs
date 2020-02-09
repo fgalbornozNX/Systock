@@ -19,7 +19,7 @@ namespace SyStock.UI
             InitializeComponent();
         }
 
-        private readonly Fachada Controlador = Fachada.Instancia;
+        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
 
         private readonly Listar _listar = new Listar();
 

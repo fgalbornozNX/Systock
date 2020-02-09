@@ -1,43 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SyStock.Entidades;
 using SyStock.LogicaNegocio.ClasedeDominio;
 
 namespace SyStock.LogicaNegocio
 {
-    public class Fachada
+    public class ControladorFachada
     {
-        private static Fachada instancia;
+        private static ControladorFachada instancia;
 
-        private int _idUsuarioLogeado;
-
-        public ControladorUsuario _controladorUsuario = new ControladorUsuario();
-        public ControladorCategoria _controladorCategoria = new ControladorCategoria();
-        public ControladorInsumo _controladorInsumo = new ControladorInsumo();
-        public ControladorArea _controladorArea = new ControladorArea();
-        public ControladorGrupo _controladorGrupo = new ControladorGrupo();
-        public ControladorPersona _controladorPersona = new ControladorPersona();
-        public ControladorEntrega _controladorEntrega = new ControladorEntrega();
-        public ControladorRenglones _controladorRenglones = new ControladorRenglones();
-
-        public static Fachada Instancia
+        public static ControladorFachada Instancia
         {
             get
             {
                 if (instancia == null)
-                    instancia = new Fachada();
+                    instancia = new ControladorFachada();
                 return instancia;
             }
         }
 
-        public int IDUsuarioLogeado
-        {
-            get { return _idUsuarioLogeado; }
-            set { _idUsuarioLogeado = value; }
-        }
+        public int IDUsuarioLogeado { get; set; }
 
         #region CONTROLADOR USUARIO
 
@@ -62,7 +45,7 @@ namespace SyStock.LogicaNegocio
                 _usuario.IdUsuarioAdmin = this.IDUsuarioLogeado;
             }
 
-            if (_controladorUsuario.Agregar(_usuario) == -1)
+            if (ControladorUsuario.Agregar(_usuario) == -1)
             {
                 return _usuario;
             }
@@ -84,11 +67,11 @@ namespace SyStock.LogicaNegocio
             Usuario _usuario = new Usuario("", "", DateTime.Now);
             if (pUsuario.IdUsuario == 0)
             {
-                _usuario = _controladorUsuario.Obtener(this.IDUsuarioLogeado);
+                _usuario = ControladorUsuario.Obtener(this.IDUsuarioLogeado);
             }
             else
             {
-                _usuario = _controladorUsuario.Obtener(pUsuario.Nombre);
+                _usuario = ControladorUsuario.Obtener(pUsuario.Nombre);
                 Console.Write(pUsuario.Nombre);
             }
             
@@ -101,7 +84,7 @@ namespace SyStock.LogicaNegocio
             {
                 string hash_nuevo = Utilidades.Encriptar(string.Concat(_usuario.Nombre, pContraseñaNueva));
                 _usuario.Contraseña = hash_nuevo;
-                _controladorUsuario.Modificar(_usuario);
+                ControladorUsuario.Modificar(_usuario);
                 return true;
             }
         }
@@ -114,11 +97,11 @@ namespace SyStock.LogicaNegocio
         public bool EliminarUsuario(string pNombreUsuario)
         {
             Usuario _usuario = new Usuario("", "", DateTime.Now);
-            _usuario = _controladorUsuario.Obtener(pNombreUsuario);
+            _usuario = ControladorUsuario.Obtener(pNombreUsuario);
             if (_usuario.FechaAlta == _usuario.FechaBaja)
             {
                 _usuario.FechaBaja = DateTime.Now;
-                _controladorUsuario.Modificar(_usuario);
+                ControladorUsuario.Modificar(_usuario);
                 return true;
             }
             else
@@ -138,10 +121,10 @@ namespace SyStock.LogicaNegocio
         {
             if (string.IsNullOrEmpty(pNombre))
             {
-                pNombre =_controladorUsuario.Obtener(this._idUsuarioLogeado).Nombre;
+                pNombre = ControladorUsuario.Obtener(this.IDUsuarioLogeado).Nombre;
             }
             string hash = Utilidades.Encriptar(string.Concat(pNombre, pContraseña));
-            Usuario _usuario = _controladorUsuario.Verificar(pNombre, hash); //Trae un objeto nulo si no lo encontró
+            Usuario _usuario = ControladorUsuario.Verificar(pNombre, hash); //Trae un objeto nulo si no lo encontró
 
             //Verifica si el usuario esta en la bd
             switch (_usuario)
@@ -167,7 +150,7 @@ namespace SyStock.LogicaNegocio
         /// <returns>Devuelve True si es Administrado. False si no lo es</returns>
         public bool EsAdmin()
         {
-            Usuario _usuario = _controladorUsuario.Obtener(this.IDUsuarioLogeado);
+            Usuario _usuario = ControladorUsuario.Obtener(this.IDUsuarioLogeado);
             if (_usuario.IdUsuarioAdmin == 0)
             {
                 return true;
@@ -184,7 +167,7 @@ namespace SyStock.LogicaNegocio
         /// <returns>Devuelve una lista de Usuarios</returns>
         public List<Usuario> ListarUsuarios()
         {
-            return _controladorUsuario.Listar();
+            return ControladorUsuario.Listar();
         }
         #endregion
 
@@ -192,25 +175,25 @@ namespace SyStock.LogicaNegocio
         public int AgregarCategoria(string pNombre)
         {
             Categoria _categoria = new Categoria(pNombre,true,this.IDUsuarioLogeado);
-            return _controladorCategoria.Agregar(_categoria);
+            return ControladorCategoria.Agregar(_categoria);
         }
 
         public bool ModificarCategoria(string nombreAntigua, string nombreNuevo)
         {
             Categoria _categoria = new Categoria("",true,this.IDUsuarioLogeado);
-            _categoria = _controladorCategoria.Obtener(nombreAntigua);
+            _categoria = ControladorCategoria.Obtener(nombreAntigua);
             _categoria.Nombre = nombreNuevo;
-            return _controladorCategoria.Modificar(_categoria);
+            return ControladorCategoria.Modificar(_categoria);
         }
 
         public bool EliminarCategoria(Categoria pCategoria)
         {
-            return _controladorCategoria.Eliminar(pCategoria);
+            return ControladorCategoria.Eliminar(pCategoria);
         }
 
         public List<Categoria> ListarCategorias()
         {
-            return _controladorCategoria.Listar();
+            return ControladorCategoria.Listar();
         }
         #endregion
 
@@ -218,47 +201,47 @@ namespace SyStock.LogicaNegocio
 
         public int AgregarInsumo(string pNombre, string pDescripcion, string pCantidad, string pStock, string pCategoria)
         {
-            int idCategoria = _controladorCategoria.Obtener(pCategoria).IdCategoria;
+            int idCategoria = ControladorCategoria.Obtener(pCategoria).IdCategoria;
             Insumo _insumo = new Insumo(pNombre, pDescripcion,Convert.ToInt32(pCantidad), Convert.ToInt32(pStock), true, idCategoria);
-            return _controladorInsumo.Agregar(_insumo);
+            return ControladorInsumo.Agregar(_insumo);
         }
 
         public Insumo ObtenerInsumo(string pNombre)
         {
-            return _controladorInsumo.Obtener(pNombre);
+            return ControladorInsumo.Obtener(pNombre);
         }
 
         public bool ModificarInsumo(Insumo pInsumo)
         {
-            return _controladorInsumo.Modificar(pInsumo);  
+            return ControladorInsumo.Modificar(pInsumo);  
         }
 
         public bool SumarStock(string pNombre, int pCantidad)
         {
-            Insumo _insumo = _controladorInsumo.Obtener(pNombre);
+            Insumo _insumo = ControladorInsumo.Obtener(pNombre);
             _insumo.Cantidad += pCantidad;
-            return _controladorInsumo.Modificar(_insumo);
+            return ControladorInsumo.Modificar(_insumo);
         }
 
         public bool RestarStock(Insumo pIns)
         {
             Insumo _insumo = new Insumo("", "", 0, 0, true, 0);
-            _insumo = _controladorInsumo.Obtener(pIns.IdInsumo);
+            _insumo = ControladorInsumo.Obtener(pIns.IdInsumo);
             int cantidadActual = _insumo.Cantidad - pIns.Cantidad;
             _insumo.Cantidad = cantidadActual;
-            return _controladorInsumo.Modificar(_insumo);
+            return ControladorInsumo.Modificar(_insumo);
         }
 
         public List<Insumo> ListarInsumos()
         {
-            return _controladorInsumo.Listar();
+            return ControladorInsumo.Listar();
         }
 
         public List<Insumo> ListarInsumos(string pCategoria)
         {
             Categoria _categoria = new Categoria("", true, 0);
-            _categoria = _controladorCategoria.Obtener(pCategoria);
-            return _controladorInsumo.Listar(_categoria.IdCategoria);
+            _categoria = ControladorCategoria.Obtener(pCategoria);
+            return ControladorInsumo.Listar(_categoria.IdCategoria);
         }
         #endregion
 
@@ -272,7 +255,7 @@ namespace SyStock.LogicaNegocio
         public int AgregarArea(string pNombreArea)
         {
             Area _area = new Area(pNombreArea);
-            return _controladorArea.Agregar(_area);
+            return ControladorArea.Agregar(_area);
         }
 
         /// <summary>
@@ -284,9 +267,9 @@ namespace SyStock.LogicaNegocio
         public bool ModificarArea(string nombreAntigua, string nombreNuevo)
         {
             Area _area = new Area("");
-            _area = _controladorArea.Obtener(nombreAntigua);
+            _area = ControladorArea.Obtener(nombreAntigua);
             _area.Nombre = nombreNuevo;
-            return _controladorArea.Modificar(_area);
+            return ControladorArea.Modificar(_area);
         }
 
         /// <summary>
@@ -295,7 +278,7 @@ namespace SyStock.LogicaNegocio
         /// <returns>Devuelve una lista de áreas</returns>
         public List<Area> ListarArea()
         {
-            return _controladorArea.Listar();
+            return ControladorArea.Listar();
         }
         #endregion
 
@@ -309,9 +292,9 @@ namespace SyStock.LogicaNegocio
         /// <returns>Devuelve -1 si agregó el Grupo. sino el valor del Id del grupo ya existente</returns>
         public int AgregarGrupo(string pNombreGrupo, string pNombreArea)
         {
-            Area _area = _controladorArea.Obtener(pNombreArea);
+            Area _area = ControladorArea.Obtener(pNombreArea);
             Grupo _grupo = new Grupo(pNombreGrupo,true,_area.IdArea,this.IDUsuarioLogeado);
-            return _controladorGrupo.Agregar(_grupo);
+            return ControladorGrupo.Agregar(_grupo);
         }
 
         /// <summary>
@@ -323,9 +306,9 @@ namespace SyStock.LogicaNegocio
         public bool ModificarGrupo(string nombreAntigua, string nombreNuevo)
         {
             Grupo _grupo = new Grupo("",true,0,0);
-            _grupo = _controladorGrupo.Obtener(nombreAntigua);
+            _grupo = ControladorGrupo.Obtener(nombreAntigua);
             _grupo.Nombre = nombreNuevo;
-             return _controladorGrupo.Modificar(_grupo);
+             return ControladorGrupo.Modificar(_grupo);
         }
 
         /// <summary>
@@ -334,7 +317,7 @@ namespace SyStock.LogicaNegocio
         /// <returns>Lista de grupos</returns>
         public List<Grupo> ListarGrupos()
         {
-            return _controladorGrupo.Listar();
+            return ControladorGrupo.Listar();
         }
 
         /// <summary>
@@ -345,23 +328,23 @@ namespace SyStock.LogicaNegocio
         public List<Grupo> ListarGrupos(string pArea)
         {
             Area _area = new Area("");
-            _area = _controladorArea.Obtener(pArea);
-            return _controladorGrupo.Listar(_area.IdArea);
+            _area = ControladorArea.Obtener(pArea);
+            return ControladorGrupo.Listar(_area.IdArea);
         }
         #endregion
 
         #region CONTROLADOR PERSONA
         public int AgregarPersona(string pNombre, string pContraseña, string pNombreGrupo)
         {
-            int _idPersona = _controladorPersona.VerificarNombre(pNombre);
+            int _idPersona = ControladorPersona.VerificarNombre(pNombre);
             if (_idPersona == -1)
             {
                 string hash = Utilidades.Encriptar(string.Concat(pNombre, pContraseña));
 
-                int _idGrupo = _controladorGrupo.Obtener(pNombreGrupo).IdGrupo;
+                int _idGrupo = ControladorGrupo.Obtener(pNombreGrupo).IdGrupo;
                 PersonaAutorizada _persona = new PersonaAutorizada(pNombre, hash, DateTime.Today, DateTime.Today, _idGrupo);
 
-                if (_controladorPersona.Agregar(_persona) == -2)
+                if (ControladorPersona.Agregar(_persona) == -2)
                 {
                     _idPersona = -2;
                 }
@@ -372,43 +355,43 @@ namespace SyStock.LogicaNegocio
         public int VerificarPersona(string pNombre, string pContraseña)
         {
             string hash = Utilidades.Encriptar(string.Concat(pNombre, pContraseña));
-            int _idPersona = _controladorPersona.Verificar(pNombre, hash);
+            int _idPersona = ControladorPersona.Verificar(pNombre, hash);
             return _idPersona;
         }
 
         public int VerificarNombre(string pNombre)
         {
-            return _controladorPersona.VerificarNombre(pNombre);
+            return ControladorPersona.VerificarNombre(pNombre);
         }
 
         public bool ModificarPersona(string pNombre, string pContraseña)
         {
             PersonaAutorizada _personaAutorizada = new PersonaAutorizada("", "", DateTime.Now, DateTime.Now, 0);
-            _personaAutorizada = _controladorPersona.Obtener(pNombre);
+            _personaAutorizada = ControladorPersona.Obtener(pNombre);
             string hash = Utilidades.Encriptar(string.Concat(pNombre, pContraseña));
             _personaAutorizada.Contraseña = hash;
-            return _controladorPersona.Modificar(_personaAutorizada);
+            return ControladorPersona.Modificar(_personaAutorizada);
         }
 
         public bool ModificarPersona(string pNombreAntiguo, string pNombreNuevo, string pContraseña)
         {
             PersonaAutorizada _personaAutorizada = new PersonaAutorizada("", "", DateTime.Now, DateTime.Now, 0);
-            _personaAutorizada = _controladorPersona.Obtener(pNombreAntiguo);
+            _personaAutorizada = ControladorPersona.Obtener(pNombreAntiguo);
             string hash = Utilidades.Encriptar(string.Concat(pNombreNuevo, pContraseña));
             _personaAutorizada.Nombre = pNombreNuevo;
             _personaAutorizada.Contraseña = hash;
-            return _controladorPersona.Modificar(_personaAutorizada);
+            return ControladorPersona.Modificar(_personaAutorizada);
         }
 
         public List<PersonaAutorizada> ListarPersonas()
         {
-            return _controladorPersona.Listar();
+            return ControladorPersona.Listar();
         }
 
         public List<PersonaAutorizada> ListarPersonas(string pGrupo)
         {
-            int idGrupo = _controladorGrupo.Obtener(pGrupo).IdGrupo;
-            return _controladorPersona.Listar(idGrupo);
+            int idGrupo = ControladorGrupo.Obtener(pGrupo).IdGrupo;
+            return ControladorPersona.Listar(idGrupo);
         }
 
         public List<MostrarPersonas> MostrarPersonas()
@@ -416,14 +399,14 @@ namespace SyStock.LogicaNegocio
             List<PersonaAutorizada> _lista = new List<PersonaAutorizada>();
             List<MostrarPersonas> _listaMostrar = new List<MostrarPersonas>();
 
-            _lista = _controladorPersona.Listar();
+            _lista = ControladorPersona.Listar();
 
             for (int i = 0; i < _lista.Count(); i++)
             {
                 if (_lista[i].FechaAlta == _lista[i].FechaBaja)
                 {
-                    Grupo grupo = _controladorGrupo.Obtener(_lista[i].IdGrupo);
-                    string area = _controladorArea.Obtener(grupo.IdArea).Nombre;
+                    Grupo grupo = ControladorGrupo.Obtener(_lista[i].IdGrupo);
+                    string area = ControladorArea.Obtener(grupo.IdArea).Nombre;
                     MostrarPersonas _per = new MostrarPersonas(_lista[i].IdPersona, _lista[i].Nombre, grupo.Nombre, area);
                     _listaMostrar.Add(_per);
                 }
@@ -437,14 +420,14 @@ namespace SyStock.LogicaNegocio
             List<PersonaAutorizada> _lista = new List<PersonaAutorizada>();
             List<MostrarPersonas> _listaMostrar = new List<MostrarPersonas>();
 
-            _lista = _controladorPersona.Listar();
+            _lista = ControladorPersona.Listar();
 
             for (int i = 0; i < _lista.Count(); i++)
             {
                 if (_lista[i].FechaAlta == _lista[i].FechaBaja)
                 {
-                    Grupo grupo = _controladorGrupo.Obtener(_lista[i].IdGrupo);
-                    string area = _controladorArea.Obtener(grupo.IdArea).Nombre;
+                    Grupo grupo = ControladorGrupo.Obtener(_lista[i].IdGrupo);
+                    string area = ControladorArea.Obtener(grupo.IdArea).Nombre;
                     if ((pArea != string.Empty) && (area == pArea))
                     {
                         MostrarPersonas _per = new MostrarPersonas(_lista[i].IdPersona, _lista[i].Nombre, grupo.Nombre, area);
@@ -464,11 +447,11 @@ namespace SyStock.LogicaNegocio
         public bool EliminarPersona(string pNombre)
         {
             PersonaAutorizada _persona = new PersonaAutorizada("", "", DateTime.Now, DateTime.Now,0);
-            _persona = _controladorPersona.Obtener(pNombre);
+            _persona = ControladorPersona.Obtener(pNombre);
             if (_persona.FechaAlta == _persona.FechaBaja)
             {
                 _persona.FechaBaja = DateTime.Now;
-                _controladorPersona.Modificar(_persona);
+                ControladorPersona.Modificar(_persona);
                 return true;
             }
             else
@@ -482,9 +465,9 @@ namespace SyStock.LogicaNegocio
         #region CONTROLADOR ENTREGA
         public int AgregarEntrega(string nombrePersona)
         {
-            int _idPersona = _controladorPersona.Obtener(nombrePersona).IdPersona;
+            int _idPersona = ControladorPersona.Obtener(nombrePersona).IdPersona;
             EntregaInsumos _entrega = new EntregaInsumos(this.IDUsuarioLogeado, _idPersona, DateTime.Today);
-            return _controladorEntrega.Agregar(_entrega);
+            return ControladorEntrega.Agregar(_entrega);
         }
         #endregion
 
@@ -499,7 +482,7 @@ namespace SyStock.LogicaNegocio
                     if (RestarStock(_ins))
                     {
                         RenglonEntrega _renglon = new RenglonEntrega(pIdEntrega, _ins.IdInsumo, _ins.Cantidad);
-                        _idRenglon = _controladorRenglones.Agregar(_renglon);
+                        _idRenglon = ControladorRenglones.Agregar(_renglon);
                     }
                     else
                     {

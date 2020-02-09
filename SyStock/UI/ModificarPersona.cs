@@ -20,7 +20,7 @@ namespace SyStock.UI
 
         public string _nombre = "";
 
-        private readonly Fachada Controlador = Fachada.Instancia;
+        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
 
         private void Button_Aceptar_Click(object sender, EventArgs e)
         {

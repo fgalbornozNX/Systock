@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SyStock.AccesoDatos;
 using SyStock.Entidades;
 
 namespace SyStock.LogicaNegocio.ClasedeDominio
 {
-    public class ControladorCategoria
+    public static class ControladorCategoria
     {
         /// <summary>
         /// Método para agregar una categoría
         /// </summary>
         /// <param name="pCategoria">Categoría a agregar</param>
         /// <returns>Devuelve -1 si puede agregarla. Sino el ID de la categoría ya existente</returns>
-        public int Agregar(Categoria pCategoria)
+        public static int Agregar(Categoria pCategoria)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -58,7 +55,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public List<Categoria> Listar()
+        public static List<Categoria> Listar()
         {
             DAOFactory factory = DAOFactory.Instancia();
             List<Categoria> _listaCategoria = new List<Categoria>();
@@ -81,7 +78,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public Categoria Obtener(string pNombre)
+        public static Categoria Obtener(string pNombre)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -108,7 +105,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// </summary>
         /// <param name="pCategoria"></param>
         /// <returns></returns>
-        public bool Modificar(Categoria pCategoria)
+        public static bool Modificar(Categoria pCategoria)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -165,7 +162,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public bool Eliminar(Categoria pCategoria)
+        public static bool Eliminar(Categoria pCategoria)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
