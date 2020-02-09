@@ -27,14 +27,30 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pRenglon">Renglon to be added</param>
         public void Agregar(RenglonEntrega pRenglon)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
+            if (pRenglon == null)
+                throw new ArgumentNullException(nameof(pRenglon));
 
-            comando.CommandText = "INSERT INTO \"Renglon\"(\"idEntrega\", \"idInsumo\", cantidad) VALUES(@entrega, @insumo, @cantidad)";
-            comando.Parameters.AddWithValue("@entrega", pRenglon.IdEntrega);
-            comando.Parameters.AddWithValue("@insumo", pRenglon.IdInsumo);
-            comando.Parameters.AddWithValue("@cantidad", pRenglon.Cantidad);
+            string query = "INSERT INTO \"Renglon\" (\"idEntrega\", \"idInsumo\", cantidad) VALUES (@entrega, @insumo, @cantidad)";
 
-            comando.ExecuteNonQuery();
+            try
+            {
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+
+                comando.CommandText = query;
+                comando.Parameters.AddWithValue("@entrega", pRenglon.IdEntrega);
+                comando.Parameters.AddWithValue("@insumo", pRenglon.IdInsumo);
+                comando.Parameters.AddWithValue("@cantidad", pRenglon.Cantidad);
+
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al agregar renglón de entrega: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al agregar renglón de entrega: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -44,21 +60,40 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <returns>Renglon</returns>
         public RenglonEntrega Obtener(int pIdRenglon)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Renglon\" WHERE \"idRenglon\" = '" + pIdRenglon + "'";
-            RenglonEntrega _renglon = new RenglonEntrega(0,0,0);
+            string query = "SELECT * FROM \"Renglon\" WHERE \"idRenglon\" = '" + pIdRenglon + "'";
+            RenglonEntrega renglon = null;
 
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
 
-                foreach (DataRow fila in tabla.Rows)
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _renglon = new RenglonEntrega(Convert.ToInt32(fila["idRenglon"]), Convert.ToInt32(fila["idEntrega"]), Convert.ToInt32(fila["idInsumo"]), Convert.ToInt32(fila["cantidad"]));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int _idRenglon = Convert.ToInt32(fila["idRenglon"]);
+                        int _idEntrega = Convert.ToInt32(fila["idEntrega"]);
+                        int _idInsumo = Convert.ToInt32(fila["idInsumo"]);
+                        int _cantidad = Convert.ToInt32(fila["cantidad"]);
+
+                        renglon = new RenglonEntrega(_idRenglon, _idEntrega, _idInsumo, _cantidad);
+                    }
+                    tabla.Dispose();
                 }
+                return renglon;
             }
-            return _renglon;
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al obtener renglón de entrega: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al obtener renglón de entrega: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -67,12 +102,28 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pRenglon">Renglon object with all filled fields</param>
         public void Modificar(RenglonEntrega pRenglon)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "UPDATE \"Renglon\" SET \"idInsumo\" = @insumo, cantidad = @cantidad WHERE \"idRenglon\" = '" + pRenglon.IdRenglon + "'";
+            if (pRenglon == null)
+                throw new ArgumentNullException(nameof(pRenglon));
 
-            comando.Parameters.AddWithValue("@insumo", pRenglon.IdInsumo);
-            comando.Parameters.AddWithValue("@cantidad", pRenglon.Cantidad);
-            comando.ExecuteNonQuery();
+            string query = "UPDATE \"Renglon\" SET \"idInsumo\" = @insumo, cantidad = @cantidad WHERE \"idRenglon\" = '" + pRenglon.IdRenglon + "'";
+
+            try
+            {
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                comando.Parameters.AddWithValue("@insumo", pRenglon.IdInsumo);
+                comando.Parameters.AddWithValue("@cantidad", pRenglon.Cantidad);
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al modificar renglón de entrega: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al modificar renglón de entrega: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -82,21 +133,39 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <returns>A list containing objects of class RenglonEntrega</returns>
         public List<RenglonEntrega> Listar(int idEntrega)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Renglon\" WHERE \"idRenglon\" = '" + idEntrega + "'";
+            string query = "SELECT * FROM \"Renglon\" WHERE \"idEntrega\" = '" + idEntrega + "'";
+            List<RenglonEntrega> listaRenglon = new List<RenglonEntrega>();
 
-            List<RenglonEntrega> _listaRenglon = new List<RenglonEntrega>();
-
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
-                foreach (DataRow fila in tabla.Rows)
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _listaRenglon.Add(new RenglonEntrega(Convert.ToInt32(fila["idRenglon"]), Convert.ToInt32(fila["idEntrega"]), Convert.ToInt32(fila["idInsumo"]), Convert.ToInt32(fila["cantidad"])));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int _idRenglon = Convert.ToInt32(fila["idRenglon"]);
+                        int _idEntrega = Convert.ToInt32(fila["idEntrega"]);
+                        int _idInsumo = Convert.ToInt32(fila["idInsumo"]);
+                        int _cantidad = Convert.ToInt32(fila["cantidad"]);
+
+                        listaRenglon.Add(new RenglonEntrega(_idRenglon, _idEntrega, _idInsumo, _cantidad));
+                    }
+                    tabla.Dispose();
                 }
+                return listaRenglon;
             }
-            return _listaRenglon;
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al listar renglones de entrega: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al listar renglones de entrega: " + e.Message);
+            }
         }
     }
 }
