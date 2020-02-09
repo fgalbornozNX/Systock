@@ -27,15 +27,31 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pGrupo">Grupo to be added</param>
         public void Agregar(Grupo pGrupo)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
+            if (pGrupo == null)
+                throw new ArgumentNullException(nameof(pGrupo));
 
-            comando.CommandText = "INSERT INTO \"Grupo\"(nombre, estado, \"idArea\", \"idUsuario\") VALUES(@nombre, @estado, @idArea, @idUsuario)";
-            comando.Parameters.AddWithValue("@nombre", pGrupo.Nombre);
-            comando.Parameters.AddWithValue("@estado", pGrupo.Estado);
-            comando.Parameters.AddWithValue("@idArea", pGrupo.IdArea);
-            comando.Parameters.AddWithValue("@idUsuario", pGrupo.IdUsuario);
+            string query = "INSERT INTO \"Grupo\"(nombre, estado, \"idArea\", \"idUsuario\") VALUES (@nombre, @estado, @idArea, @idUsuario)";
 
-            comando.ExecuteNonQuery();
+            try
+            {
+                NpgsqlCommand comando = this._conexion.CreateCommand();
+
+                comando.CommandText = query;
+                comando.Parameters.AddWithValue("@nombre", pGrupo.Nombre);
+                comando.Parameters.AddWithValue("@estado", pGrupo.Estado);
+                comando.Parameters.AddWithValue("@idArea", pGrupo.IdArea);
+                comando.Parameters.AddWithValue("@idUsuario", pGrupo.IdUsuario);
+
+                comando.ExecuteNonQuery();
+            }
+            catch(PostgresException e)
+            {
+                throw new DAOException("Error al agregar un nuevo grupo: " + e.Message);
+            }
+            catch(NpgsqlException e)
+            {
+                throw new DAOException("Error al agregar un nuevo grupo: " + e.Message);
+            }
         }
 
         /// <summary>
