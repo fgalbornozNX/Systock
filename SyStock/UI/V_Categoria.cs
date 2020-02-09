@@ -34,6 +34,8 @@ namespace SyStock.UI
 
         private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
 
+        private readonly Listar _listar = new Listar(); 
+        
         private List<Categoria> _listaCategorias;
 
         private int idColumna = 0;
@@ -45,21 +47,8 @@ namespace SyStock.UI
         /// </summary>
         private void RefrescarDataGrid()
         {
-            this.dataGridView1.Rows.Clear();
-            //_listar.Areas(this.comboBox_area);
             _listaCategorias = Controlador.ListarCategorias();
-            this.dataGridView1.ColumnHeadersVisible = true;
-
-            foreach (var _cat in _listaCategorias)
-            {
-                if (_cat != null)
-                {
-                    String[] row;
-                    row = new String[] { _cat.Nombre };
-                    this.dataGridView1.Rows.Add(row);
-                }
-            }
-            dataGridView1.Refresh();
+            _listar.Categorias(dataGridView1, _listaCategorias);
         }
 
         private void DataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -128,6 +117,7 @@ namespace SyStock.UI
                             MessageBox.Show("Modificado con éxito");
                             RefrescarDataGrid();
                             this.dataGridView1.Enabled = true;
+                            this.dataGridView1.ReadOnly = false;
                         }
                         else
                         {
@@ -194,6 +184,7 @@ namespace SyStock.UI
             this.button_Agregar.Text = "Aceptar";
             this.textBox_nombre.Text = _categoria.Nombre;
             this.dataGridView1.Enabled = false;
+            this.dataGridView1.ReadOnly = true;
             this.Button_Editar.Enabled = false;
             this.Button_Eliminar.Enabled = false;
         }

@@ -81,12 +81,12 @@ namespace SyStock.UI
                 comboBox_categoria.Items.Add(_listaCategorias[i].Nombre);
         }
 
-        public void Categorias(DataGrid dataGrid_categoria)
-        {/*
-            this.dataGridView1.Rows.Clear();
-            //_listar.Areas(this.comboBox_area);
-            _listaCategorias = Controlador.ListarCategorias();
-            this.dataGridView1.ColumnHeadersVisible = true;
+        public void Categorias(DataGridView dataGrid_categoria, List<Categoria> _listaCategorias)
+        {
+            dataGrid_categoria.Rows.Clear();
+            dataGrid_categoria.ColumnHeadersVisible = true;
+
+            _listaCategorias.Sort(delegate (Categoria a1, Categoria a2) { return a1.Nombre.CompareTo(a2.Nombre); });
 
             foreach (var _cat in _listaCategorias)
             {
@@ -94,22 +94,10 @@ namespace SyStock.UI
                 {
                     String[] row;
                     row = new String[] { _cat.Nombre };
-                    this.dataGridView1.Rows.Add(row);
+                    dataGrid_categoria.Rows.Add(row);
                 }
             }
-            dataGridView1.Refresh();
-
-            if (comboBox_categoria.Name == "comboBox_filtrar")
-            {
-                comboBox_categoria.Items.Add("TODOS");
-            }
-            comboBox_categoria.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            List<Categoria> _listaCategorias = new List<Categoria>();
-            _listaCategorias = Controlador.ListarCategorias();
-            _listaCategorias.Sort(delegate (Categoria a1, Categoria a2) { return a1.Nombre.CompareTo(a2.Nombre); });
-            for (int i = 0; i < _listaCategorias.Count; i++)
-                comboBox_categoria.Items.Add(_listaCategorias[i].Nombre);*/
+            dataGrid_categoria.Refresh();
         }
 
         public void Areas(ComboBox pComboBox)
