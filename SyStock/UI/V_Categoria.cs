@@ -27,7 +27,6 @@ namespace SyStock.UI
         private void V_Categoria_Load(object sender, EventArgs e)
         {
             RefrescarDataGrid();
-            this.Button_agregarInsumo.Enabled = false;
             this.Button_Editar.Enabled = false;
             this.Button_Eliminar.Enabled = false;
         }
@@ -48,9 +47,15 @@ namespace SyStock.UI
         private void RefrescarDataGrid()
         {
             _listaCategorias = Controlador.ListarCategorias();
+            _listaCategorias.Sort(delegate (Categoria a1, Categoria a2) { return a1.Nombre.CompareTo(a2.Nombre); });
             _listar.Categorias(dataGridView1, _listaCategorias);
         }
 
+        /// <summary>
+        /// Método para traer la categoría seleccionada
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if ((dataGridView1.SelectedRows.Count == 1) && (e.RowIndex < _listaCategorias.Count()))
@@ -142,21 +147,39 @@ namespace SyStock.UI
         {
             try
             {
-                DialogResult result = MessageBox.Show("¿Seguro que deseas Eliminar esta Categoría?", "Confirmación", MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
+                if (_categoria.Estado)
                 {
-                    if (Controlador.EliminarCategoria(_categoria))
+                    DialogResult result = MessageBox.Show("¿Seguro que deseas dar de baja esta Categoría?", "Confirmación", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
                     {
-                        MessageBox.Show("Categoría dada de baja");
-                    }
-                    else
-                    {
-                        MessageBox.Show("La categoría ya está dada de baja");
-                    }
+                        if (Controlador.BajaCategoria(_categoria))
+                        {
+                            MessageBox.Show("Categoría dada de baja");
+                        }
+                        else
+                        {
+                            MessageBox.Show("La categoría ya está dada de baja");
+                        }
 
-                    this.Button_Editar.Enabled = false;
-                    this.Button_Eliminar.Enabled = false;
+                        this.Button_Editar.Enabled = false;
+                        this.Button_Eliminar.Enabled = false;
+                    }
                 }
+                else
+                {
+                    DialogResult result = MessageBox.Show("¿Seguro que deseas eliminar esta Categoría?", "Confirmación", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
+                    {
+                        if (Controlador.EliminarCategoria(_categoria))
+                        {
+                            MessageBox.Show("Categoría eliminada con éxito");
+                        }
+
+                        this.Button_Editar.Enabled = false;
+                        this.Button_Eliminar.Enabled = false;
+                    }
+                }
+                RefrescarDataGrid();
             }
             catch (LogicaException ex)
             {
@@ -187,11 +210,6 @@ namespace SyStock.UI
             this.dataGridView1.ReadOnly = true;
             this.Button_Editar.Enabled = false;
             this.Button_Eliminar.Enabled = false;
-        }
-
-        private void Button_agregarInsumo_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

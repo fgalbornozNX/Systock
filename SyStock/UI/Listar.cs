@@ -86,8 +86,6 @@ namespace SyStock.UI
             dataGrid_categoria.Rows.Clear();
             dataGrid_categoria.ColumnHeadersVisible = true;
 
-            _listaCategorias.Sort(delegate (Categoria a1, Categoria a2) { return a1.Nombre.CompareTo(a2.Nombre); });
-
             foreach (var _cat in _listaCategorias)
             {
                 if (_cat != null)

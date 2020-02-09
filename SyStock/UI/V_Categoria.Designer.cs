@@ -35,7 +35,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.Button_agregarInsumo = new System.Windows.Forms.Button();
             this.Button_Cancelar = new System.Windows.Forms.Button();
             this.Button_Editar = new System.Windows.Forms.Button();
             this.Button_Aceptar = new System.Windows.Forms.Button();
@@ -110,7 +109,6 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.Button_agregarInsumo);
             this.groupBox2.Controls.Add(this.Button_Cancelar);
             this.groupBox2.Controls.Add(this.Button_Editar);
             this.groupBox2.Controls.Add(this.Button_Aceptar);
@@ -121,18 +119,7 @@
             this.groupBox2.Size = new System.Drawing.Size(455, 328);
             this.groupBox2.TabIndex = 17;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Listar Insumos de Categoría";
-            // 
-            // Button_agregarInsumo
-            // 
-            this.Button_agregarInsumo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Button_agregarInsumo.Image = ((System.Drawing.Image)(resources.GetObject("Button_agregarInsumo.Image")));
-            this.Button_agregarInsumo.Location = new System.Drawing.Point(178, 15);
-            this.Button_agregarInsumo.Name = "Button_agregarInsumo";
-            this.Button_agregarInsumo.Size = new System.Drawing.Size(44, 42);
-            this.Button_agregarInsumo.TabIndex = 8;
-            this.Button_agregarInsumo.UseVisualStyleBackColor = true;
-            this.Button_agregarInsumo.Click += new System.EventHandler(this.Button_agregarInsumo_Click);
+            this.groupBox2.Text = "Listar de Categoría";
             // 
             // Button_Cancelar
             // 
@@ -238,7 +225,6 @@
         private System.Windows.Forms.Button Button_Aceptar;
         private System.Windows.Forms.Button Button_Eliminar;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.Button Button_agregarInsumo;
         private System.Windows.Forms.DataGridViewTextBoxColumn Categoría;
     }
 }

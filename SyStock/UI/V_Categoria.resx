@@ -428,30 +428,6 @@
         AAAASUVORK5CYII=
 </value>
   </data>
-  <data name="Button_agregarInsumo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGeYUxB9wAAACBjSFJNAACH
-        EAAAjBIAAP1NAACBPgAAWesAARIPAAA85gAAGc66ySIyAAABK2lDQ1BQaG90b3Nob3AgSUNDIHByb2Zp
-        bGUAACjPY2BgMnB0cXJlEmBgyM0rKQpyd1KIiIxSYD/PwMbAzAAGicnFBY4BAT4gdl5+XioDBvh2jYER
-        RF/WBZnFQBrgSi4oKgHSf4DYKCW1OJmBgdEAyM4uLykAijPOAbJFkrLB7A0gdlFIkDOQfQTI5kuHsK+A
-        2EkQ9hMQuwjoCSD7C0h9OpjNxAE2B8KWAbFLUitA9jI45xdUFmWmZ5QoGFpaWio4puQnpSoEVxaXpOYW
-        K3jmJecXFeQXJZakpgDVQtwHBoIQhaAQ0wBqtNBkoDIAxQOE9TkQHL6MYmcQYgiQXFpUBmUyMhkT5iPM
-        mCPBwOC/lIGB5Q9CzKSXgWGBDgMD/1SEmJohA4OAPgPDvjkAwMZP/eeaqagAAAAJcEhZcwAACxMAAAsT
-        AQCanBgAAALsSURBVFhH5Ze/axRBFMfPEEgUESMhgohFEAkxiEIIaCESAv7AQkSClVhZ5A+wELGREKwk
-        BAkiIiIiKSwsJMZEFIKFlQQREREVkSBBLEREg56f79x752TdvbuN3ln44MPefGfmzXeX2bdzBUX/g8Ut
-        cBPewntYgA8RHzOIx8RofpJ5uATtWrNYLIa1tfhm0KRig3gGa2ID16LORnEqNvA40dkIJmIDz038Dot1
-        RmtorVuxgRcmjkFTnXkIWut2bOCliaMlpX7BGqkGXpn4XxmYrGqA9mpYq6tJsVYrrTY1BO2KBsZKSilo
-        T5s+a5K0R6bVyjmbGoK2G5hK24RJA5Om/zMDe+AY7DNJ2kE4noNemxqCthuYrmqgHsEaSwwEEzSynsBG
-        6IFOk6R1mlYLW2G9TQ1B+y58g5nYQLkS2rgQtKdMz7sHvsJruAMHbGoI2h2wElrSDFywcSFo592EqvXv
-        4ArshTZYYVN/ff8tajHQB4dgt0nStDEPp6Bx/bAJmm2sasYAaDMehW0Q8ijKhhBTDSw3yLNOueCz5Y3R
-        l3fQhpYCIesJ6Ji2C3pMkqa7kObshO3QZv1d8AaSCye5CE2e1M8DSQPVKuEP0DnvJLSA7tyrai2MeFI3
-        MB4EC9r3TM8yoNdJJrusT+cJ73OktRufTHO0absrGdDj7NXVJGndpokdsAF00FgFyQVEuRTzO61/NNNA
-        nmCu3oAliWEY4jJ+xrRZ8HFz6tAxWY0/MaBvhicVHdb1W9B3Nhq38LcMDFoOp5KBkWjcvIQn1tCHIhSR
-        vME87Q1PKlQDxLAN0Rj9O/oCfjIW99VxOhJUSp/WyAzsV0XjKqR5HifehGmFaUgdreCvXB60q4csv/Ic
-        ifocPVVtPD32+M6FvsKlIxs/mkEbSSX0MuiDctXQXzdx3bgBE3YdCAksaI9DvEgWMt9n0/KHf8kcD5Kq
-        JuiOVWTSFha68+Uvrsgy4MECKmLnYQ70z1t7S+eLExCdlAuFn/+mQyo2ZnlVAAAAAElFTkSuQmCC
-</value>
-  </data>
   <data name="Button_Cancelar.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGeYUxB9wAAACBjSFJNAACH
@@ -540,6 +516,9 @@
         qhxDTQ19cetqfARNzxqEM9AHTRDOS5Ik+QMgd50G8j7iLgAAAABJRU5ErkJggg==
 </value>
   </data>
+  <metadata name="Categoría.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <metadata name="Categoría.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
