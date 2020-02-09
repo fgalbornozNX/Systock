@@ -132,6 +132,7 @@
             this.Button_agregarInsumo.Size = new System.Drawing.Size(44, 42);
             this.Button_agregarInsumo.TabIndex = 8;
             this.Button_agregarInsumo.UseVisualStyleBackColor = true;
+            this.Button_agregarInsumo.Click += new System.EventHandler(this.Button_agregarInsumo_Click);
             // 
             // Button_Cancelar
             // 
@@ -155,6 +156,7 @@
             this.Button_Editar.Size = new System.Drawing.Size(44, 42);
             this.Button_Editar.TabIndex = 3;
             this.Button_Editar.UseVisualStyleBackColor = true;
+            this.Button_Editar.Click += new System.EventHandler(this.Button_Editar_Click);
             // 
             // Button_Aceptar
             // 
@@ -191,6 +193,7 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(435, 210);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DataGridView1_CellMouseClick);
             // 
             // Categoría
             // 
