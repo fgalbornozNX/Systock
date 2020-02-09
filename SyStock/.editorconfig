@@ -11,3 +11,6 @@ dotnet_diagnostic.CA5350.severity = silent
 
 # CA2000: Dispose objects before losing scope
 dotnet_diagnostic.CA2000.severity = none
+
+# CA1304: Specify CultureInfo
+dotnet_diagnostic.CA1304.severity = none

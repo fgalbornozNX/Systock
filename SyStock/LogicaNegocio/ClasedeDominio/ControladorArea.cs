@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SyStock.AccesoDatos;
 using SyStock.Entidades;
 
@@ -13,17 +14,17 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// <returns>Devuelve -1 si logra agregarla, o sino el ID del Área</returns>
         public static int Agregar(Area pArea)
         {
+            if ((pArea == null) || (pArea.Nombre.Length == 0))
+                throw new ArgumentNullException(nameof(pArea));
+
             DAOFactory factory = DAOFactory.Instancia();
+            int idArea = -1;
 
             try
             {
                 factory.IniciarConexion();
-                IAreaDAO _areaDAO = factory.AreaDAO;
-                int idArea = -1;
-
-                List<Area> listaAreas = new List<Area>();
-                listaAreas = _areaDAO.Listar();
-
+                List<Area> listaAreas = factory.AreaDAO.Listar();
+                factory.FinalizarConexion();
 
                 for (int i = 0; i < listaAreas.Count; i++)
                 {
@@ -33,22 +34,19 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                     }
                 }
 
-                factory.FinalizarConexion();
                 if (idArea == -1)
                 {
                     factory.IniciarConexion();
-                    _areaDAO.Agregar(pArea);
+                    factory.AreaDAO.Agregar(pArea);
+                    factory.FinalizarConexion();
                 }
                 return idArea;
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
@@ -59,23 +57,20 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         public static List<Area> Listar()
         {
             DAOFactory factory = DAOFactory.Instancia();
-            List<Area> _listaArea = new List<Area>();
 
             try
             {
                 factory.IniciarConexion();
-                IAreaDAO _areaDAO = factory.AreaDAO;
-                _listaArea = _areaDAO.Listar();
-                return _listaArea;
+                List<Area> listaArea = factory.AreaDAO.Listar();
+                factory.FinalizarConexion();
+
+                return listaArea;
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
@@ -86,20 +81,18 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// <returns>Devuelve true si o modificò. False en caso contrario</returns>
         public static bool Modificar(Area pArea)
         {
+            if ((pArea == null) || (pArea.Nombre.Length == 0))
+                throw new ArgumentNullException(nameof(pArea));
+
             DAOFactory factory = DAOFactory.Instancia();
+            int idArea = -1;
+            string nombre = string.Empty;
 
             try
             {
                 factory.IniciarConexion();
-                IAreaDAO _areaDAO = factory.AreaDAO;
-
-
-                int idArea = -1;
-                string nombre = "";
-
-                List<Area> listaAreas = new List<Area>();
-                listaAreas = _areaDAO.Listar();
-
+                List<Area> listaAreas = factory.AreaDAO.Listar();
+                factory.FinalizarConexion();
 
                 for (int i = 0; i < listaAreas.Count; i++)
                 {
@@ -110,11 +103,12 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                     }
                 }
 
-                factory.FinalizarConexion();
-                if (((idArea == -1)&& (idArea != pArea.IdArea))||((nombre != pArea.Nombre) && (idArea == pArea.IdArea)))
+                if (((idArea == -1) && (idArea != pArea.IdArea)) || ((nombre != pArea.Nombre) && (idArea == pArea.IdArea)))
                 {
                     factory.IniciarConexion();
-                    _areaDAO.Modificar(pArea);
+                    factory.AreaDAO.Modificar(pArea);
+                    factory.FinalizarConexion();
+
                     return true;
                 }
                 else
@@ -127,17 +121,13 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                     {
                         return false;
                     }
-                    
                 }
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
@@ -153,19 +143,16 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             try
             {
                 factory.IniciarConexion();
-                IAreaDAO _areaDAO = factory.AreaDAO;
-                Area _area = new Area("");
-                _area = _areaDAO.Obtener(pNombre);
-                return _area;
+                Area area = factory.AreaDAO.Obtener(pNombre);
+                factory.FinalizarConexion();
+
+                return area;
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
@@ -181,19 +168,17 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             try
             {
                 factory.IniciarConexion();
-                IAreaDAO _areaDAO = factory.AreaDAO;
-                Area _area = new Area("");
-                _area = _areaDAO.Obtener(pId);
-                return _area;
+                Area area = factory.AreaDAO.Obtener(pId);
+                factory.FinalizarConexion();
+
+                return area;
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+
+                throw new LogicaException(e.Message);
             }
         }
     }
