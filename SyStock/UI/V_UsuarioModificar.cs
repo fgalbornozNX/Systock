@@ -15,7 +15,7 @@ namespace SyStock.UI
     public partial class V_UsuarioModificar : Form
     {
 
-        private readonly Fachada Controlador = Fachada.Instancia;
+        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
 
         public Usuario _usu = new Usuario("", "", DateTime.Now);
 

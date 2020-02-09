@@ -15,7 +15,7 @@ namespace SyStock.UI
     {
         private bool app_access = false;
 
-        private readonly Fachada controlador = Fachada.Instancia;
+        private readonly ControladorFachada controlador = ControladorFachada.Instancia;
 
         public V_login()
         {

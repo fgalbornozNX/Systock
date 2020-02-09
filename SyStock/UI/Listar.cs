@@ -11,7 +11,7 @@ namespace SyStock.UI
 {
     public class Listar
     {
-        private readonly Fachada Controlador = Fachada.Instancia;
+        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
 
         public void Insumos(ComboBox pComboBox_insumos, ComboBox pComboBox_categoria)
         {

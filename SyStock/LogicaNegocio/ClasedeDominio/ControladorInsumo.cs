@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SyStock.AccesoDatos;
 using SyStock.Entidades;
 
 namespace SyStock.LogicaNegocio.ClasedeDominio
 {
-    public class ControladorInsumo
+    public static class ControladorInsumo
     {
-        public int Agregar(Insumo pInsumo)
+        public static int Agregar(Insumo pInsumo)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -38,7 +35,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public Insumo Obtener(int pIdInsumo)
+        public static Insumo Obtener(int pIdInsumo)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -60,7 +57,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public Insumo Obtener(string pNombreInsumo)
+        public static Insumo Obtener(string pNombreInsumo)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -82,7 +79,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public bool Modificar(Insumo pInsumo)
+        public static bool Modificar(Insumo pInsumo)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -104,7 +101,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public List<Insumo> Listar()
+        public static List<Insumo> Listar()
         {
             DAOFactory factory = DAOFactory.Instancia();
             List<Insumo> _listaInsumo = new List<Insumo>();
@@ -127,7 +124,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public List<Insumo> Listar(int idCategoria)
+        public static List<Insumo> Listar(int idCategoria)
         {
             DAOFactory factory = DAOFactory.Instancia();
             List<Insumo> _listaInsumo = new List<Insumo>();

@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using SyStock.AccesoDatos;
 using SyStock.Entidades;
 
 namespace SyStock.LogicaNegocio.ClasedeDominio
 {
-    public class ControladorGrupo
+    public static class ControladorGrupo
     {
         /// <summary>
         /// Método para agregar un grupo
         /// </summary>
         /// <param name="pGrupo">Grupo a agregar</param>
         /// <returns>Devuelve -1 si agregó el Grupo. sino el valor del Id del grupo ya existente</returns>
-        public int Agregar(Grupo pGrupo)
+        public static int Agregar(Grupo pGrupo)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -61,7 +57,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// </summary>
         /// <param name="pGrupo">Grupo a modificar</param>
         /// <returns>Devuelve true si logró modificarlo</returns>
-        public bool Modificar(Grupo pGrupo)
+        public static bool Modificar(Grupo pGrupo)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -123,7 +119,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// Método para listar los grupos
         /// </summary>
         /// <returns>Lista de grupos</returns>
-        public List<Grupo> Listar()
+        public static List<Grupo> Listar()
         {
             DAOFactory factory = DAOFactory.Instancia();
             List<Grupo> _listaGrupo = new List<Grupo>();
@@ -151,7 +147,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// </summary>
         /// <param name="idArea">Id del Área de os grupos a listar</param>
         /// <returns>Lista de grupos para una determinada Área</returns>
-        public List<Grupo> Listar(int idArea)
+        public static List<Grupo> Listar(int idArea)
         {
             DAOFactory factory = DAOFactory.Instancia();
             List<Grupo> _listaGrupo = new List<Grupo>();
@@ -179,7 +175,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// </summary>
         /// <param name="pNombre">Nombre del grupo</param>
         /// <returns>Devuelve el grupo. Null si no lo encontró</returns>
-        public Grupo Obtener(string pNombre)
+        public static Grupo Obtener(string pNombre)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -207,7 +203,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// </summary>
         /// <param name="pId">ID del grupo</param>
         /// <returns>Devuelve el grupo. Null si no lo encontró</returns>
-        public Grupo Obtener(int pId)
+        public static Grupo Obtener(int pId)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
