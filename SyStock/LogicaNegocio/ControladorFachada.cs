@@ -186,6 +186,11 @@ namespace SyStock.LogicaNegocio
             return ControladorCategoria.Modificar(_categoria);
         }
 
+        public bool BajaCategoria(Categoria pCategoria)
+        {
+            return ControladorCategoria.Baja(pCategoria);
+        }
+
         public bool EliminarCategoria(Categoria pCategoria)
         {
             return ControladorCategoria.Eliminar(pCategoria);

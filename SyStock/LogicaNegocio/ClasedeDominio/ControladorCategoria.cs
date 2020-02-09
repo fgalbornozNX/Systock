@@ -162,7 +162,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             }
         }
 
-        public static bool Eliminar(Categoria pCategoria)
+        public static bool Baja(Categoria pCategoria)
         {
             DAOFactory factory = DAOFactory.Instancia();
 
@@ -176,6 +176,37 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                     pCategoria.Estado = false;
                     factory.IniciarConexion();
                     _categoriaDAO.Modificar(pCategoria);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (DAOException e)
+            {
+                factory.RollBack();
+                throw new LogicaException(e.Message);
+            }
+            finally
+            {
+                factory.FinalizarConexion();
+            }
+        }
+
+        public static bool Eliminar(Categoria pCategoria)
+        {
+            DAOFactory factory = DAOFactory.Instancia();
+
+            try
+            {
+                factory.IniciarConexion();
+                ICategoriaDAO _categoriaDAO = factory.CategoriaDAO;
+
+                if (!pCategoria.Estado)
+                {
+                    factory.IniciarConexion();
+                    _categoriaDAO.Eliminar(pCategoria.IdCategoria);
                     return true;
                 }
                 else
