@@ -81,13 +81,11 @@ namespace SyStock.UI
                 comboBox_categoria.Items.Add(_listaCategorias[i].Nombre);
         }
 
-        public void Categorias(DataGridView dataGrid_categoria)
+        public void Categorias(DataGridView dataGrid_categoria, List<Categoria> _listaCategorias)
         {
             dataGrid_categoria.Rows.Clear();
             dataGrid_categoria.ColumnHeadersVisible = true;
 
-            List<Categoria> _listaCategorias = new List<Categoria>();
-            _listaCategorias = Controlador.ListarCategorias();
             _listaCategorias.Sort(delegate (Categoria a1, Categoria a2) { return a1.Nombre.CompareTo(a2.Nombre); });
 
             foreach (var _cat in _listaCategorias)
@@ -96,15 +94,6 @@ namespace SyStock.UI
                 {
                     String[] row;
                     row = new String[] { _cat.Nombre };
-
-                    if (_cat.Estado)
-                    {
-                        //DataGridView1.Rows(e.RowIndex).Cells("Estado").Style.ForeColor = Color.Blue
-                    }
-                    else
-                    {
-
-                    }
                     dataGrid_categoria.Rows.Add(row);
                 }
             }
