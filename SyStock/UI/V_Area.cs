@@ -94,14 +94,13 @@ namespace SyStock.UI
                     if (!this.checkBox1.Checked)
                     {
                         AgregarArea();
-                        RefrescarAreas();
                     }
                     else
                     {
                         AgregarAreaGrupo();
-                        RefrescarAreas();
-                        RefrescarGrupos();
                     }
+                    RefrescarAreas();
+                    RefrescarGrupos();
                 }
             }
             //Aceptar una modificación
@@ -135,11 +134,13 @@ namespace SyStock.UI
                     }
                     else
                     {
-                        if (Controlador.ModificarArea(_nombre, this.comboBox_area.Text.ToUpper()))
+                        if (Controlador.ModificarArea(_nombre, this.comboBox_area.Text))
                         {
                             this.Button_Agregar.Text = "Agregar";
                             ActivarTodo();
                             MessageBox.Show("Modificado con éxito");
+                            RefrescarAreas();
+                            RefrescarGrupos();
                         }
                         else
                         {

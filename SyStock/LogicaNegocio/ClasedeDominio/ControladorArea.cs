@@ -99,6 +99,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
 
 
                 int idArea = -1;
+                string nombre = "";
 
                 List<Area> listaAreas = new List<Area>();
                 listaAreas = _areaDAO.Listar();
@@ -109,11 +110,12 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                     if ((listaAreas[i].Nombre.ToUpper() == pArea.Nombre.ToUpper()) && (listaAreas[i].IdArea != pArea.IdArea))
                     {
                         idArea = listaAreas[i].IdArea;
+                        nombre = listaAreas[i].Nombre;
                     }
                 }
 
                 factory.FinalizarConexion();
-                if (idArea == -1)
+                if (((idArea == -1)&& (idArea != pArea.IdArea))||((nombre != pArea.Nombre) && (idArea == pArea.IdArea)))
                 {
                     factory.IniciarConexion();
                     _areaDAO.Modificar(pArea);
@@ -121,11 +123,16 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                 }
                 else
                 {
-                    return false;
+                    if(idArea == pArea.IdArea)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                    
                 }
-
-                _areaDAO.Modificar(pArea);
-                return true;
             }
             catch (DAOException e)
             {
