@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SyStock.AccesoDatos;
 using SyStock.Entidades;
 
@@ -13,17 +14,17 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// <returns>Devuelve -1 si agregó el Grupo. sino el valor del Id del grupo ya existente</returns>
         public static int Agregar(Grupo pGrupo)
         {
+            if ((pGrupo == null) || (pGrupo.IdArea < 1))
+                throw new ArgumentNullException(nameof(pGrupo));
+
             DAOFactory factory = DAOFactory.Instancia();
+            int idGrupo = -1;
 
             try
             {
                 factory.IniciarConexion();
-                IGrupoDAO _grupoDAO = factory.GrupoDAO;
-                int idGrupo = -1;
-
-                List<Grupo> listaGrupos = new List<Grupo>();
-                listaGrupos = _grupoDAO.Listar(pGrupo.IdArea);
-
+                List<Grupo> listaGrupos = factory.GrupoDAO.Listar(pGrupo.IdArea);
+                factory.FinalizarConexion();
 
                 for (int i = 0; i < listaGrupos.Count; i++)
                 {
@@ -33,22 +34,19 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                     }
                 }
 
-                factory.FinalizarConexion();
                 if (idGrupo == -1)
                 {
                     factory.IniciarConexion();
-                    _grupoDAO.Agregar(pGrupo);
+                    factory.GrupoDAO.Agregar(pGrupo);
+                    factory.FinalizarConexion();
                 }
                 return idGrupo;
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
@@ -59,19 +57,18 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         /// <returns>Devuelve true si logró modificarlo</returns>
         public static bool Modificar(Grupo pGrupo)
         {
+            if ((pGrupo == null) || (pGrupo.IdArea < 1))
+                throw new ArgumentNullException(nameof(pGrupo));
+
             DAOFactory factory = DAOFactory.Instancia();
+            int idGrupo = -1;
+            string nombre = string.Empty;
 
             try
             {
                 factory.IniciarConexion();
-                IGrupoDAO _grupoDAO = factory.GrupoDAO;
-
-                int idGrupo = -1;
-                string nombre = "";
-
-                List<Grupo> listaGrupos = new List<Grupo>();
-                listaGrupos = _grupoDAO.Listar(pGrupo.IdArea);
-
+                List<Grupo> listaGrupos = factory.GrupoDAO.Listar(pGrupo.IdArea);
+                factory.FinalizarConexion();
 
                 for (int i = 0; i < listaGrupos.Count; i++)
                 {
@@ -81,13 +78,13 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                         nombre = listaGrupos[i].Nombre;
                     }
                 }
-
-                factory.FinalizarConexion();
                 
                 if (((idGrupo == -1) && (idGrupo != pGrupo.IdGrupo)) || ((nombre != pGrupo.Nombre) && (idGrupo == pGrupo.IdArea)))
                 {
                     factory.IniciarConexion();
-                    _grupoDAO.Modificar(pGrupo);
+                    factory.GrupoDAO.Modificar(pGrupo);
+                    factory.FinalizarConexion();
+
                     return true;
                 }
                 else
@@ -107,11 +104,8 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
@@ -122,23 +116,20 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         public static List<Grupo> Listar()
         {
             DAOFactory factory = DAOFactory.Instancia();
-            List<Grupo> _listaGrupo = new List<Grupo>();
 
             try
             {
                 factory.IniciarConexion();
-                IGrupoDAO _GrupoDAO = factory.GrupoDAO;
-                _listaGrupo = _GrupoDAO.Listar();
-                return _listaGrupo;
+                List<Grupo> listaGrupo = factory.GrupoDAO.Listar();
+                factory.FinalizarConexion();
+
+                return listaGrupo;
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
@@ -150,23 +141,20 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
         public static List<Grupo> Listar(int idArea)
         {
             DAOFactory factory = DAOFactory.Instancia();
-            List<Grupo> _listaGrupo = new List<Grupo>();
 
             try
             {
                 factory.IniciarConexion();
-                IGrupoDAO _grupoDAO = factory.GrupoDAO;
-                _listaGrupo = _grupoDAO.Listar(idArea);
+                List<Grupo> _listaGrupo = factory.GrupoDAO.Listar(idArea);
+                factory.FinalizarConexion();
+
                 return _listaGrupo;
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
@@ -182,19 +170,16 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             try
             {
                 factory.IniciarConexion();
-                IGrupoDAO _GrupoDAO = factory.GrupoDAO;
-                Grupo _Grupo = new Grupo(0, "", true, 0, 0);
-                _Grupo = _GrupoDAO.Obtener(pNombre);
-                return _Grupo;
+                Grupo grupo = factory.GrupoDAO.Obtener(pNombre);
+                factory.FinalizarConexion();
+
+                return grupo;
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
 
@@ -210,19 +195,16 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
             try
             {
                 factory.IniciarConexion();
-                IGrupoDAO _GrupoDAO = factory.GrupoDAO;
-                Grupo _Grupo = new Grupo(0, "", true, 0, 0);
-                _Grupo = _GrupoDAO.Obtener(pId);
-                return _Grupo;
+                Grupo grupo = factory.GrupoDAO.Obtener(pId);
+                factory.FinalizarConexion();
+
+                return grupo;
             }
             catch (DAOException e)
             {
                 factory.RollBack();
-                throw new LogicaException(e.Message);
-            }
-            finally
-            {
                 factory.FinalizarConexion();
+                throw new LogicaException(e.Message);
             }
         }
     }
