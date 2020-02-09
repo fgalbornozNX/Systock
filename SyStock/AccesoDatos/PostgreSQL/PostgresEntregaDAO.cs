@@ -24,14 +24,29 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pEntrega">Entrega to be added</param>
         public void Agregar(EntregaInsumos pEntrega)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
+            if (pEntrega == null)
+                throw new ArgumentNullException(nameof(pEntrega));
 
-            comando.CommandText = "INSERT INTO \"Entrega\"(\"idUsuario\", \"idPersona\", fecha) VALUES(@usuario, @persona, @fecha)";
-            comando.Parameters.AddWithValue("@usuario", pEntrega.IdUsuario);
-            comando.Parameters.AddWithValue("@persona", pEntrega.IdPersona);
-            comando.Parameters.AddWithValue("@fecha", pEntrega.Fecha.ToString());
-            Console.WriteLine(pEntrega.IdUsuario + pEntrega.IdPersona + pEntrega.Fecha.ToString());
-            comando.ExecuteNonQuery();
+            string query = "INSERT INTO \"Entrega\" (\"idUsuario\", \"idPersona\", fecha) VALUES (@usuario, @persona, @fecha)";
+
+            try
+            {
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+
+                comando.CommandText = query;
+                comando.Parameters.AddWithValue("@usuario", pEntrega.IdUsuario);
+                comando.Parameters.AddWithValue("@persona", pEntrega.IdPersona);
+                comando.Parameters.AddWithValue("@fecha", pEntrega.Fecha.ToString());
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al agregar entrega: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al agregar entrega: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -40,21 +55,41 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <param name="pIdEntrega">ID to search by</param>
         public EntregaInsumos Obtener(int pIdEntrega)
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Entrega\" WHERE \"idEntrega\" = '" + pIdEntrega + "'";
-            EntregaInsumos _entrega = new EntregaInsumos(0, 0, DateTime.Today);
+            string query = "SELECT * FROM \"Entrega\" WHERE \"idEntrega\" = '" + pIdEntrega + "'";
+            EntregaInsumos entrega = null;
 
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query; 
+                
 
-                foreach (DataRow fila in tabla.Rows)
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _entrega = new EntregaInsumos(Convert.ToInt32(fila["idEntrega"]), Convert.ToInt32(fila["idUsuario"]), Convert.ToInt32(fila["idPersonaRetira"]), Convert.ToDateTime(fila["fecha"]));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int _id = Convert.ToInt32(fila["idEntrega"]);
+                        int _idUser = Convert.ToInt32(fila["idUsuario"]);
+                        int _idPersona = Convert.ToInt32(fila["idPersona"]);
+                        DateTime _fecha = Convert.ToDateTime(fila["fecha"]);
+
+                        entrega = new EntregaInsumos(_id, _idUser, _idPersona, _fecha);
+                    }
+                    tabla.Dispose();
                 }
+                return entrega;
             }
-            return _entrega;
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al obetener entrega: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al obetener entrega: " + e.Message);
+            }
         }
 
         /// <summary>
@@ -63,21 +98,39 @@ namespace SyStock.AccesoDatos.PostgreSQL
         /// <returns>A list containing all EntregaInsumos objects</returns>
         public List<EntregaInsumos> Listar()
         {
-            NpgsqlCommand comando = this._conexion.CreateCommand();
-            comando.CommandText = "SELECT * FROM \"Entrega\"";
+            string query = "SELECT * FROM \"Entrega\"";
+            List<EntregaInsumos> listaEntrega = new List<EntregaInsumos>();
 
-            List<EntregaInsumos> _listaEntrega = new List<EntregaInsumos>();
-
-            using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
+            try
             {
-                DataTable tabla = new DataTable();
-                adaptador.Fill(tabla);
-                foreach (DataRow fila in tabla.Rows)
+                using NpgsqlCommand comando = this._conexion.CreateCommand();
+                comando.CommandText = query;
+
+                using (NpgsqlDataAdapter adaptador = new NpgsqlDataAdapter(comando))
                 {
-                    _listaEntrega.Add(new EntregaInsumos(Convert.ToInt32(fila["idEntrega"]), Convert.ToInt32(fila["idUsuario"]), Convert.ToInt32(fila["idPersonaRetira"]), Convert.ToDateTime(fila["fecha"])));
+                    DataTable tabla = new DataTable();
+                    adaptador.Fill(tabla);
+                    foreach (DataRow fila in tabla.Rows)
+                    {
+                        int _id = Convert.ToInt32(fila["idEntrega"]);
+                        int _idUser = Convert.ToInt32(fila["idUsuario"]);
+                        int _idPersona = Convert.ToInt32(fila["idPersona"]);
+                        DateTime _fecha = Convert.ToDateTime(fila["fecha"]);
+
+                        listaEntrega.Add(new EntregaInsumos(_id, _idUser, _idPersona, _fecha));
+                    }
+                    tabla.Dispose();
                 }
+                return listaEntrega;
             }
-            return _listaEntrega;
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al listar entregas: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al listar entregas: " + e.Message);
+            }
         }
     }
 }
