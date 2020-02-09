@@ -236,5 +236,29 @@ namespace SyStock.AccesoDatos.PostgreSQL
                 throw new DAOException("Error al listar categorías: " + e.Message);
             }
         }
+
+        /// <summary>
+        /// Delete a "Categoria" from the database
+        /// </summary>
+        /// <param name="id">ID to search by</param>
+        void Eliminar(int id)
+        {
+            string query = "DELETE FROM \"Categoria\" WHERE \"idCategoria\" = '" + id + "'";
+
+            using NpgsqlCommand comando = this._conexion.CreateCommand();
+            try
+            {
+                comando.CommandText = query;
+                comando.ExecuteNonQuery();
+            }
+            catch (PostgresException e)
+            {
+                throw new DAOException("Error al intentar eliminar una categoria: " + e.Message);
+            }
+            catch (NpgsqlException e)
+            {
+                throw new DAOException("Error al intentar eliminar una categoria: " + e.Message);
+            }
+        }
     }
 }

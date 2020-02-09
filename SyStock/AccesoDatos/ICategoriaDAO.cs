@@ -44,5 +44,11 @@ namespace SyStock.AccesoDatos
         /// </summary>
         /// <returns>A list containing all Categoria objects</returns>
         List<Categoria> Listar();
+
+        /// <summary>
+        /// Delete a "Categoria" from the database
+        /// </summary>
+        /// <param name="id">ID to search by</param>
+        void Eliminar(int id);
     }
 }
