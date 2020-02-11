@@ -1,54 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SyStock.Entidades
+﻿namespace SyStock.Entidades
 {
     public class Categoria
     {
-        readonly int _idCategoria;
-        string _nombre;
-        bool _estado;
-        int _idUsuario;
-
         public Categoria(string pNombre, bool pEstado, int pIdUsuario)
         {
-            _nombre = pNombre;
-            _estado = pEstado;
-            _idUsuario = pIdUsuario;
+            Nombre = pNombre;
+            Estado = pEstado;
+            IdUsuario = pIdUsuario;
         }
 
         public Categoria(int pIdCategoria, string pNombre, bool pEstado, int pIdUsuario)
         {
-            _idCategoria = pIdCategoria;
-            _nombre = pNombre;
-            _estado = pEstado;
-            _idUsuario = pIdUsuario;
+            IdCategoria = pIdCategoria;
+            Nombre = pNombre;
+            Estado = pEstado;
+            IdUsuario = pIdUsuario;
         }
 
-        public int IdCategoria
-        {
-            get { return _idCategoria; }
-        }
+        public int IdCategoria { get; set; }
+        public string Nombre { get; set; }
 
-        public string Nombre
-        {
-            get { return _nombre; }
-            set { _nombre = value; }
-        }
+        public bool Estado { get; set; }
 
-        public bool Estado
-        {
-            get { return _estado; }
-            set { _estado = value; }
-        }
-
-        public int IdUsuario
-        {
-            get { return _idUsuario; }
-            set { _idUsuario = value; }
-        }
+        public int IdUsuario { get; set; }
     }
 }
