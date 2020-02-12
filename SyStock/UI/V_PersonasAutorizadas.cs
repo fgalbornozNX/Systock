@@ -35,7 +35,11 @@ namespace SyStock.UI
         {
             comboBox_area.Text = _area;
             _listar.Areas(this.comboBox_area);
-            _listar.Grupo(this.comboBox_grupo,this.comboBox_area);
+            if (_area != "")
+            {
+                _listar.Grupo(this.comboBox_grupo, this.comboBox_area);
+            }
+           
             _listar.Areas(this.comboBox_area2);
             _listar.Grupo(this.ComboBox_grupo2);
 

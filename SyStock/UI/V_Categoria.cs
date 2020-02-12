@@ -214,5 +214,10 @@ namespace SyStock.UI
             this.Button_Editar.Enabled = false;
             this.Button_Eliminar.Enabled = false;
         }
+
+        private void Button_Aceptar_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

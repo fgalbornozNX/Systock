@@ -156,6 +156,7 @@
             this.Button_Aceptar.Text = "Aceptar";
             this.Button_Aceptar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.Button_Aceptar.UseVisualStyleBackColor = true;
+            this.Button_Aceptar.Click += new System.EventHandler(this.Button_Aceptar_Click);
             // 
             // Button_Eliminar
             // 

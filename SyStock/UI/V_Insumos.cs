@@ -27,15 +27,23 @@ namespace SyStock.UI
 
         Insumo _insumo;
 
+        /// <summary>
+        /// Método para cargar la ventana
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void V_Insumos_Load(object sender, EventArgs e)
         {
             this.Button_ModificarInsumo.Enabled = false;
             _listar.Categorias(this.comboBox_categoria);
             _listar.Categorias(this.comboBox_filtrar);
-            this.comboBox_filtrar.Text = "TODOS";
+            comboBox_filtrar.Text = "TODOS";
             RefrescarDataGrid();
         }
 
+        /// <summary>
+        /// Método para actualizar los datos del dataGrid
+        /// </summary>
         private void RefrescarDataGrid()
         {
             this.dataGridView1.Rows.Clear();
@@ -57,13 +65,25 @@ namespace SyStock.UI
             dataGridView1.Refresh();
         }
 
+        /// <summary>
+        /// Método del botón agregar categoría
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_AgregarCategoria_Click(object sender, EventArgs e)
         {
             V_Categoria v_Categoria = new V_Categoria();
-            v_Categoria.Show();
+            v_Categoria.ShowDialog();
             RefrescarDataGrid();
+            
+            comboBox_categoria.Text = v_Categoria._categoria.Nombre;
         }
 
+        /// <summary>
+        /// Método del botón agregar insumos
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_AgregarInsumo_Click(object sender, EventArgs e)
         {
             if (this.Button_AgregarInsumo.Text == "Agregar")
@@ -76,9 +96,12 @@ namespace SyStock.UI
             }
         }
 
+        /// <summary>
+        /// Método para agregar un insumo
+        /// </summary>
         private void AgregarInsumos()
         {
-            if ((this.textBox_nombre.Text == string.Empty) || (this.comboBox_categoria.Text == string.Empty) || (this.textBox_cantidad.Text == string.Empty) || (this.textBox_stock.Text == string.Empty))
+            if ((string.IsNullOrEmpty(this.textBox_nombre.Text)) || (string.IsNullOrEmpty(this.comboBox_categoria.Text)) || (string.IsNullOrEmpty(this.textBox_cantidad.Text)) || (string.IsNullOrEmpty(this.textBox_stock.Text)))
             {
             MessageBox.Show("Falta ingresar algunos datos");
         }
@@ -112,6 +135,9 @@ namespace SyStock.UI
         }
         }
 
+        /// <summary>
+        /// Método para modificar un insumo
+        /// </summary>
         private void ModificarInsumos()
         {
             _insumo.Descripcion = this.richTextBox_descripcion.Text;
@@ -129,6 +155,11 @@ namespace SyStock.UI
             }
         }
 
+        /// <summary>
+        /// Método para mostrar todos o algunos insumos de una categoria
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ComboBox_filtrar_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.dataGridView1.Rows.Clear();
@@ -156,16 +187,31 @@ namespace SyStock.UI
             dataGridView1.Refresh();
         }
 
+        /// <summary>
+        /// Método para cerrar la ventana
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Cancelar_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
+        /// <summary>
+        /// Método del botón modificar insumo
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_ModificarInsumo_Click(object sender, EventArgs e)
         {
             ActivarModificar();
         }
 
+        /// <summary>
+        /// Método para activar opciones al seleccionar un insumo
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if ((dataGridView1.SelectedRows.Count == 1) && (e.RowIndex < _listaInsumos.Count()))
@@ -180,6 +226,10 @@ namespace SyStock.UI
             }
         }
 
+        /// <summary>
+        /// Método para modificar un insumo
+        /// </summary>
+        /// <param name="pIdInsumo"></param>
         private void Modificar(int pIdInsumo)
         {
             string _nombre = _listaInsumos[pIdInsumo].Nombre;
@@ -187,6 +237,9 @@ namespace SyStock.UI
             _insumo = Controlador.ObtenerInsumo(_nombre);
         }
 
+        /// <summary>
+        /// Método para poner la ventana en modo modificar insumo
+        /// </summary>
         private void ActivarModificar()
         {
             this.Button_AgregarCategoría.Visible = false;
@@ -200,6 +253,9 @@ namespace SyStock.UI
             this.Button_AgregarInsumo.Text = "Aceptar";
         }
 
+        /// <summary>
+        ///  Método para desactivar la ventana en modo modificar insumo
+        /// </summary>
         private void DesactivarModificar()
         {
             this.Button_AgregarCategoría.Visible = true;
