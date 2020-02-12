@@ -61,6 +61,7 @@ namespace SyStock.UI
         {
             V_Categoria v_Categoria = new V_Categoria();
             v_Categoria.Show();
+            RefrescarDataGrid();
         }
 
         private void Button_AgregarInsumo_Click(object sender, EventArgs e)

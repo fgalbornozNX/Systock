@@ -63,7 +63,9 @@ namespace SyStock.UI
                 Button_Editar.Enabled = true;
                 Button_Eliminar.Enabled = true;
                 idColumna = e.RowIndex;
+                _categoria.IdCategoria = _listaCategorias[idColumna].IdCategoria;
                 _categoria.Nombre = _listaCategorias[idColumna].Nombre;
+                _categoria.Estado = _listaCategorias[idColumna].Estado;
             }
             else
             {
@@ -145,6 +147,7 @@ namespace SyStock.UI
         /// <param name="e"></param>
         private void Button_Eliminar_Click(object sender, EventArgs e)
         {
+            Console.WriteLine(_categoria.IdCategoria);
             try
             {
                 if (_categoria.Estado)
