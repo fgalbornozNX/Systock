@@ -103,13 +103,13 @@ namespace SyStock.AccesoDatos.PostgreSQL
 
                     foreach (DataRow fila in tabla.Rows)
                     {
-                        int _cantidad = Convert.ToInt32(fila[""]);
-                        int _cantidadMin = Convert.ToInt32(fila[""]);
-                        int _idCategoria = Convert.ToInt32(fila[""]);
-                        int _idInsumo = Convert.ToInt32(fila[""]);
-                        bool _estado = Convert.ToBoolean(fila[""]);
-                        string _nombre = Convert.ToString(fila[""]);
-                        string _descripcion = Convert.ToString(fila[""]);
+                        int _cantidad = Convert.ToInt32(fila["cantidad"]);
+                        int _cantidadMin = Convert.ToInt32(fila["cantidadMinima"]);
+                        int _idCategoria = Convert.ToInt32(fila["idCategoria"]);
+                        int _idInsumo = Convert.ToInt32(fila["idInsumo"]);
+                        bool _estado = Convert.ToBoolean(fila["estado"]);
+                        string _nombre = Convert.ToString(fila["nombre"]);
+                        string _descripcion = Convert.ToString(fila["descripcion"]);
 
                         insumo = new Insumo(_idInsumo, _nombre, _descripcion, _cantidad, _cantidadMin, _estado, _idCategoria);
                     }
@@ -148,13 +148,13 @@ namespace SyStock.AccesoDatos.PostgreSQL
 
                     foreach (DataRow fila in tabla.Rows)
                     {
-                        int _cantidad = Convert.ToInt32(fila[""]);
-                        int _cantidadMin = Convert.ToInt32(fila[""]);
-                        int _idCategoria = Convert.ToInt32(fila[""]);
-                        int _idInsumo = Convert.ToInt32(fila[""]);
-                        bool _estado = Convert.ToBoolean(fila[""]);
-                        string _nombre = Convert.ToString(fila[""]);
-                        string _descripcion = Convert.ToString(fila[""]);
+                        int _cantidad = Convert.ToInt32(fila["cantidad"]);
+                        int _cantidadMin = Convert.ToInt32(fila["cantidadMinima"]);
+                        int _idCategoria = Convert.ToInt32(fila["idCategoria"]);
+                        int _idInsumo = Convert.ToInt32(fila["idInsumo"]);
+                        bool _estado = Convert.ToBoolean(fila["estado"]);
+                        string _nombre = Convert.ToString(fila["nombre"]);
+                        string _descripcion = Convert.ToString(fila["descripcion"]);
 
                         insumo = new Insumo(_idInsumo, _nombre, _descripcion, _cantidad, _cantidadMin, _estado, _idCategoria);
                     }
@@ -226,13 +226,13 @@ namespace SyStock.AccesoDatos.PostgreSQL
                     adaptador.Fill(tabla);
                     foreach (DataRow fila in tabla.Rows)
                     {
-                        int _cantidad = Convert.ToInt32(fila[""]);
-                        int _cantidadMin = Convert.ToInt32(fila[""]);
-                        int _idCategoria = Convert.ToInt32(fila[""]);
-                        int _idInsumo = Convert.ToInt32(fila[""]);
-                        bool _estado = Convert.ToBoolean(fila[""]);
-                        string _nombre = Convert.ToString(fila[""]);
-                        string _descripcion = Convert.ToString(fila[""]);
+                        int _cantidad = Convert.ToInt32(fila["cantidad"]);
+                        int _cantidadMin = Convert.ToInt32(fila["cantidadMinima"]);
+                        int _idCategoria = Convert.ToInt32(fila["idCategoria"]);
+                        int _idInsumo = Convert.ToInt32(fila["idInsumo"]);
+                        bool _estado = Convert.ToBoolean(fila["estado"]);
+                        string _nombre = Convert.ToString(fila["nombre"]);
+                        string _descripcion = Convert.ToString(fila["descripcion"]);
 
                         listaInsumos.Add(new Insumo(_idInsumo, _nombre, _descripcion, _cantidad, _cantidadMin, _estado, _idCategoria));
                     }
@@ -272,13 +272,13 @@ namespace SyStock.AccesoDatos.PostgreSQL
                     adaptador.Fill(tabla);
                     foreach (DataRow fila in tabla.Rows)
                     {
-                        int _cantidad = Convert.ToInt32(fila[""]);
-                        int _cantidadMin = Convert.ToInt32(fila[""]);
-                        int _idCategoria = Convert.ToInt32(fila[""]);
-                        int _idInsumo = Convert.ToInt32(fila[""]);
-                        bool _estado = Convert.ToBoolean(fila[""]);
-                        string _nombre = Convert.ToString(fila[""]);
-                        string _descripcion = Convert.ToString(fila[""]);
+                        int _cantidad = Convert.ToInt32(fila["cantidad"]);
+                        int _cantidadMin = Convert.ToInt32(fila["cantidadMinima"]);
+                        int _idCategoria = Convert.ToInt32(fila["idCategoria"]);
+                        int _idInsumo = Convert.ToInt32(fila["idInsumo"]);
+                        bool _estado = Convert.ToBoolean(fila["estado"]);
+                        string _nombre = Convert.ToString(fila["nombre"]);
+                        string _descripcion = Convert.ToString(fila["descripcion"]);
 
                         listaInsumos.Add(new Insumo(_idInsumo, _nombre, _descripcion, _cantidad, _cantidadMin, _estado, _idCategoria));
                     }
