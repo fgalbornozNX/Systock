@@ -101,38 +101,38 @@ namespace SyStock.UI
         /// </summary>
         private void AgregarInsumos()
         {
-            if ((string.IsNullOrEmpty(this.textBox_nombre.Text)) || (string.IsNullOrEmpty(this.comboBox_categoria.Text)) || (string.IsNullOrEmpty(this.textBox_cantidad.Text)) || (string.IsNullOrEmpty(this.textBox_stock.Text)))
+            try
             {
-            MessageBox.Show("Falta ingresar algunos datos");
-        }
-            else
-            {
-            DialogResult result = MessageBox.Show("¿Seguro que deseas Agregar este Insumo?", "Confirmación", MessageBoxButtons.YesNo);
-            if (result == DialogResult.Yes)
-            {
-                int agregado = Controlador.AgregarInsumo(this.textBox_nombre.Text.ToUpper(), this.richTextBox_descripcion.Text, this.textBox_cantidad.Text, this.textBox_stock.Text, this.comboBox_categoria.Text);
-                if (agregado == -2)
+                if ((string.IsNullOrEmpty(this.textBox_nombre.Text)) || (string.IsNullOrEmpty(this.comboBox_categoria.Text)) || (string.IsNullOrEmpty(this.textBox_cantidad.Text)) || (string.IsNullOrEmpty(this.textBox_stock.Text)))
                 {
-                    MessageBox.Show("Problemas al agregar el Insumo. Vuelva a intentarlo");
+                    MessageBox.Show("Falta ingresar algunos datos");
                 }
                 else
                 {
-                    if (agregado != -1)
+                    DialogResult result = MessageBox.Show("¿Seguro que deseas Agregar este Insumo?", "Confirmación", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
                     {
-                        MessageBox.Show("Nombre de Insumo ya existente");
-                    }
-                    else
-                    {
-                        this.textBox_nombre.Clear();
-                        this.comboBox_categoria.Text = string.Empty;
-                        this.richTextBox_descripcion.Clear();
-                        this.textBox_cantidad.Clear();
-                        this.textBox_stock.Clear();
-                        RefrescarDataGrid();
+                        int agregado = Controlador.AgregarInsumo(this.textBox_nombre.Text, this.richTextBox_descripcion.Text, this.textBox_cantidad.Text, this.textBox_stock.Text, this.comboBox_categoria.Text);
+                        if (agregado != -1)
+                        {
+                            MessageBox.Show("Nombre de Insumo ya existente");
+                        }
+                        else
+                        {
+                            this.textBox_nombre.Clear();
+                            this.comboBox_categoria.Text = string.Empty;
+                            this.richTextBox_descripcion.Clear();
+                            this.textBox_cantidad.Clear();
+                            this.textBox_stock.Clear();
+                            RefrescarDataGrid();
+                        }
                     }
                 }
             }
-        }
+            catch (LogicaException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         /// <summary>
@@ -140,18 +140,18 @@ namespace SyStock.UI
         /// </summary>
         private void ModificarInsumos()
         {
-            _insumo.Descripcion = this.richTextBox_descripcion.Text;
-            _insumo.CantidadMinima = Convert.ToInt32(this.textBox_stock.Text);
-            bool _modifica = Controlador.ModificarInsumo(_insumo);
-            if (_modifica)
+            try
             {
+                _insumo.Descripcion = this.richTextBox_descripcion.Text;
+                _insumo.CantidadMinima = Convert.ToInt32(this.textBox_stock.Text);
+                Controlador.ModificarInsumo(_insumo);
                 DesactivarModificar();
                 RefrescarDataGrid();
                 MessageBox.Show("Modificado con éxito");
             }
-            else
+            catch (LogicaException ex)
             {
-                MessageBox.Show("Ocurrió un error, inténtelo nuevamente");
+                MessageBox.Show(ex.Message);
             }
         }
 

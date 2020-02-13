@@ -204,6 +204,15 @@ namespace SyStock.LogicaNegocio
 
         #region CONTROLADOR INSUMOS
 
+        /// <summary>
+        /// Método para Agregar un nuevo insumo
+        /// </summary>
+        /// <param name="pNombre">Nombre del insumo</param>
+        /// <param name="pDescripcion">Descripción del insumo</param>
+        /// <param name="pCantidad">Cantidad del insumo</param>
+        /// <param name="pStock">Stock del insumo</param>
+        /// <param name="pCategoria">Id de la categoría del insumo</param>
+        /// <returns></returns>
         public int AgregarInsumo(string pNombre, string pDescripcion, string pCantidad, string pStock, string pCategoria)
         {
             int idCategoria = ControladorCategoria.Obtener(pCategoria).IdCategoria;
@@ -211,17 +220,32 @@ namespace SyStock.LogicaNegocio
             return ControladorInsumo.Agregar(_insumo);
         }
 
+        /// <summary>
+        /// Método para obtener un determinado insumo
+        /// </summary>
+        /// <param name="pNombre">Nombre del insumo</param>
+        /// <returns></returns>
         public Insumo ObtenerInsumo(string pNombre)
         {
             return ControladorInsumo.Obtener(pNombre);
         }
 
-        public bool ModificarInsumo(Insumo pInsumo)
+        /// <summary>
+        /// Modificar un determinado insumo
+        /// </summary>
+        /// <param name="pInsumo">Id del insumo</param>
+        /// <returns></returns>
+        public void ModificarInsumo(Insumo pInsumo)
         {
             ControladorInsumo.Modificar(pInsumo);
-            return true;
         }
 
+        /// <summary>
+        /// Método para sumar stock a un insumo
+        /// </summary>
+        /// <param name="pNombre">Nombre del insumo</param>
+        /// <param name="pCantidad">Cantidad del insumo</param>
+        /// <returns></returns>
         public bool SumarStock(string pNombre, int pCantidad)
         {
             Insumo _insumo = ControladorInsumo.Obtener(pNombre);
@@ -230,6 +254,11 @@ namespace SyStock.LogicaNegocio
             return true;
         }
 
+        /// <summary>
+        /// Método para restar stock a un insumo
+        /// </summary>
+        /// <param name="pIns">Insumo a restar stock</param>
+        /// <returns></returns>
         public bool RestarStock(Insumo pIns)
         {
             Insumo _insumo = new Insumo("", "", 0, 0, true, 0);
@@ -240,11 +269,20 @@ namespace SyStock.LogicaNegocio
             return true;
         }
 
+        /// <summary>
+        /// Método para listar insumos
+        /// </summary>
+        /// <returns>Lista de insumos</returns>
         public List<Insumo> ListarInsumos()
         {
             return ControladorInsumo.Listar();
         }
 
+        /// <summary>
+        /// Método para listar insumos
+        /// </summary>
+        /// <param name="pCategoria">Nombre de la categoría</param>
+        /// <returns>Lista de insumos</returns>
         public List<Insumo> ListarInsumos(string pCategoria)
         {
             Categoria _categoria = new Categoria("", true, 0);

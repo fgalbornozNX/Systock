@@ -19,11 +19,21 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
 
             DAOFactory factory = DAOFactory.Instancia();
 
+            int idInsumo = -1;
             try
             {
                 factory.IniciarConexion();
-                int idInsumo = factory.InsumoDAO.VerificarNombre(pInsumo.Nombre);
+                
+                List<Insumo> listaInsumos = factory.InsumoDAO.Listar();
                 factory.FinalizarConexion();
+
+                for (int i = 0; i < listaInsumos.Count; i++)
+                {
+                    if (listaInsumos[i].Nombre.ToUpper() == pInsumo.Nombre.ToUpper())
+                    {
+                        idInsumo = listaInsumos[i].IdInsumo;
+                    }
+                }
 
                 if (idInsumo == -1)
                 {
@@ -32,6 +42,7 @@ namespace SyStock.LogicaNegocio.ClasedeDominio
                     factory.FinalizarConexion();
                 }
                 return idInsumo;
+
             }
             catch (DAOException e)
             {
