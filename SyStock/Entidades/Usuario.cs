@@ -4,23 +4,16 @@ namespace SyStock.Entidades
 {
     public class Usuario
     {
-        int _idUsuario;
-        string _nombre;
-        string _contraseña;
-        DateTime _fechaAlta;
-        DateTime _fechaBaja;
-        int _idUsuarioAdmin;
-
         /// <summary>
         /// Representa un usuario Administrador de la aplicación
         /// </summary>
         public Usuario(string pNombre, string pContraseña, DateTime pFechaAlta)
         {
-            _nombre = pNombre;
-            _contraseña = pContraseña;
-            _fechaAlta = pFechaAlta;
-            _fechaBaja = DateTime.MinValue;
-            _idUsuarioAdmin = 1;
+            Nombre = pNombre;
+            Contraseña = pContraseña;
+            FechaAlta = pFechaAlta;
+            FechaBaja = DateTime.MinValue;
+            IdUsuarioAdmin = 1;
         }
 
         /// <summary>
@@ -28,11 +21,11 @@ namespace SyStock.Entidades
         /// </summary>
         public Usuario(int pIdUsuario, string pNombre, string pContraseña, DateTime pFechaAlta, DateTime pFechaBaja)
         {
-            _idUsuario = pIdUsuario;
-            _nombre = pNombre;
-            _contraseña = pContraseña;
-            _fechaAlta = pFechaAlta;
-            _fechaBaja = pFechaBaja;
+            IdUsuario = pIdUsuario;
+            Nombre = pNombre;
+            Contraseña = pContraseña;
+            FechaAlta = pFechaAlta;
+            FechaBaja = pFechaBaja;
         }
        
         /// <summary>
@@ -40,66 +33,42 @@ namespace SyStock.Entidades
         /// </summary>
         public Usuario(int pIdUsuario, string pNombre, string pContraseña, DateTime pFechaAlta, DateTime pFechaBaja, int pIdAdmin)
         {
-            _idUsuario = pIdUsuario;
-            _nombre = pNombre;
-            _contraseña = pContraseña;
-            _fechaAlta = pFechaAlta;
-            _fechaBaja = pFechaBaja;
-            _idUsuarioAdmin = pIdAdmin;
+            IdUsuario = pIdUsuario;
+            Nombre = pNombre;
+            Contraseña = pContraseña;
+            FechaAlta = pFechaAlta;
+            FechaBaja = pFechaBaja;
+            IdUsuarioAdmin = pIdAdmin;
         }
 
         /// <summary>
         /// ID del Usuario
         /// </summary>
-        public int IdUsuario
-        {
-            get { return _idUsuario; }
-            set { _idUsuario = value; }
-        }
+        public int IdUsuario { get; set; }
 
         /// <summary>
         /// Nombre de usuario.
         /// </summary>
-        public string Nombre
-        {
-            get { return _nombre; }
-            set { _nombre = value; }
-        }
+        public string Nombre { get; set; }
 
         /// <summary>
         /// Contraseña del Usuario.
         /// </summary>
-        public string Contraseña
-        {
-            get { return _contraseña; }
-            set { _contraseña = value; }
-        }
+        public string Contraseña { get; set; }
 
         /// <summary>
         /// Fecha de alta del Usuario
         /// </summary>
-        public DateTime FechaAlta
-        {
-            get { return _fechaAlta; }
-            set { _fechaAlta = value; }
-        }
+        public DateTime FechaAlta { get; set; }
 
         /// <summary>
         /// Fecha de baja del Usuario
         /// </summary>
-        public DateTime FechaBaja
-        {
-            get { return _fechaBaja; }
-            set { _fechaBaja = value; }
-        }
+        public DateTime FechaBaja { get; set; }
 
         /// <summary>
         /// ID del Usuario Admin
         /// </summary>
-        public int IdUsuarioAdmin
-        {
-            get { return _idUsuarioAdmin; }
-            set { _idUsuarioAdmin = value; }
-        }
+        public int IdUsuarioAdmin { get; set; }
     }
 }

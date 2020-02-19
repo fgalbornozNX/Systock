@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SyStock.LogicaNegocio;
 using SyStock.Entidades;
@@ -19,29 +13,25 @@ namespace SyStock.UI
             InitializeComponent();
         }
 
-        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
-
-        private readonly Listar _listar = new Listar();
-
         private List<MostrarPersonas> _listarPersonas = new List<MostrarPersonas>();
-        public string _area = "";
-        public string _grupo = "";
 
-        public string _nombreAntiguo = "";
+        public string Area { get; set; }
+        public string Grupo { get; set; }
+        public string NombreAntiguo { get; set; }
 
         private int _idPersona = 0;
 
         private void V_PersonasAutorizadas_Load(object sender, EventArgs e)
         {
-            comboBox_area.Text = _area;
-            _listar.Areas(this.comboBox_area);
-            if (_area != "")
+            comboBox_area.Text = this.Area;
+            Listar.Areas(this.comboBox_area);
+            if (!String.IsNullOrEmpty(this.Area))
             {
-                _listar.Grupo(this.comboBox_grupo, this.comboBox_area);
+                Listar.Grupo(this.comboBox_grupo, this.comboBox_area);
             }
            
-            _listar.Areas(this.comboBox_area2);
-            _listar.Grupo(this.ComboBox_grupo2);
+            Listar.Areas(this.comboBox_area2);
+            Listar.Grupo(this.ComboBox_grupo2);
 
             RefrescarDataGrid();
         }
@@ -50,7 +40,7 @@ namespace SyStock.UI
         {
             this.dataGridView1.Rows.Clear();
             this.dataGridView1.ColumnHeadersVisible = true;
-            _listarPersonas = Controlador.MostrarPersonas();
+            _listarPersonas = ControladorFachada.MostrarPersonas();
             foreach (var _per in _listarPersonas)
             {
                 if (_per != null)
@@ -88,7 +78,7 @@ namespace SyStock.UI
         private void ComboBox_area_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.comboBox_grupo.Enabled = true;
-            _listar.Grupo(this.comboBox_grupo, this.comboBox_area);
+            Listar.Grupo(this.comboBox_grupo, this.comboBox_area);
             if(this.comboBox_grupo.Items.Count == 1)
             {
                 this.comboBox_grupo.Text = this.comboBox_grupo.Items[0].ToString();
@@ -99,8 +89,8 @@ namespace SyStock.UI
 
         private void ComboBox_area2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _listar.Grupo(ComboBox_grupo2, comboBox_area2);
-            _listarPersonas = Controlador.MostrarPersonas(this.comboBox_area2.Text,string.Empty);
+            Listar.Grupo(ComboBox_grupo2, comboBox_area2);
+            _listarPersonas = ControladorFachada.MostrarPersonas(this.comboBox_area2.Text,string.Empty);
             RefrescarDataGrid();
         }
 
@@ -109,9 +99,9 @@ namespace SyStock.UI
             //Agregar una nueva persona
             if (this.button_Agregar.Text == "Agregar")
             {
-                if ((this.textBox_nombre.Text == string.Empty) || (this.comboBox_area.Text == string.Empty))
+                if ((this.textBox_nombre.Text.Length == 0) || (this.comboBox_area.Text.Length == 0))
                 {
-                    if ((this.comboBox_grupo.Items.Count == 1) && (this.comboBox_grupo.Text == string.Empty))
+                    if ((this.comboBox_grupo.Items.Count == 1) && (this.comboBox_grupo.Text.Length == 0))
                     {
                         MessageBox.Show("Falta seleccionar el grupo al que pertenece la persona");
                     }
@@ -123,21 +113,21 @@ namespace SyStock.UI
                 }
                 else
                 {
-                    switch (Controlador.VerificarNombre(this.textBox_nombre.Text.ToUpper()))
+                    switch (ControladorFachada.VerificarNombre(this.textBox_nombre.Text.ToUpper()))
                     {
                         case -1:
                             //Nombre disponible
                             string _contraseña = "";
                             V_ingresarPassword v_pass = new V_ingresarPassword()
                             {
-                                _nombre = this.textBox_nombre.Text,
+                                Nombre = this.textBox_nombre.Text,
                             };
                             v_pass.linkLabel1.Visible = false;
                             v_pass.ShowDialog(this);
-                            _contraseña = v_pass._contraseña;
-                            if (v_pass._guardar)
+                            _contraseña = v_pass.Contraseña;
+                            if (v_pass.Guardar)
                             {
-                                int _idPersona = Controlador.AgregarPersona(this.textBox_nombre.Text.ToUpper(), _contraseña, this.comboBox_grupo.Text.ToUpper());
+                                int _idPersona = ControladorFachada.AgregarPersona(this.textBox_nombre.Text.ToUpper(), _contraseña, this.comboBox_grupo.Text.ToUpper());
                                 switch (_idPersona)
                                 {
                                     case -1:
@@ -171,15 +161,15 @@ namespace SyStock.UI
             //Modificar datos de la persona
             else
             {
-                if (this.textBox_nombre.Text == string.Empty)
+                if (this.textBox_nombre.Text.Length == 0)
                 {
                     MessageBox.Show("Faltan ingresar nombre de persona");
                 }
                 else
                 {
-                    if (_nombreAntiguo != this.textBox_nombre.Text.ToUpper())
+                    if (this.NombreAntiguo != this.textBox_nombre.Text.ToUpper())
                     {
-                        switch (Controlador.VerificarNombre(this.textBox_nombre.Text.ToUpper()))
+                        switch (ControladorFachada.VerificarNombre(this.textBox_nombre.Text.ToUpper()))
                         {
                             case -1:
                                 //Nombre disponible
@@ -187,15 +177,15 @@ namespace SyStock.UI
                                 V_ingresarPassword v_pass = new V_ingresarPassword()
                                 {
                                     Text = "Cambiar Contraseña",
-                                    _nombre = this.textBox_nombre.Text,
+                                    Nombre = this.textBox_nombre.Text,
                                 };
                                 v_pass.linkLabel1.Visible = false;
                                 v_pass.ShowDialog(this);
-                                _contraseña = v_pass._contraseña;
-                                if (v_pass._guardar)
+                                _contraseña = v_pass.Contraseña;
+                                if (v_pass.Guardar)
                                 {
                                     this.button_Agregar.Text = "Agregar";
-                                    if (Controlador.ModificarPersona(_nombreAntiguo, this.textBox_nombre.Text.ToUpper(), _contraseña))
+                                    if (ControladorFachada.ModificarPersona(this.NombreAntiguo, this.textBox_nombre.Text.ToUpper(), _contraseña))
                                     {
                                         //Modificó bien
                                         MessageBox.Show("Modificado con éxito");
@@ -225,15 +215,15 @@ namespace SyStock.UI
                         V_ingresarPassword v_pass = new V_ingresarPassword()
                         {
                             Text = "Cambiar Contraseña",
-                            _nombre = this.textBox_nombre.Text,
+                            Nombre = this.textBox_nombre.Text,
                         };
                         v_pass.linkLabel1.Visible = false;
                         v_pass.ShowDialog(this);
-                        _contraseña = v_pass._contraseña;
-                        if (v_pass._guardar)
+                        _contraseña = v_pass.Contraseña;
+                        if (v_pass.Guardar)
                         {
                             this.button_Agregar.Text = "Agregar";
-                            if (Controlador.ModificarPersona(_nombreAntiguo, _contraseña))
+                            if (ControladorFachada.ModificarPersona(this.NombreAntiguo, _contraseña))
                             {
                                 Activar();
                                 MessageBox.Show("Modificado con éxito");
@@ -255,13 +245,13 @@ namespace SyStock.UI
 
         private void ComboBox_grupo2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _listarPersonas = Controlador.MostrarPersonas(string.Empty, ComboBox_grupo2.Text);
+            _listarPersonas = ControladorFachada.MostrarPersonas(string.Empty, ComboBox_grupo2.Text);
             RefrescarDataGrid();
         }
 
         private void DataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if ((dataGridView1.SelectedRows.Count == 1) && (e.RowIndex < _listarPersonas.Count()))
+            if ((dataGridView1.SelectedRows.Count == 1) && (e.RowIndex < _listarPersonas.Count))
             {
                 Button_Modificar.Enabled = true;
                 Button_Eliminar.Enabled = true;
@@ -279,7 +269,7 @@ namespace SyStock.UI
             DialogResult result = MessageBox.Show("¿Seguro que desea dar de baja a " + _listarPersonas[_idPersona].Nombre + " de la lista?", "Confirmación", MessageBoxButtons.YesNo);
             if (result == DialogResult.Yes)
             {
-                Controlador.EliminarPersona(_listarPersonas[_idPersona].Nombre);
+                ControladorFachada.EliminarPersona(_listarPersonas[_idPersona].Nombre);
                 _listarPersonas.RemoveAt(_idPersona);
                 RefrescarDataGrid();
                 Button_Modificar.Enabled = false;
@@ -291,7 +281,7 @@ namespace SyStock.UI
         {
             this.button_Agregar.Text = "Aceptar";
             this.textBox_nombre.Text = _listarPersonas[_idPersona].Nombre;
-            _nombreAntiguo = _listarPersonas[_idPersona].Nombre;
+            this.NombreAntiguo = _listarPersonas[_idPersona].Nombre;
             Desactivar();
         }
     }

@@ -1,198 +1,223 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SyStock.Entidades;
 using SyStock.LogicaNegocio;
 
 namespace SyStock.UI
 {
-    public class Listar
+    public static class Listar
     {
-        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
-
-        public void Insumos(ComboBox pComboBox_insumos, ComboBox pComboBox_categoria)
+        public static void Insumos(ComboBox pComboBoxInsumos, ComboBox pComboBoxCategoria)
         {
-            pComboBox_insumos.Items.Clear();
-            pComboBox_insumos.DropDownStyle = ComboBoxStyle.DropDownList;
+            if (pComboBoxInsumos == null || pComboBoxCategoria == null)
+                throw new ArgumentNullException(pComboBoxInsumos == null ? nameof(pComboBoxInsumos) : nameof(pComboBoxCategoria));
 
-            List<Insumo> _listaInsumos = new List<Insumo>();
-            if (pComboBox_categoria.Text == "")
+            pComboBoxInsumos.Items.Clear();
+            pComboBoxInsumos.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            List<Insumo> listaInsumos = new List<Insumo>();
+            if (pComboBoxCategoria.Text.Length == 0)
             {
-                _listaInsumos = Controlador.ListarInsumos();
-                _listaInsumos.Sort(delegate (Insumo a1, Insumo a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+                listaInsumos = ControladorFachada.ListarInsumos();
+                listaInsumos.Sort(delegate (Insumo a1, Insumo a2) { return a1.Nombre.CompareTo(a2.Nombre); });
             }
             else
             {
-                _listaInsumos = Controlador.ListarInsumos(pComboBox_categoria.Text);
-                _listaInsumos.Sort(delegate (Insumo a1, Insumo a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+                listaInsumos = ControladorFachada.ListarInsumos(pComboBoxCategoria.Text);
+                listaInsumos.Sort(delegate (Insumo a1, Insumo a2) { return a1.Nombre.CompareTo(a2.Nombre); });
             }
 
-            for (int i = 0; i < _listaInsumos.Count; i++)
-                pComboBox_insumos.Items.Add(_listaInsumos[i].Nombre);
+            for (int i = 0; i < listaInsumos.Count; i++)
+                pComboBoxInsumos.Items.Add(listaInsumos[i].Nombre);
         }
 
-        public Insumo Cantidad(ComboBox comboBox_cantidad, ComboBox comboBox_nombre)
+        public static Insumo Cantidad(ComboBox comboBoxCantidad, ComboBox comboBoxNombre)
         {
-            comboBox_cantidad.Items.Clear();
-            //this.comboBox_cantidad.DropDownStyle = ComboBoxStyle.DropDownList;
+            if (comboBoxCantidad == null || comboBoxNombre == null)
+                throw new ArgumentNullException(comboBoxCantidad == null ? nameof(comboBoxCantidad) : nameof(comboBoxNombre));
 
-            Insumo _ins = null;
+            comboBoxCantidad.Items.Clear();
 
-            int _cantidad = 0;
-            if (comboBox_nombre.Text == "")
+            Insumo ins = null;
+            int cantidad = 0;
+            if (comboBoxNombre.Text.Length == 0)
             {
-                _cantidad = 0;
+                cantidad = 0;
             }
             else
             {
-                _ins = Controlador.ObtenerInsumo(comboBox_nombre.Text);
+                ins = ControladorFachada.ObtenerInsumo(comboBoxNombre.Text);
 
-                if (_ins == null)
-                {
+                if (ins == null)
                     MessageBox.Show("No se encontró el insumo");
-                }
                 else
-                {
-                    _cantidad = _ins.Cantidad;
-                }
+                    cantidad = ins.Cantidad;
             }
 
-            for (int i = 0; i < _cantidad; i++)
-                comboBox_cantidad.Items.Add(Convert.ToString(i + 1));
-            return _ins;
+            for (int i = 0; i < cantidad; i++)
+                comboBoxCantidad.Items.Add(Convert.ToString(i + 1));
+            return ins;
         }
 
-        public void Categorias(ComboBox comboBox_categoria)
+        public static void Categorias(ComboBox comboBoxCategoria)
         {
-            comboBox_categoria.Items.Clear();
-            if (comboBox_categoria.Name == "comboBox_filtrar")
+            if (comboBoxCategoria == null)
+                throw new ArgumentNullException(nameof(comboBoxCategoria));
+
+            comboBoxCategoria.Items.Clear();
+            if (comboBoxCategoria.Name == "comboBox_filtrar")
             {
-                comboBox_categoria.Items.Add("TODOS");
+                comboBoxCategoria.Items.Add("TODOS");
             }
-            comboBox_categoria.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxCategoria.DropDownStyle = ComboBoxStyle.DropDownList;
 
-            List<Categoria> _listaCategorias = new List<Categoria>();
-            _listaCategorias = Controlador.ListarCategorias();
-            _listaCategorias.Sort(delegate (Categoria a1, Categoria a2) { return a1.Nombre.CompareTo(a2.Nombre); });
-            for (int i = 0; i < _listaCategorias.Count; i++)
-                comboBox_categoria.Items.Add(_listaCategorias[i].Nombre);
+            List<Categoria> listaCategorias = new List<Categoria>();
+            listaCategorias = ControladorFachada.ListarCategorias();
+            listaCategorias.Sort(delegate (Categoria a1, Categoria a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+            for (int i = 0; i < listaCategorias.Count; i++)
+                comboBoxCategoria.Items.Add(listaCategorias[i].Nombre);
         }
 
-        public void Categorias(DataGridView dataGrid_categoria, List<Categoria> _listaCategorias)
+        public static void Categorias(DataGridView dataGridCategoria, List<Categoria> listaCategorias)
         {
-            dataGrid_categoria.Rows.Clear();
-            dataGrid_categoria.ColumnHeadersVisible = true;
+            if (dataGridCategoria == null || listaCategorias == null)
+                throw new ArgumentNullException(dataGridCategoria == null ? nameof(dataGridCategoria) : nameof(listaCategorias));
 
-            foreach (var _cat in _listaCategorias)
+            dataGridCategoria.Rows.Clear();
+            dataGridCategoria.ColumnHeadersVisible = true;
+
+            foreach (var cat in listaCategorias)
             {
-                if (_cat != null)
+                if (cat != null)
                 {
                     String[] row;
-                    row = new String[] { _cat.Nombre };
-                    dataGrid_categoria.Rows.Add(row);
+                    row = new String[] { cat.Nombre };
+                    dataGridCategoria.Rows.Add(row);
                 }
             }
-            dataGrid_categoria.Refresh();
+            dataGridCategoria.Refresh();
         }
 
-        public void Areas(ComboBox pComboBox)
+        public static void Areas(ComboBox pComboBox)
         {
+            if (pComboBox == null)
+                throw new ArgumentNullException(nameof(pComboBox));
+
             pComboBox.Items.Clear();
             pComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 
-            List<Area> _listaAreas = new List<Area>();
-            _listaAreas = Controlador.ListarArea();
-            _listaAreas.Sort(delegate (Area a1, Area a2) { return a1.Nombre.CompareTo(a2.Nombre); });
-            for (int i = 0; i < _listaAreas.Count; i++)
-                pComboBox.Items.Add(_listaAreas[i].Nombre);
+            List<Area> listaAreas = new List<Area>();
+            listaAreas = ControladorFachada.ListarArea();
+            listaAreas.Sort(delegate (Area a1, Area a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+            for (int i = 0; i < listaAreas.Count; i++)
+                pComboBox.Items.Add(listaAreas[i].Nombre);
         }
 
-        public void Areas(ListBox pListBox)
+        public static void Areas(ListBox pListBox)
         {
+            if (pListBox == null)
+                throw new ArgumentNullException(nameof(pListBox));
+
             pListBox.Items.Clear();
 
-            List<Area> _listaAreas = new List<Area>();
-            _listaAreas = Controlador.ListarArea();
-            _listaAreas.Sort(delegate (Area a1, Area a2) { return a1.Nombre.CompareTo(a2.Nombre); });
-            for (int i = 0; i < _listaAreas.Count; i++)
-                pListBox.Items.Add(_listaAreas[i].Nombre);
+            List<Area> listaAreas = new List<Area>();
+            listaAreas = ControladorFachada.ListarArea();
+            listaAreas.Sort(delegate (Area a1, Area a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+            for (int i = 0; i < listaAreas.Count; i++)
+                pListBox.Items.Add(listaAreas[i].Nombre);
         }
 
-        public void Grupo(ComboBox pComboBox_grupo)
+        public static void Grupo(ComboBox pComboBoxGrupo)
         {
-            pComboBox_grupo.Items.Clear();
-            pComboBox_grupo.DropDownStyle = ComboBoxStyle.DropDownList;
+            if (pComboBoxGrupo == null)
+                throw new ArgumentNullException(nameof(pComboBoxGrupo));
 
-            List<Grupo> _listaGrupo = new List<Grupo>();
-            _listaGrupo = Controlador.ListarGrupos();
-            _listaGrupo.Sort(delegate (Grupo a1, Grupo a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+            pComboBoxGrupo.Items.Clear();
+            pComboBoxGrupo.DropDownStyle = ComboBoxStyle.DropDownList;
 
-            for (int i = 0; i < _listaGrupo.Count; i++)
-                pComboBox_grupo.Items.Add(_listaGrupo[i].Nombre);
+            List<Grupo> listaGrupo = new List<Grupo>();
+            listaGrupo = ControladorFachada.ListarGrupos();
+            listaGrupo.Sort(delegate (Grupo a1, Grupo a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+
+            for (int i = 0; i < listaGrupo.Count; i++)
+                pComboBoxGrupo.Items.Add(listaGrupo[i].Nombre);
         }
 
-        public void Grupo(ListBox pListBox_grupo)
+        public static void Grupo(ListBox pListBoxGrupo)
         {
-            pListBox_grupo.Items.Clear();
+            if (pListBoxGrupo == null)
+                throw new ArgumentNullException(nameof(pListBoxGrupo));
 
-            List<Grupo> _listaGrupo = new List<Grupo>();
-            _listaGrupo = Controlador.ListarGrupos();
-            _listaGrupo.Sort(delegate (Grupo a1, Grupo a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+            pListBoxGrupo.Items.Clear();
 
-            for (int i = 0; i < _listaGrupo.Count; i++)
-                pListBox_grupo.Items.Add(_listaGrupo[i].Nombre);
+            List<Grupo> listaGrupo = new List<Grupo>();
+            listaGrupo = ControladorFachada.ListarGrupos();
+            listaGrupo.Sort(delegate (Grupo a1, Grupo a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+
+            for (int i = 0; i < listaGrupo.Count; i++)
+                pListBoxGrupo.Items.Add(listaGrupo[i].Nombre);
         }
 
-        public void Grupo(ComboBox pComboBox_grupo, ComboBox pComboBox_area)
+        public static void Grupo(ComboBox pComboBoxGrupo, ComboBox pComboBoxArea)
         {
-            pComboBox_grupo.Items.Clear();
-            pComboBox_grupo.DropDownStyle = ComboBoxStyle.DropDownList;
+            if (pComboBoxGrupo == null || pComboBoxArea == null)
+                throw new ArgumentNullException(pComboBoxGrupo == null ? nameof(pComboBoxGrupo) : nameof(pComboBoxArea));
 
-            List<Grupo> _listaGrupo = new List<Grupo>();
-            _listaGrupo = Controlador.ListarGrupos(pComboBox_area.Text);
-            _listaGrupo.Sort(delegate (Grupo a1, Grupo a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+            pComboBoxGrupo.Items.Clear();
+            pComboBoxGrupo.DropDownStyle = ComboBoxStyle.DropDownList;
 
-            for (int i = 0; i < _listaGrupo.Count; i++)
-                pComboBox_grupo.Items.Add(_listaGrupo[i].Nombre);
+            List<Grupo> listaGrupo = new List<Grupo>();
+            listaGrupo = ControladorFachada.ListarGrupos(pComboBoxArea.Text);
+            listaGrupo.Sort(delegate (Grupo a1, Grupo a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+
+            for (int i = 0; i < listaGrupo.Count; i++)
+                pComboBoxGrupo.Items.Add(listaGrupo[i].Nombre);
         }
 
-        public void Grupo(ListBox pListBox_grupo, ComboBox pComboBox_area)
+        public static void Grupo(ListBox pListBoxGrupo, ComboBox pComboBoxArea)
         {
-            pListBox_grupo.Items.Clear();
+            if (pListBoxGrupo == null || pComboBoxArea == null)
+                throw new ArgumentNullException(pListBoxGrupo == null ? nameof(pListBoxGrupo) : nameof(pComboBoxArea));
 
-            List<Grupo> _listaGrupo = new List<Grupo>();
-            _listaGrupo = Controlador.ListarGrupos(pComboBox_area.Text);
-            _listaGrupo.Sort(delegate (Grupo a1, Grupo a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+            pListBoxGrupo.Items.Clear();
 
-            for (int i = 0; i < _listaGrupo.Count; i++)
-                pListBox_grupo.Items.Add(_listaGrupo[i].Nombre);
+            List<Grupo> listaGrupo = new List<Grupo>();
+            listaGrupo = ControladorFachada.ListarGrupos(pComboBoxArea.Text);
+            listaGrupo.Sort(delegate (Grupo a1, Grupo a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+
+            for (int i = 0; i < listaGrupo.Count; i++)
+                pListBoxGrupo.Items.Add(listaGrupo[i].Nombre);
         }
 
-        public void Persona(ComboBox comboBox_persona)
+        public static void Persona(ComboBox comboBoxPersona)
         {
-            comboBox_persona.Items.Clear();
+            if (comboBoxPersona == null)
+                throw new ArgumentNullException(nameof(comboBoxPersona));
+
+            comboBoxPersona.Items.Clear();
+
+            List<PersonaAutorizada> listaPersonas = new List<PersonaAutorizada>();
+            listaPersonas = ControladorFachada.ListarPersonas();
+            listaPersonas.Sort(delegate (PersonaAutorizada a1, PersonaAutorizada a2) { return a1.Nombre.CompareTo(a2.Nombre); });
+
+            for (int i = 0; i < listaPersonas.Count; i++)
+                comboBoxPersona.Items.Add(listaPersonas[i].Nombre);
+        }
+
+        public static void Persona(ComboBox comboBoxPersona, string pGrupo)
+        {
+            if (comboBoxPersona == null || pGrupo == null)
+                throw new ArgumentNullException(comboBoxPersona == null ? nameof(comboBoxPersona) : nameof(pGrupo));
+
+            comboBoxPersona.Items.Clear();
 
             List<PersonaAutorizada> _listaPersonas = new List<PersonaAutorizada>();
-            _listaPersonas = Controlador.ListarPersonas();
+            _listaPersonas = ControladorFachada.ListarPersonas(pGrupo);
             _listaPersonas.Sort(delegate (PersonaAutorizada a1, PersonaAutorizada a2) { return a1.Nombre.CompareTo(a2.Nombre); });
 
             for (int i = 0; i < _listaPersonas.Count; i++)
-                comboBox_persona.Items.Add(_listaPersonas[i].Nombre);
-        }
-
-        public void Persona(ComboBox comboBox_persona, string pGrupo)
-        {
-            comboBox_persona.Items.Clear();
-
-            List<PersonaAutorizada> _listaPersonas = new List<PersonaAutorizada>();
-            _listaPersonas = Controlador.ListarPersonas(pGrupo);
-            _listaPersonas.Sort(delegate (PersonaAutorizada a1, PersonaAutorizada a2) { return a1.Nombre.CompareTo(a2.Nombre); });
-
-            for (int i = 0; i < _listaPersonas.Count; i++)
-                comboBox_persona.Items.Add(_listaPersonas[i].Nombre);
+                comboBoxPersona.Items.Add(_listaPersonas[i].Nombre);
         }
     }
 }

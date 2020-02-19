@@ -1,26 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using SyStock.Entidades;
 using SyStock.LogicaNegocio.ClasedeDominio;
 
 namespace SyStock.LogicaNegocio
 {
-    public class ControladorFachada
+    public static class ControladorFachada
     {
-        private static ControladorFachada instancia;
-
-        public static ControladorFachada Instancia
-        {
-            get
-            {
-                if (instancia == null)
-                    instancia = new ControladorFachada();
-                return instancia;
-            }
-        }
-
-        public int IDUsuarioLogeado { get; set; }
+        /// <summary>
+        /// Almacena el ID del usuario que actualmente está utilizando la aplicación
+        /// </summary>
+        public static int IDUsuarioLogeado { get; set; }
 
         #region CONTROLADOR USUARIO
 
@@ -31,28 +21,20 @@ namespace SyStock.LogicaNegocio
         /// <param name="pContraseña">Contraseña del Usuario</param>
         /// <param name="EsAdmin">True si es admin, False si no lo es</param>
         /// <returns>Usuario agregado. Null si no se puede agregar</returns>
-        public Usuario AgregarUsuario(string pNombre, string pContraseña, bool EsAdmin)
+        public static Usuario AgregarUsuario(string pNombre, string pContraseña, bool EsAdmin)
         {
             string hash = Utilidades.Encriptar(string.Concat(pNombre, pContraseña));
 
-            Usuario _usuario = new Usuario(pNombre, hash, DateTime.Now);
+            Usuario usuario = new Usuario(pNombre, hash, DateTime.Now);
             if (EsAdmin)
-            {
-                _usuario.IdUsuarioAdmin = 0;
-            }
+                usuario.IdUsuarioAdmin = 0;
             else
-            {
-                _usuario.IdUsuarioAdmin = this.IDUsuarioLogeado;
-            }
+                usuario.IdUsuarioAdmin = IDUsuarioLogeado;
 
-            if (ControladorUsuario.Agregar(_usuario) == -1)
-            {
-                return _usuario;
-            }
+            if (ControladorUsuario.Agregar(usuario) == -1)
+                return usuario;
             else
-            {
                 return null;
-            }
         }
 
         /// <summary>
@@ -62,29 +44,28 @@ namespace SyStock.LogicaNegocio
         /// <param name="pContraseñaAntigua">Contraseña antigua</param>
         /// <param name="pContraseñaNueva">Nueva contraseña</param>
         /// <returns></returns>
-        public bool ModificarUsuario(Usuario pUsuario, string pContraseñaAntigua, string pContraseñaNueva)
+        public static bool ModificarUsuario(Usuario pUsuario, string pContraseñaAntigua, string pContraseñaNueva)
         {
-            Usuario _usuario = new Usuario("", "", DateTime.Now);
+            if (pUsuario == null)
+                throw new ArgumentNullException(nameof(pUsuario));
+
+            Usuario usuario;
             if (pUsuario.IdUsuario == 0)
-            {
-                _usuario = ControladorUsuario.Obtener(this.IDUsuarioLogeado);
-            }
+                usuario = ControladorUsuario.Obtener(IDUsuarioLogeado);
             else
             {
-                _usuario = ControladorUsuario.Obtener(pUsuario.Nombre);
+                usuario = ControladorUsuario.Obtener(pUsuario.Nombre);
                 Console.Write(pUsuario.Nombre);
             }
             
-            string hash = Utilidades.Encriptar(string.Concat(_usuario.Nombre, pContraseñaAntigua));
-            if (_usuario.Contraseña != hash)
-            {
+            string hash = Utilidades.Encriptar(string.Concat(usuario.Nombre, pContraseñaAntigua));
+            if (usuario.Contraseña != hash)
                 return false;
-            }
             else
             {
-                string hash_nuevo = Utilidades.Encriptar(string.Concat(_usuario.Nombre, pContraseñaNueva));
-                _usuario.Contraseña = hash_nuevo;
-                ControladorUsuario.Modificar(_usuario);
+                string hash_nuevo = Utilidades.Encriptar(string.Concat(usuario.Nombre, pContraseñaNueva));
+                usuario.Contraseña = hash_nuevo;
+                ControladorUsuario.Modificar(usuario);
                 return true;
             }
         }
@@ -94,20 +75,18 @@ namespace SyStock.LogicaNegocio
         /// </summary>
         /// <param name="pNombreUsuario">Nombre del usuario a eliminar</param>
         /// <returns>Devuelve True si fue eliminado. False si no se pudo eliminar</returns>
-        public bool EliminarUsuario(string pNombreUsuario)
+        public static bool EliminarUsuario(string pNombreUsuario)
         {
-            Usuario _usuario = new Usuario("", "", DateTime.Now);
-            _usuario = ControladorUsuario.Obtener(pNombreUsuario);
-            if (_usuario.FechaAlta == _usuario.FechaBaja)
+            Usuario usuario;
+            usuario = ControladorUsuario.Obtener(pNombreUsuario);
+            if (usuario.FechaBaja == DateTime.MinValue)
             {
-                _usuario.FechaBaja = DateTime.Now;
-                ControladorUsuario.Modificar(_usuario);
+                usuario.FechaBaja = DateTime.Now;
+                ControladorUsuario.Modificar(usuario);
                 return true;
             }
             else
-            {
                 return false;
-            }
             
         }
 
@@ -117,30 +96,22 @@ namespace SyStock.LogicaNegocio
         /// <param name="pNombre">Nombre del Usuario</param>
         /// <param name="pContraseña">Contraseña del Usuario</param>
         /// <returns>Devuelve el usuario. Null si no lo encontró</returns>
-        public int VerificarUsuario(string pNombre, string pContraseña)
+        public static int VerificarUsuario(string pNombre, string pContraseña)
         {
             if (string.IsNullOrEmpty(pNombre))
-            {
-                pNombre = ControladorUsuario.Obtener(this.IDUsuarioLogeado).Nombre;
-            }
-            string hash = Utilidades.Encriptar(string.Concat(pNombre, pContraseña));
-            Usuario _usuario = ControladorUsuario.Verificar(pNombre, hash); //Trae un objeto nulo si no lo encontró
+                pNombre = ControladorUsuario.Obtener(IDUsuarioLogeado).Nombre;
 
-            //Verifica si el usuario esta en la bd
-            switch (_usuario)
+            string hash = Utilidades.Encriptar(string.Concat(pNombre, pContraseña));
+            Usuario usuario = ControladorUsuario.Verificar(pNombre, hash); //Trae un objeto nulo si no lo encontró
+
+            if (usuario == null)
+                return 1;
+            else if (usuario.FechaBaja != DateTime.MinValue)
+                return 2; // Ya se encuentra dado de baja 
+            else
             {
-                case null:
-                    return 1; //Devuelve 1 si no lo encuentra
-                default:
-                    if (_usuario.FechaBaja != DateTime.MinValue)
-                    {
-                        return 2; //Esta dado de baja
-                    }
-                    else
-                    {
-                        this.IDUsuarioLogeado = _usuario.IdUsuario;
-                        return 3; //Puede loguearse
-                    }
+                IDUsuarioLogeado = usuario.IdUsuario;
+                return 3; // Puede loguearse
             }
         }
 
@@ -148,55 +119,77 @@ namespace SyStock.LogicaNegocio
         /// Verifica si el usuario registrado es Administrador
         /// </summary>
         /// <returns>Devuelve True si es Administrado. False si no lo es</returns>
-        public bool EsAdmin()
+        public static bool EsAdmin()
         {
-            Usuario _usuario = ControladorUsuario.Obtener(this.IDUsuarioLogeado);
-            if (_usuario.IdUsuarioAdmin == 0)
-            {
+            Usuario usuario = ControladorUsuario.Obtener(IDUsuarioLogeado);
+            if (usuario.IdUsuarioAdmin == 0)
                 return true;
-    }
             else
-            {
                 return false;
-}
         }
 
         /// <summary>
-        /// Mètodo para listar los Usuarios
+        /// Método para listar los Usuarios
         /// </summary>
         /// <returns>Devuelve una lista de Usuarios</returns>
-        public List<Usuario> ListarUsuarios()
+        public static List<Usuario> ListarUsuarios()
         {
             return ControladorUsuario.Listar();
         }
         #endregion
 
         #region CONTROLADOR CATEGORIA
-        public int AgregarCategoria(string pNombre)
+
+        /// <summary>
+        /// Agrega una categoría a la base de datos
+        /// </summary>
+        /// <param name="pNombre">Nombre de la categoria</param>
+        /// <returns>-1 en caso de éxito</returns>
+        public static int AgregarCategoria(string pNombre)
         {
-            Categoria _categoria = new Categoria(pNombre,true,this.IDUsuarioLogeado);
-            return ControladorCategoria.Agregar(_categoria);
+            Categoria categoria = new Categoria(pNombre,true,IDUsuarioLogeado);
+            return ControladorCategoria.Agregar(categoria);
         }
 
-        public bool ModificarCategoria(string nombreAntigua, string nombreNuevo)
+        /// <summary>
+        /// Modifica el nombre de una categoría
+        /// </summary>
+        /// <param name="nombreAntigua">nombre anterior</param>
+        /// <param name="nombreNuevo">nuevo nombre</param>
+        /// <returns>True en caso de éxito. Falso caso contrario</returns>
+        public static bool ModificarCategoria(string nombreAntigua, string nombreNuevo)
         {
-            Categoria _categoria = new Categoria("",true,this.IDUsuarioLogeado);
-            _categoria = ControladorCategoria.Obtener(nombreAntigua);
-            _categoria.Nombre = nombreNuevo;
-            return ControladorCategoria.Modificar(_categoria);
+            Categoria categoria;
+            categoria = ControladorCategoria.Obtener(nombreAntigua);
+            categoria.Nombre = nombreNuevo;
+            return ControladorCategoria.Modificar(categoria);
         }
 
-        public bool BajaCategoria(Categoria pCategoria)
+        /// <summary>
+        /// Permite dar de baja una categoría
+        /// </summary>
+        /// <param name="pCategoria">Categoría a buscar</param>
+        /// <returns>True en caso de éxito. False caso contrario</returns>
+        public static bool BajaCategoria(Categoria pCategoria)
         {
             return ControladorCategoria.Baja(pCategoria);
         }
 
-        public bool EliminarCategoria(Categoria pCategoria)
+        /// <summary>
+        /// Permite eliminar definitivamente una categoría
+        /// </summary>
+        /// <param name="pCategoria">Categoría a buscar</param>
+        /// <returns>True en caso de éxito. False caso contrario</returns>
+        public static bool EliminarCategoria(Categoria pCategoria)
         {
             return ControladorCategoria.Eliminar(pCategoria);
         }
 
-        public List<Categoria> ListarCategorias()
+        /// <summary>
+        /// Lista las categorías existentes
+        /// </summary>
+        /// <returns>Lista conteniendo las categorías de la base de datos</returns>
+        public static List<Categoria> ListarCategorias()
         {
             return ControladorCategoria.Listar();
         }
@@ -213,11 +206,11 @@ namespace SyStock.LogicaNegocio
         /// <param name="pStock">Stock del insumo</param>
         /// <param name="pCategoria">Id de la categoría del insumo</param>
         /// <returns></returns>
-        public int AgregarInsumo(string pNombre, string pDescripcion, string pCantidad, string pStock, string pCategoria)
+        public static int AgregarInsumo(string pNombre, string pDescripcion, string pCantidad, string pStock, string pCategoria)
         {
             int idCategoria = ControladorCategoria.Obtener(pCategoria).IdCategoria;
-            Insumo _insumo = new Insumo(pNombre, pDescripcion,Convert.ToInt32(pCantidad), Convert.ToInt32(pStock), true, idCategoria);
-            return ControladorInsumo.Agregar(_insumo);
+            Insumo insumo = new Insumo(pNombre, pDescripcion,Convert.ToInt32(pCantidad), Convert.ToInt32(pStock), true, idCategoria);
+            return ControladorInsumo.Agregar(insumo);
         }
 
         /// <summary>
@@ -225,7 +218,7 @@ namespace SyStock.LogicaNegocio
         /// </summary>
         /// <param name="pNombre">Nombre del insumo</param>
         /// <returns></returns>
-        public Insumo ObtenerInsumo(string pNombre)
+        public static Insumo ObtenerInsumo(string pNombre)
         {
             return ControladorInsumo.Obtener(pNombre);
         }
@@ -235,7 +228,7 @@ namespace SyStock.LogicaNegocio
         /// </summary>
         /// <param name="pInsumo">Id del insumo</param>
         /// <returns></returns>
-        public void ModificarInsumo(Insumo pInsumo)
+        public static void ModificarInsumo(Insumo pInsumo)
         {
             ControladorInsumo.Modificar(pInsumo);
         }
@@ -246,11 +239,11 @@ namespace SyStock.LogicaNegocio
         /// <param name="pNombre">Nombre del insumo</param>
         /// <param name="pCantidad">Cantidad del insumo</param>
         /// <returns></returns>
-        public bool SumarStock(string pNombre, int pCantidad)
+        public static bool SumarStock(string pNombre, int pCantidad)
         {
-            Insumo _insumo = ControladorInsumo.Obtener(pNombre);
-            _insumo.Cantidad += pCantidad;
-            ControladorInsumo.Modificar(_insumo);
+            Insumo insumo = ControladorInsumo.Obtener(pNombre);
+            insumo.Cantidad += pCantidad;
+            ControladorInsumo.Modificar(insumo);
             return true;
         }
 
@@ -259,13 +252,16 @@ namespace SyStock.LogicaNegocio
         /// </summary>
         /// <param name="pIns">Insumo a restar stock</param>
         /// <returns></returns>
-        public bool RestarStock(Insumo pIns)
+        public static bool RestarStock(Insumo pIns)
         {
-            Insumo _insumo = new Insumo("", "", 0, 0, true, 0);
-            _insumo = ControladorInsumo.Obtener(pIns.IdInsumo);
-            int cantidadActual = _insumo.Cantidad - pIns.Cantidad;
-            _insumo.Cantidad = cantidadActual;
-            ControladorInsumo.Modificar(_insumo);
+            if (pIns == null)
+                throw new ArgumentNullException(nameof(pIns));
+
+            Insumo insumo;
+            insumo = ControladorInsumo.Obtener(pIns.IdInsumo);
+            int cantidadActual = insumo.Cantidad - pIns.Cantidad;
+            insumo.Cantidad = cantidadActual;
+            ControladorInsumo.Modificar(insumo);
             return true;
         }
 
@@ -273,7 +269,7 @@ namespace SyStock.LogicaNegocio
         /// Método para listar insumos
         /// </summary>
         /// <returns>Lista de insumos</returns>
-        public List<Insumo> ListarInsumos()
+        public static List<Insumo> ListarInsumos()
         {
             return ControladorInsumo.Listar();
         }
@@ -283,11 +279,10 @@ namespace SyStock.LogicaNegocio
         /// </summary>
         /// <param name="pCategoria">Nombre de la categoría</param>
         /// <returns>Lista de insumos</returns>
-        public List<Insumo> ListarInsumos(string pCategoria)
+        public static List<Insumo> ListarInsumos(string pCategoria)
         {
-            Categoria _categoria = new Categoria("", true, 0);
-            _categoria = ControladorCategoria.Obtener(pCategoria);
-            return ControladorInsumo.Listar(_categoria.IdCategoria);
+            Categoria categoria = ControladorCategoria.Obtener(pCategoria);
+            return ControladorInsumo.Listar(categoria.IdCategoria);
         }
         #endregion
 
@@ -298,10 +293,10 @@ namespace SyStock.LogicaNegocio
         /// </summary>
         /// <param name="pNombreArea">Nómbre del área a agregar</param>
         /// <returns>Devuelve -1 si logra agregarla, o sino el ID del Área</returns>
-        public int AgregarArea(string pNombreArea)
+        public static int AgregarArea(string pNombreArea)
         {
-            Area _area = new Area(pNombreArea);
-            return ControladorArea.Agregar(_area);
+            Area area = new Area(pNombreArea);
+            return ControladorArea.Agregar(area);
         }
 
         /// <summary>
@@ -310,19 +305,18 @@ namespace SyStock.LogicaNegocio
         /// <param name="nombreAntigua">Nombre de la área a modificar</param>
         /// <param name="nombreNuevo">Nuevo nombre del área</param>
         /// <returns>Devuelve true si o modificò. False en caso contrario</returns>
-        public bool ModificarArea(string nombreAntigua, string nombreNuevo)
+        public static bool ModificarArea(string nombreAntigua, string nombreNuevo)
         {
-            Area _area = new Area("");
-            _area = ControladorArea.Obtener(nombreAntigua);
-            _area.Nombre = nombreNuevo;
-            return ControladorArea.Modificar(_area);
+            Area area = ControladorArea.Obtener(nombreAntigua);
+            area.Nombre = nombreNuevo;
+            return ControladorArea.Modificar(area);
         }
 
         /// <summary>
         /// Método para listar las áreas
         /// </summary>
         /// <returns>Devuelve una lista de áreas</returns>
-        public List<Area> ListarArea()
+        public static List<Area> ListarArea()
         {
             return ControladorArea.Listar();
         }
@@ -336,10 +330,10 @@ namespace SyStock.LogicaNegocio
         /// <param name="pNombreGrupo">Nombre del grupo</param>
         /// <param name="pNombreArea">Nombre del área al q se le asignará el grupo</param>
         /// <returns>Devuelve -1 si agregó el Grupo. sino el valor del Id del grupo ya existente</returns>
-        public int AgregarGrupo(string pNombreGrupo, string pNombreArea)
+        public static int AgregarGrupo(string pNombreGrupo, string pNombreArea)
         {
             Area _area = ControladorArea.Obtener(pNombreArea);
-            Grupo _grupo = new Grupo(pNombreGrupo,true,_area.IdArea,this.IDUsuarioLogeado);
+            Grupo _grupo = new Grupo(pNombreGrupo,true,_area.IdArea,IDUsuarioLogeado);
             return ControladorGrupo.Agregar(_grupo);
         }
 
@@ -349,19 +343,18 @@ namespace SyStock.LogicaNegocio
         /// <param name="nombreAntigua">Nombre del grupo</param>
         /// <param name="nombreNuevo">Nuevo nombre del grupo</param>
         /// <returns>Devuelve true si logró modificarlo</returns>
-        public bool ModificarGrupo(string nombreAntigua, string nombreNuevo)
+        public static bool ModificarGrupo(string nombreAntigua, string nombreNuevo)
         {
-            Grupo _grupo = new Grupo("",true,0,0);
-            _grupo = ControladorGrupo.Obtener(nombreAntigua);
-            _grupo.Nombre = nombreNuevo;
-             return ControladorGrupo.Modificar(_grupo);
+            Grupo grupo = ControladorGrupo.Obtener(nombreAntigua);
+            grupo.Nombre = nombreNuevo;
+            return ControladorGrupo.Modificar(grupo);
         }
 
         /// <summary>
         /// Método para listar los grupos
         /// </summary>
         /// <returns>Lista de grupos</returns>
-        public List<Grupo> ListarGrupos()
+        public static List<Grupo> ListarGrupos()
         {
             return ControladorGrupo.Listar();
         }
@@ -371,174 +364,241 @@ namespace SyStock.LogicaNegocio
         /// </summary>
         /// <param name="pArea">Id del Área de os grupos a listar</param>
         /// <returns>Lista de grupos para una determinada Área</returns>
-        public List<Grupo> ListarGrupos(string pArea)
-        {
-            Area _area = new Area("");
-            _area = ControladorArea.Obtener(pArea);
-            return ControladorGrupo.Listar(_area.IdArea);
+        public static List<Grupo> ListarGrupos(string pArea)
+        { 
+            Area area = ControladorArea.Obtener(pArea);
+            return ControladorGrupo.Listar(area.IdArea);
         }
         #endregion
 
         #region CONTROLADOR PERSONA
-        public int AgregarPersona(string pNombre, string pContraseña, string pNombreGrupo)
+
+        /// <summary>
+        /// Permite agregar una persona
+        /// </summary>
+        /// <param name="pNombre">nombre de la persona</param>
+        /// <param name="pContraseña">contraseña para permitir el retiro de insumos</param>
+        /// <param name="pNombreGrupo">grupo al que pertenece</param>
+        /// <returns>-1 en caso de éxito</returns>
+        public static int AgregarPersona(string pNombre, string pContraseña, string pNombreGrupo)
         {
-            int _idPersona = ControladorPersona.VerificarNombre(pNombre);
-            if (_idPersona == -1)
+            int idPersona = ControladorPersona.VerificarNombre(pNombre);
+            if (idPersona == -1)
             {
                 string hash = Utilidades.Encriptar(string.Concat(pNombre, pContraseña));
 
-                int _idGrupo = ControladorGrupo.Obtener(pNombreGrupo).IdGrupo;
-                PersonaAutorizada _persona = new PersonaAutorizada(pNombre, hash, DateTime.Today, DateTime.Today, _idGrupo);
+                Grupo gr = ControladorGrupo.Obtener(pNombreGrupo);
+                int idGrupo;
+                if (gr != null)
+                    idGrupo = gr.IdGrupo;
+                else
+                    return -2;
 
-                if (ControladorPersona.Agregar(_persona) == -2)
-                {
-                    _idPersona = -2;
-                }
+                PersonaAutorizada persona = new PersonaAutorizada(pNombre, hash, DateTime.Today, DateTime.Today, idGrupo);
+
+                if (ControladorPersona.Agregar(persona) == -2)
+                    idPersona = -2;
             }
-            return _idPersona;
+            return idPersona;
         }
 
-        public int VerificarPersona(string pNombre, string pContraseña)
+        /// <summary>
+        /// Verifica las credenciales de una persona
+        /// </summary>
+        /// <param name="pNombre">nombre de la persona</param>
+        /// <param name="pContraseña">contraseña</param>
+        public static int VerificarPersona(string pNombre, string pContraseña)
         {
             string hash = Utilidades.Encriptar(string.Concat(pNombre, pContraseña));
-            int _idPersona = ControladorPersona.Verificar(pNombre, hash);
-            return _idPersona;
+            return ControladorPersona.Verificar(pNombre, hash);
         }
 
-        public int VerificarNombre(string pNombre)
+        /// <summary>
+        /// Verifica la existencia de una persona. Busca por nombre
+        /// </summary>
+        /// <param name="pNombre">nombre a buscar</param>
+        public static int VerificarNombre(string pNombre)
         {
             return ControladorPersona.VerificarNombre(pNombre);
         }
 
-        public bool ModificarPersona(string pNombre, string pContraseña)
+        /// <summary>
+        /// Permite modificar la contrasña de una persona
+        /// </summary>
+        /// <param name="pNombre">nombre de la persona</param>
+        /// <param name="pContraseña">contraseña</param>
+        public static bool ModificarPersona(string pNombre, string pContraseña)
         {
-            PersonaAutorizada _personaAutorizada = new PersonaAutorizada("", "", DateTime.Now, DateTime.Now, 0);
-            _personaAutorizada = ControladorPersona.Obtener(pNombre);
+            PersonaAutorizada personaAutorizada = ControladorPersona.Obtener(pNombre);
             string hash = Utilidades.Encriptar(string.Concat(pNombre, pContraseña));
-            _personaAutorizada.Contraseña = hash;
-            ControladorPersona.Modificar(_personaAutorizada);
+            personaAutorizada.Contraseña = hash;
+            ControladorPersona.Modificar(personaAutorizada);
             return true;
         }
 
-        public bool ModificarPersona(string pNombreAntiguo, string pNombreNuevo, string pContraseña)
+        /// <summary>
+        /// Permite modificar el nombre y la contraseña de una persona
+        /// </summary>
+        /// <param name="pNombreAntiguo">nombre actual</param>
+        /// <param name="pNombreNuevo">nuevo nombre</param>
+        /// <param name="pContraseña">nueva contraseña</param>
+        /// <returns></returns>
+        public static bool ModificarPersona(string pNombreAntiguo, string pNombreNuevo, string pContraseña)
         {
-            PersonaAutorizada _personaAutorizada = new PersonaAutorizada("", "", DateTime.Now, DateTime.Now, 0);
-            _personaAutorizada = ControladorPersona.Obtener(pNombreAntiguo);
+            PersonaAutorizada personaAutorizada = ControladorPersona.Obtener(pNombreAntiguo);
             string hash = Utilidades.Encriptar(string.Concat(pNombreNuevo, pContraseña));
-            _personaAutorizada.Nombre = pNombreNuevo;
-            _personaAutorizada.Contraseña = hash;
-            ControladorPersona.Modificar(_personaAutorizada);
+            personaAutorizada.Nombre = pNombreNuevo;
+            personaAutorizada.Contraseña = hash;
+            ControladorPersona.Modificar(personaAutorizada);
             return true;
         }
 
-        public List<PersonaAutorizada> ListarPersonas()
+        /// <summary>
+        /// Genera una lista de personas
+        /// </summary>
+        /// <returns>Lista conteniendo todas las personas autorizadas</returns>
+        public static List<PersonaAutorizada> ListarPersonas()
         {
             return ControladorPersona.Listar();
         }
 
-        public List<PersonaAutorizada> ListarPersonas(string pGrupo)
+        /// <summary>
+        /// Genera una lista de personas
+        /// </summary>
+        /// <param name="pGrupo">grupo de pertenencia</param>
+        /// <returns>Lista conteniendo todas las personas de un determinado grupo</returns>
+        public static List<PersonaAutorizada> ListarPersonas(string pGrupo)
         {
             int idGrupo = ControladorGrupo.Obtener(pGrupo).IdGrupo;
             return ControladorPersona.Listar(idGrupo);
         }
 
-        public List<MostrarPersonas> MostrarPersonas()
+        /// <summary>
+        /// Genera una lista de las personas en Alta
+        /// </summary>
+        /// <returns>Lista conteniendo todas las personas cuyo estado actual es "Alta"</returns>
+        public static List<MostrarPersonas> MostrarPersonas()
         {
-            List<PersonaAutorizada> _lista = new List<PersonaAutorizada>();
-            List<MostrarPersonas> _listaMostrar = new List<MostrarPersonas>();
+            List<PersonaAutorizada> lista;
+            List<MostrarPersonas> listaMostrar = new List<MostrarPersonas>();
 
-            _lista = ControladorPersona.Listar();
+            lista = ControladorPersona.Listar();
 
-            for (int i = 0; i < _lista.Count(); i++)
+            for (int i = 0; i < lista.Count; i++)
             {
-                if (_lista[i].FechaAlta == _lista[i].FechaBaja)
+                if (lista[i].FechaAlta >= lista[i].FechaBaja)
                 {
-                    Grupo grupo = ControladorGrupo.Obtener(_lista[i].IdGrupo);
+                    Grupo grupo = ControladorGrupo.Obtener(lista[i].IdGrupo);
                     string area = ControladorArea.Obtener(grupo.IdArea).Nombre;
-                    MostrarPersonas _per = new MostrarPersonas(_lista[i].IdPersona, _lista[i].Nombre, grupo.Nombre, area);
-                    _listaMostrar.Add(_per);
+                    MostrarPersonas per = new MostrarPersonas(lista[i].IdPersona, lista[i].Nombre, grupo.Nombre, area);
+                    listaMostrar.Add(per);
                 }
             }
 
-            return _listaMostrar;
+            return listaMostrar;
         }
 
-        public List<MostrarPersonas> MostrarPersonas(string pArea, string pGrupo)
+        /// <summary>
+        /// Genera una lista de las personas en Alta en un determinado grupo
+        /// </summary>
+        /// <param name="pArea">Area de la persona</param>
+        /// <param name="pGrupo">Grupo de la persona</param>
+        /// <returns>Lista conteniendo todas las personas cuyo estado actual es "Alta", dentro de un determinado grupo</returns>
+        public static List<MostrarPersonas> MostrarPersonas(string pArea, string pGrupo)
         {
-            List<PersonaAutorizada> _lista = new List<PersonaAutorizada>();
-            List<MostrarPersonas> _listaMostrar = new List<MostrarPersonas>();
+            if (pArea == null || pGrupo == null)
+                throw new ArgumentNullException(pArea == null ? nameof(pArea) : nameof(pGrupo));
 
-            _lista = ControladorPersona.Listar();
+            List<PersonaAutorizada> lista;
+            List<MostrarPersonas> listaMostrar = new List<MostrarPersonas>();
 
-            for (int i = 0; i < _lista.Count(); i++)
+            lista = ControladorPersona.Listar();
+
+            for (int i = 0; i < lista.Count; i++)
             {
-                if (_lista[i].FechaAlta == _lista[i].FechaBaja)
+                if (lista[i].FechaAlta == lista[i].FechaBaja)
                 {
-                    Grupo grupo = ControladorGrupo.Obtener(_lista[i].IdGrupo);
+                    Grupo grupo = ControladorGrupo.Obtener(lista[i].IdGrupo);
                     string area = ControladorArea.Obtener(grupo.IdArea).Nombre;
-                    if ((pArea != string.Empty) && (area == pArea))
+                    if ((pArea.Length == 0) && (area == pArea))
                     {
-                        MostrarPersonas _per = new MostrarPersonas(_lista[i].IdPersona, _lista[i].Nombre, grupo.Nombre, area);
-                        _listaMostrar.Add(_per);
+                        MostrarPersonas per = new MostrarPersonas(lista[i].IdPersona, lista[i].Nombre, grupo.Nombre, area);
+                        listaMostrar.Add(per);
                     }
-                    if ((pGrupo != string.Empty) && (grupo.Nombre == pGrupo))
+                    if ((pGrupo.Length == 0) && (grupo.Nombre == pGrupo))
                     {
-                        MostrarPersonas _per = new MostrarPersonas(_lista[i].IdPersona, _lista[i].Nombre, grupo.Nombre, area);
-                        _listaMostrar.Add(_per);
+                        MostrarPersonas per = new MostrarPersonas(lista[i].IdPersona, lista[i].Nombre, grupo.Nombre, area);
+                        listaMostrar.Add(per);
                     }
                 }
             }
 
-            return _listaMostrar;
+            return listaMostrar;
         }
 
-        public bool EliminarPersona(string pNombre)
+        /// <summary>
+        /// Permite dar de baja una persona
+        /// </summary>
+        /// <param name="pNombre">nombre de la persona a dar de baja</param>
+        /// <returns>true en caso de éxito, false caso contrario</returns>
+        public static bool EliminarPersona(string pNombre)
         {
-            PersonaAutorizada _persona = new PersonaAutorizada("", "", DateTime.Now, DateTime.Now,0);
-            _persona = ControladorPersona.Obtener(pNombre);
-            if (_persona.FechaAlta == _persona.FechaBaja)
+            PersonaAutorizada persona = ControladorPersona.Obtener(pNombre);
+            if (persona.FechaBaja == DateTime.MinValue)
             {
-                _persona.FechaBaja = DateTime.Now;
-                ControladorPersona.Modificar(_persona);
+                persona.FechaBaja = DateTime.Now;
+                ControladorPersona.Modificar(persona);
                 return true;
             }
             else
-            {
                 return false;
-            }
-
         }
         #endregion
 
         #region CONTROLADOR ENTREGA
-        public int AgregarEntrega(string nombrePersona)
+
+        /// <summary>
+        /// Agrega una entrega
+        /// </summary>
+        /// <param name="nombrePersona">nombre de la persona que retira</param>
+        public static int AgregarEntrega(string nombrePersona)
         {
-            int _idPersona = ControladorPersona.Obtener(nombrePersona).IdPersona;
-            EntregaInsumos _entrega = new EntregaInsumos(this.IDUsuarioLogeado, _idPersona, DateTime.Today);
-            return ControladorEntrega.Agregar(_entrega);
+            int idPersona = ControladorPersona.Obtener(nombrePersona).IdPersona;
+            EntregaInsumos entrega = new EntregaInsumos(IDUsuarioLogeado, idPersona, DateTime.Today);
+            return ControladorEntrega.Agregar(entrega);
         }
         #endregion
 
         #region CONTROLADOR RENGLON DE ENTREGA
-        public int AgregarRenglon(int pIdEntrega, List<Insumo> _listarInsumos)
+
+        /// <summary>
+        /// Permite agregar un renglón de entrega
+        /// </summary>
+        /// <param name="pIdEntrega"></param>
+        /// <param name="listarInsumos"></param>
+        /// <returns></returns>
+        public static int AgregarRenglon(int pIdEntrega, List<Insumo> listarInsumos)
         {
-            int _idRenglon = 0;
-            foreach (var _ins in _listarInsumos)
+            if (listarInsumos == null)
+                throw new ArgumentNullException(nameof(listarInsumos));
+
+            int idRenglon = 0;
+            foreach (var ins in listarInsumos)
             {
-                if ((_ins != null) && (_idRenglon != -2))
+                if ((ins != null) && (idRenglon != -2))
                 {
-                    if (RestarStock(_ins))
+                    if (RestarStock(ins))
                     {
-                        RenglonEntrega _renglon = new RenglonEntrega(pIdEntrega, _ins.IdInsumo, _ins.Cantidad);
-                        _idRenglon = ControladorRenglones.Agregar(_renglon);
+                        RenglonEntrega renglon = new RenglonEntrega(pIdEntrega, ins.IdInsumo, ins.Cantidad);
+                        idRenglon = ControladorRenglones.Agregar(renglon);
                     }
                     else
                     {
-                        _idRenglon = -2;
+                        idRenglon = -2;
                     }
                 }
             }
-            return _idRenglon;
+            return idRenglon;
         }
         #endregion
     }

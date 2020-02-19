@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SyStock.Entidades;
 using SyStock.LogicaNegocio;
@@ -18,8 +12,6 @@ namespace SyStock.UI
         {
             InitializeComponent();
         }
-
-        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
 
         private void V_ActualizarStock_Load(object sender, EventArgs e)
         {
@@ -38,10 +30,10 @@ namespace SyStock.UI
             this.comboBox_categoria.Items.Clear();
             this.comboBox_categoria.DropDownStyle = ComboBoxStyle.DropDownList;
 
-            List<Categoria> _listaCategorias = new List<Categoria>();
-            _listaCategorias = Controlador.ListarCategorias();
-            for (int i = 0; i < _listaCategorias.Count; i++)
-                this.comboBox_categoria.Items.Add(_listaCategorias[i].Nombre);
+            List<Categoria> listaCategorias;
+            listaCategorias = ControladorFachada.ListarCategorias();
+            for (int i = 0; i < listaCategorias.Count; i++)
+                this.comboBox_categoria.Items.Add(listaCategorias[i].Nombre);
         }
 
         private void ListarInsumos()
@@ -50,20 +42,20 @@ namespace SyStock.UI
             this.comboBox_nombre.DropDownStyle = ComboBoxStyle.DropDownList;
 
             List<Insumo> _listaInsumos = new List<Insumo>();
-            if (this.comboBox_categoria.Text == "")
+            if (this.comboBox_categoria.Text.Length == 0)
             {
-                _listaInsumos = Controlador.ListarInsumos();
+                _listaInsumos = ControladorFachada.ListarInsumos();
             }
             else
             {
-                _listaInsumos = Controlador.ListarInsumos(this.comboBox_categoria.Text);
+                _listaInsumos = ControladorFachada.ListarInsumos(this.comboBox_categoria.Text);
             }
             
             for (int i = 0; i < _listaInsumos.Count; i++)
                 this.comboBox_nombre.Items.Add(_listaInsumos[i].Nombre);
         }
 
-        private void comboBox_categoria_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBox_categoria_SelectedIndexChanged(object sender, EventArgs e)
         {
             ListarInsumos();
         }
@@ -75,7 +67,7 @@ namespace SyStock.UI
 
         private void Button_Aceptar_Click(object sender, EventArgs e)
         {
-                if ((this.comboBox_nombre.Text == string.Empty) || (this.textBox_cantidad.Text == string.Empty))
+                if ((this.comboBox_nombre.Text.Length == 0) || (this.textBox_cantidad.Text.Length == 0))
                 {
                     MessageBox.Show("Falta ingresar algunos datos");
                 }
@@ -84,7 +76,7 @@ namespace SyStock.UI
                 DialogResult result = MessageBox.Show("¿Seguro que deseas agregar el stock?", "Confirmación", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
-                    bool modificado = Controlador.SumarStock(this.comboBox_nombre.Text.ToUpper(), Convert.ToInt32(this.textBox_cantidad.Text));
+                    bool modificado = ControladorFachada.SumarStock(this.comboBox_nombre.Text.ToUpper(), Convert.ToInt32(this.textBox_cantidad.Text));
                     if (!modificado)
                     {
                         MessageBox.Show("Problemas al actualizar el Stock. Vuelva a intentarlo");

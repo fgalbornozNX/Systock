@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SyStock.LogicaNegocio;
 
@@ -18,9 +11,7 @@ namespace SyStock.UI
             InitializeComponent();
         }
 
-        public string _nombre = "";
-
-        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
+        public string Nombre { get; set; }
 
         private void Button_Aceptar_Click(object sender, EventArgs e)
         {
@@ -30,7 +21,7 @@ namespace SyStock.UI
             }
             else
             {
-                int _verificar = Controlador.VerificarUsuario("", this.textBox_contraseñaUsuario.Text);
+                int _verificar = ControladorFachada.VerificarUsuario("", this.textBox_contraseñaUsuario.Text);
                 switch (_verificar)
                 {
                     case 1:
@@ -48,8 +39,7 @@ namespace SyStock.UI
 
         private void ModificarContraseña()
         {
-            Console.WriteLine(_nombre);
-            bool modifica = Controlador.ModificarPersona(_nombre, this.textBox_contraseña_nueva.Text);
+            bool modifica = ControladorFachada.ModificarPersona(this.Nombre, this.textBox_contraseña_nueva.Text);
             if (modifica)
             {
                 this.Close();

@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SyStock.LogicaNegocio;
 using System.Windows.Forms;
 
@@ -14,8 +7,6 @@ namespace SyStock.UI
     public partial class V_login : Form
     {
         private bool app_access = false;
-
-        private readonly ControladorFachada controlador = ControladorFachada.Instancia;
 
         public V_login()
         {
@@ -77,7 +68,7 @@ namespace SyStock.UI
                                 default:
                                     {
                                         //Verifica si el usuario esta en la bd
-                                        int _usuarioLogueado = controlador.VerificarUsuario(this.textBox_nombre.Text, this.textBox_contraseña.Text);
+                                        int _usuarioLogueado = ControladorFachada.VerificarUsuario(this.textBox_nombre.Text, this.textBox_contraseña.Text);
                                         switch (_usuarioLogueado)
                                         {
                                             case 1:

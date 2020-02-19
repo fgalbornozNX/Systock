@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SyStock.Entidades;
 using SyStock.LogicaNegocio;
@@ -30,25 +24,20 @@ namespace SyStock.UI
             this.Button_Editar.Enabled = false;
             this.Button_Eliminar.Enabled = false;
         }
-
-        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
-
-        private readonly Listar _listar = new Listar(); 
         
         private List<Categoria> _listaCategorias;
-
         private int idColumna = 0;
 
-        public Categoria _categoria = new Categoria("",true,0);
+        public Categoria Categoria { get; set; }
 
         /// <summary>
         /// Método para refrescar la ventana
         /// </summary>
         private void RefrescarDataGrid()
         {
-            _listaCategorias = Controlador.ListarCategorias();
+            _listaCategorias = ControladorFachada.ListarCategorias();
             _listaCategorias.Sort(delegate (Categoria a1, Categoria a2) { return a1.Nombre.CompareTo(a2.Nombre); });
-            _listar.Categorias(dataGridView1, _listaCategorias);
+            Listar.Categorias(dataGridView1, _listaCategorias);
         }
 
         /// <summary>
@@ -58,14 +47,14 @@ namespace SyStock.UI
         /// <param name="e"></param>
         private void DataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if ((dataGridView1.SelectedRows.Count == 1) && (e.RowIndex < _listaCategorias.Count()))
+            if ((dataGridView1.SelectedRows.Count == 1) && (e.RowIndex < _listaCategorias.Count))
             {
                 Button_Editar.Enabled = true;
                 Button_Eliminar.Enabled = true;
                 idColumna = e.RowIndex;
-                _categoria.IdCategoria = _listaCategorias[idColumna].IdCategoria;
-                _categoria.Nombre = _listaCategorias[idColumna].Nombre;
-                _categoria.Estado = _listaCategorias[idColumna].Estado;
+                this.Categoria.IdCategoria = _listaCategorias[idColumna].IdCategoria;
+                this.Categoria.Nombre = _listaCategorias[idColumna].Nombre;
+                this.Categoria.Estado = _listaCategorias[idColumna].Estado;
             }
             else
             {
@@ -95,7 +84,7 @@ namespace SyStock.UI
                         }
                         else
                         {
-                            int agregado = Controlador.AgregarCategoria(this.textBox_nombre.Text);
+                            int agregado = ControladorFachada.AgregarCategoria(this.textBox_nombre.Text);
                             if (agregado != -1)
                             {
                                 MessageBox.Show("Nombre de Categoría ya existente");
@@ -118,7 +107,7 @@ namespace SyStock.UI
                     }
                     else
                     {
-                        if (Controlador.ModificarCategoria(_categoria.Nombre, this.textBox_nombre.Text))
+                        if (ControladorFachada.ModificarCategoria(this.Categoria.Nombre, this.textBox_nombre.Text))
                         {
                             this.button_Agregar.Text = "Agregar";
                             MessageBox.Show("Modificado con éxito");
@@ -147,15 +136,15 @@ namespace SyStock.UI
         /// <param name="e"></param>
         private void Button_Eliminar_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(_categoria.IdCategoria);
+            Console.WriteLine(this.Categoria.IdCategoria);
             try
             {
-                if (_categoria.Estado)
+                if (this.Categoria.Estado)
                 {
                     DialogResult result = MessageBox.Show("¿Seguro que deseas dar de baja esta Categoría?", "Confirmación", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes)
                     {
-                        if (Controlador.BajaCategoria(_categoria))
+                        if (ControladorFachada.BajaCategoria(this.Categoria))
                         {
                             MessageBox.Show("Categoría dada de baja");
                         }
@@ -173,7 +162,7 @@ namespace SyStock.UI
                     DialogResult result = MessageBox.Show("¿Seguro que deseas eliminar esta Categoría?", "Confirmación", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes)
                     {
-                        if (Controlador.EliminarCategoria(_categoria))
+                        if (ControladorFachada.EliminarCategoria(this.Categoria))
                         {
                             MessageBox.Show("Categoría eliminada con éxito");
                         }
@@ -208,7 +197,7 @@ namespace SyStock.UI
         private void Button_Editar_Click(object sender, EventArgs e)
         {
             this.button_Agregar.Text = "Aceptar";
-            this.textBox_nombre.Text = _categoria.Nombre;
+            this.textBox_nombre.Text = this.Categoria.Nombre;
             this.dataGridView1.Enabled = false;
             this.dataGridView1.ReadOnly = true;
             this.Button_Editar.Enabled = false;

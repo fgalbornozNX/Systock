@@ -251,7 +251,7 @@
             this.comboBox_grupo2.Name = "comboBox_grupo2";
             this.comboBox_grupo2.Size = new System.Drawing.Size(194, 21);
             this.comboBox_grupo2.TabIndex = 18;
-            this.comboBox_grupo2.SelectedIndexChanged += new System.EventHandler(this.comboBox_grupo2_SelectedIndexChanged);
+            this.comboBox_grupo2.SelectedIndexChanged += new System.EventHandler(this.ComboBox_grupo2_SelectedIndexChanged);
             // 
             // label4
             // 

@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SyStock.LogicaNegocio;
 using SyStock.Entidades;
@@ -19,11 +13,7 @@ namespace SyStock.UI
             InitializeComponent();
         }
 
-        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
-
         private List<Insumo> _listaInsumos = new List<Insumo>();
-
-        private readonly Listar _listar = new Listar();
 
         Insumo _insumo;
 
@@ -35,8 +25,8 @@ namespace SyStock.UI
         private void V_Insumos_Load(object sender, EventArgs e)
         {
             this.Button_ModificarInsumo.Enabled = false;
-            _listar.Categorias(this.comboBox_categoria);
-            _listar.Categorias(this.comboBox_filtrar);
+            Listar.Categorias(this.comboBox_categoria);
+            Listar.Categorias(this.comboBox_filtrar);
             comboBox_filtrar.Text = "TODOS";
             RefrescarDataGrid();
         }
@@ -47,9 +37,9 @@ namespace SyStock.UI
         private void RefrescarDataGrid()
         {
             this.dataGridView1.Rows.Clear();
-            _listar.Categorias(this.comboBox_categoria);
-            _listar.Categorias(this.comboBox_filtrar);
-            _listaInsumos = Controlador.ListarInsumos();
+            Listar.Categorias(this.comboBox_categoria);
+            Listar.Categorias(this.comboBox_filtrar);
+            _listaInsumos = ControladorFachada.ListarInsumos();
 
             this.dataGridView1.ColumnHeadersVisible = true;
 
@@ -76,7 +66,7 @@ namespace SyStock.UI
             v_Categoria.ShowDialog();
             RefrescarDataGrid();
             
-            comboBox_categoria.Text = v_Categoria._categoria.Nombre;
+            comboBox_categoria.Text = v_Categoria.Categoria.Nombre;
         }
 
         /// <summary>
@@ -112,7 +102,7 @@ namespace SyStock.UI
                     DialogResult result = MessageBox.Show("¿Seguro que deseas Agregar este Insumo?", "Confirmación", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes)
                     {
-                        int agregado = Controlador.AgregarInsumo(this.textBox_nombre.Text, this.richTextBox_descripcion.Text, this.textBox_cantidad.Text, this.textBox_stock.Text, this.comboBox_categoria.Text);
+                        int agregado = ControladorFachada.AgregarInsumo(this.textBox_nombre.Text, this.richTextBox_descripcion.Text, this.textBox_cantidad.Text, this.textBox_stock.Text, this.comboBox_categoria.Text);
                         if (agregado != -1)
                         {
                             MessageBox.Show("Nombre de Insumo ya existente");
@@ -144,7 +134,7 @@ namespace SyStock.UI
             {
                 _insumo.Descripcion = this.richTextBox_descripcion.Text;
                 _insumo.CantidadMinima = Convert.ToInt32(this.textBox_stock.Text);
-                Controlador.ModificarInsumo(_insumo);
+                ControladorFachada.ModificarInsumo(_insumo);
                 DesactivarModificar();
                 RefrescarDataGrid();
                 MessageBox.Show("Modificado con éxito");
@@ -166,11 +156,11 @@ namespace SyStock.UI
             string pCategoria = this.comboBox_filtrar.Text;
             if (pCategoria == "TODOS")
             {
-                _listaInsumos = Controlador.ListarInsumos();
+                _listaInsumos = ControladorFachada.ListarInsumos();
             }
             else
             {
-                _listaInsumos = Controlador.ListarInsumos(pCategoria);
+                _listaInsumos = ControladorFachada.ListarInsumos(pCategoria);
             }
 
             this.dataGridView1.ColumnHeadersVisible = true;
@@ -214,7 +204,7 @@ namespace SyStock.UI
         /// <param name="e"></param>
         private void DataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if ((dataGridView1.SelectedRows.Count == 1) && (e.RowIndex < _listaInsumos.Count()))
+            if ((dataGridView1.SelectedRows.Count == 1) && (e.RowIndex < _listaInsumos.Count))
             {
                 Button_ModificarInsumo.Enabled = true;
                 Modificar(e.RowIndex);
@@ -234,7 +224,7 @@ namespace SyStock.UI
         {
             string _nombre = _listaInsumos[pIdInsumo].Nombre;
             _insumo = new Insumo("", "", 0, 0, true, 0);
-            _insumo = Controlador.ObtenerInsumo(_nombre);
+            _insumo = ControladorFachada.ObtenerInsumo(_nombre);
         }
 
         /// <summary>

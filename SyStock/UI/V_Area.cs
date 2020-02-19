@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SyStock.LogicaNegocio;
 
@@ -18,13 +11,8 @@ namespace SyStock.UI
             InitializeComponent();
         }
 
-        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
-
-        private readonly Listar _listar = new Listar();
-
         private bool _grupo = false;
-
-        private string _nombre = "";
+        private string _nombre = string.Empty;
 
         /// <summary>
         /// Método para cargar la ventana
@@ -42,11 +30,11 @@ namespace SyStock.UI
         /// </summary>
         private void RefrescarAreas()
         {
-            _listar.Areas(this.comboBox_area);
+            Listar.Areas(this.comboBox_area);
             this.comboBox_area.DropDownStyle = ComboBoxStyle.DropDown;
-            _listar.Areas(this.comboBox_filtrarArea);
-            _listar.Areas(this.listBox_area);
-            _listar.Areas(this.comboBox_areaPersona);
+            Listar.Areas(this.comboBox_filtrarArea);
+            Listar.Areas(this.listBox_area);
+            Listar.Areas(this.comboBox_areaPersona);
         }
 
         /// <summary>
@@ -54,14 +42,14 @@ namespace SyStock.UI
         /// </summary>
         private void RefrescarGrupos()
         {
-            _listar.Grupo(this.comboBox_grupoPersona);
+            Listar.Grupo(this.comboBox_grupoPersona);
             if (string.IsNullOrEmpty(this.comboBox_filtrarArea.Text))
             {
-                _listar.Grupo(this.listBox_grupos);
+                Listar.Grupo(this.listBox_grupos);
             }
             else
             {
-                _listar.Grupo(this.listBox_grupos, this.comboBox_filtrarArea); 
+                Listar.Grupo(this.listBox_grupos, this.comboBox_filtrarArea); 
             }
             this.checkBox1.Checked = false;
         }
@@ -114,7 +102,7 @@ namespace SyStock.UI
                     }
                     else
                     {
-                        if (Controlador.ModificarGrupo(_nombre, this.textBox_grupo.Text))
+                        if (ControladorFachada.ModificarGrupo(_nombre, this.textBox_grupo.Text))
                         {
                             this.Button_Agregar.Text = "Agregar";
                             ActivarTodo();
@@ -128,13 +116,13 @@ namespace SyStock.UI
                 }
                 else
                 {
-                    if (this.comboBox_area.Text == string.Empty)
+                    if (this.comboBox_area.Text.Length == 0)
                     {
                         MessageBox.Show("Falta ingresar nombre de área");
                     }
                     else
                     {
-                        if (Controlador.ModificarArea(_nombre, this.comboBox_area.Text))
+                        if (ControladorFachada.ModificarArea(_nombre, this.comboBox_area.Text))
                         {
                             this.Button_Agregar.Text = "Agregar";
                             ActivarTodo();
@@ -174,7 +162,7 @@ namespace SyStock.UI
         {
             try
             {
-                int idArea = Controlador.AgregarArea(this.comboBox_area.Text);
+                int idArea = ControladorFachada.AgregarArea(this.comboBox_area.Text);
                 switch (idArea)
                 {
                     case -1:
@@ -199,7 +187,7 @@ namespace SyStock.UI
         {
             try
             {
-                int idArea = Controlador.AgregarArea(this.comboBox_area.Text);
+                int idArea = ControladorFachada.AgregarArea(this.comboBox_area.Text);
                 switch (idArea)
                 {
                     case -1:
@@ -227,7 +215,7 @@ namespace SyStock.UI
         {
             try
             {
-                int idGrupo = Controlador.AgregarGrupo(grupo, area);
+                int idGrupo = ControladorFachada.AgregarGrupo(grupo, area);
                 switch (idGrupo)
                 {
                     case -1:
@@ -266,7 +254,7 @@ namespace SyStock.UI
         {
             try
             {
-                if ((this.textBox_nombrePersona.Text == string.Empty) || (this.comboBox_grupoPersona.Text == string.Empty))
+                if ((this.textBox_nombrePersona.Text.Length == 0) || (this.comboBox_grupoPersona.Text.Length == 0))
                 {
                     MessageBox.Show("Falta ingresar datos obligatorios");
                 }
@@ -275,13 +263,13 @@ namespace SyStock.UI
                     string _contraseña = "";
                     V_ingresarPassword v_pass = new V_ingresarPassword()
                     {
-                        _nombre = this.textBox_nombrePersona.Text,
+                        Nombre = this.textBox_nombrePersona.Text,
                     };
                     v_pass.ShowDialog(this);
-                    _contraseña = v_pass._contraseña;
-                    if (v_pass._guardar)
+                    _contraseña = v_pass.Contraseña;
+                    if (v_pass.Guardar)
                     {
-                        Controlador.AgregarPersona(this.textBox_nombrePersona.Text.ToUpper(), _contraseña, this.comboBox_grupoPersona.Text.ToUpper());
+                        ControladorFachada.AgregarPersona(this.textBox_nombrePersona.Text.ToUpper(), _contraseña, this.comboBox_grupoPersona.Text.ToUpper());
                     }
                     this.Show();
                     this.comboBox_areaPersona.Text = "";
@@ -302,7 +290,7 @@ namespace SyStock.UI
         /// <param name="e"></param>
         private void ComboBox_areaPersona_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _listar.Grupo(comboBox_grupoPersona, comboBox_areaPersona);
+            Listar.Grupo(comboBox_grupoPersona, comboBox_areaPersona);
             if (comboBox_grupoPersona.Items.Count == 1)
             {
                 this.comboBox_grupoPersona.Text = this.comboBox_areaPersona.Text;

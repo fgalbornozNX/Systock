@@ -4,102 +4,78 @@ namespace SyStock.Entidades
 {
     public class PersonaAutorizada
     {
-        int _idPersona;
-        string _nombre;
-        string _contraseña;
-        DateTime _fechaAlta;
-        DateTime _fechaBaja;
-        int _idGrupo;
-        int _idCreadoPor;
-
         /// <summary>
         /// Representa un usuario Administrador de la aplicación
         /// </summary>
         public  PersonaAutorizada(string pNombre, string pContraseña, DateTime pFechaAlta, DateTime pFechaBaja, int pIdGrupo)
         {
-            _nombre = pNombre;
-            _contraseña = pContraseña;
-            _fechaAlta = pFechaAlta;
-            _fechaBaja = pFechaBaja;
-            _idGrupo = pIdGrupo;
+            Nombre = pNombre;
+            Contraseña = pContraseña;
+            FechaAlta = pFechaAlta;
+            FechaBaja = pFechaBaja;
+            IdGrupo = pIdGrupo;
         }
 
+        /// <summary>
+        /// Representa un usuario Administrador de la aplicación
+        /// </summary>
         public PersonaAutorizada(int pIdPersona, string pNombre, string pContraseña, DateTime pFechaAlta, DateTime pFechaBaja, int pIdGrupo)
         {
-            _idPersona = pIdPersona;
-            _nombre = pNombre;
-            _contraseña = pContraseña;
-            _fechaAlta = pFechaAlta;
-            _fechaBaja = pFechaBaja;
-            _idGrupo = pIdGrupo;
+            IdPersona = pIdPersona;
+            Nombre = pNombre;
+            Contraseña = pContraseña;
+            FechaAlta = pFechaAlta;
+            FechaBaja = pFechaBaja;
+            IdGrupo = pIdGrupo;
         }
 
+        /// <summary>
+        /// Representa un usuario Administrador de la aplicación
+        /// </summary>
         public PersonaAutorizada(int pIdPersona, string pNombre, string pContraseña, DateTime pFechaAlta, DateTime pFechaBaja, int pIdGrupo, int pIdCreadoPor)
         {
-            _idPersona = pIdPersona;
-            _nombre = pNombre;
-            _contraseña = pContraseña;
-            _fechaAlta = pFechaAlta;
-            _fechaBaja = pFechaBaja;
-            _idGrupo = pIdGrupo;
-            _idCreadoPor = pIdCreadoPor;
+            IdPersona = pIdPersona;
+            Nombre = pNombre;
+            Contraseña = pContraseña;
+            FechaAlta = pFechaAlta;
+            FechaBaja = pFechaBaja;
+            IdGrupo = pIdGrupo;
+            IdCreador = pIdCreadoPor;
         }
 
         /// <summary>
         /// ID del Usuario
         /// </summary>
-        public int IdPersona
-        {
-            get { return _idPersona; }
-            set { _idPersona = value; }
-        }
+        public int IdPersona { get; set; }
 
         /// <summary>
         /// Nombre de usuario.
         /// </summary>
-        public string Nombre
-        {
-            get { return _nombre; }
-            set { _nombre = value; }
-        }
+        public string Nombre { get; set; }
 
         /// <summary>
         /// Contraseña del Usuario.
         /// </summary>
-        public string Contraseña
-        {
-            get { return _contraseña; }
-            set { _contraseña = value; }
-        }
+        public string Contraseña { get; set; }
 
         /// <summary>
         /// Fecha de alta del Usuario
         /// </summary>
-        public DateTime FechaAlta
-        {
-            get { return _fechaAlta; }
-            set { _fechaAlta = value; }
-        }
+        public DateTime FechaAlta { get; set; }
 
         /// <summary>
         /// Fecha de baja del Usuario
         /// </summary>
-        public DateTime FechaBaja
-        {
-            get { return _fechaBaja; }
-            set { _fechaBaja = value; }
-        }
+        public DateTime FechaBaja { get; set; }
 
-        public int IdGrupo
-        {
-            get { return _idGrupo; }
-            set { _idGrupo = value; }
-        }
+        /// <summary>
+        /// Referencia al grupo al que pertenece la persona
+        /// </summary>
+        public int IdGrupo { get; set; }
 
-        public int IdCreador
-        {
-            get { return _idCreadoPor; }
-            set { _idCreadoPor = value; }
-        }
+        /// <summary>
+        /// Almacena el ID del usuario que agregó a esta persona
+        /// </summary>
+        public int IdCreador { get; set; }
     }
 }

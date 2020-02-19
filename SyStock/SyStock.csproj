@@ -88,6 +88,7 @@
     <Compile Include="Entidades\PersonaAutorizada.cs" />
     <Compile Include="Entidades\RenglonEntrega.cs" />
     <Compile Include="Entidades\Usuario.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="LogicaNegocio\ClasedeDominio\ControladorArea.cs" />
     <Compile Include="LogicaNegocio\ClasedeDominio\ControladorCategoria.cs" />
     <Compile Include="LogicaNegocio\ClasedeDominio\ControladorEntrega.cs" />

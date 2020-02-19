@@ -1,63 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SyStock.Entidades
+﻿namespace SyStock.Entidades
 {
     public class Grupo
     {
-        readonly int _idGrupo;
-        string _nombre;
-        bool _estado;
-        int _idArea;
-        int _idUsuario;
-
         public Grupo(string pNombre, bool pEstado, int pIdArea, int pIdUsuario)
         {
-            _nombre = pNombre;
-            _estado = pEstado;
-            _idArea = pIdArea;
-            _idUsuario = pIdUsuario;
+            Nombre = pNombre;
+            Estado = pEstado;
+            IdArea = pIdArea;
+            IdUsuario = pIdUsuario;
         }
 
         public Grupo(int pIdGrupo, string pNombre, bool pEstado, int pIdArea, int pIdUsuario)
         {
-            _idGrupo = pIdGrupo;
-            _nombre = pNombre;
-            _estado = pEstado;
-            _idArea = pIdArea;
-            _idUsuario = pIdUsuario;
+            IdGrupo = pIdGrupo;
+            Nombre = pNombre;
+            Estado = pEstado;
+            IdArea = pIdArea;
+            IdUsuario = pIdUsuario;
         }
 
-        public int IdGrupo
-        {
-            get { return _idGrupo; }
-        }
+        public int IdGrupo { get; private set; }
 
-        public string Nombre
-        {
-            get { return _nombre; }
-            set { _nombre = value; }
-        }
+        public string Nombre { get; set; }
 
-        public bool Estado
-        {
-            get { return _estado; }
-            set { _estado = value; }
-        }
+        public bool Estado { get; set; }
 
-        public int IdArea
-        {
-            get { return _idArea; }
-            set { _idArea = value; }
-        }
+        public int IdArea { get; set; }
 
-        public int IdUsuario
-        {
-            get { return _idUsuario; }
-            set { _idUsuario = value; }
-        }
+        public int IdUsuario { get; set; }
     }
 }

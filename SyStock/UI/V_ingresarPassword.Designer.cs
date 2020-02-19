@@ -31,8 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(V_ingresarPassword));
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.textBox_nombre = new System.Windows.Forms.TextBox();
-            this.textBox_contraseña = new System.Windows.Forms.TextBox();
+            this.textBoxNombre = new System.Windows.Forms.TextBox();
+            this.textBoxContraseña = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.Button_Cancelar = new System.Windows.Forms.Button();
@@ -46,8 +46,8 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.linkLabel1);
-            this.groupBox2.Controls.Add(this.textBox_nombre);
-            this.groupBox2.Controls.Add(this.textBox_contraseña);
+            this.groupBox2.Controls.Add(this.textBoxNombre);
+            this.groupBox2.Controls.Add(this.textBoxContraseña);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.Button_Cancelar);
@@ -70,24 +70,24 @@
             this.linkLabel1.Text = "¿Olvidaste la contraseña?";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1_LinkClicked);
             // 
-            // textBox_nombre
+            // textBoxNombre
             // 
-            this.textBox_nombre.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxNombre.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_nombre.Location = new System.Drawing.Point(73, 23);
-            this.textBox_nombre.Name = "textBox_nombre";
-            this.textBox_nombre.Size = new System.Drawing.Size(211, 20);
-            this.textBox_nombre.TabIndex = 14;
+            this.textBoxNombre.Location = new System.Drawing.Point(73, 23);
+            this.textBoxNombre.Name = "textBoxNombre";
+            this.textBoxNombre.Size = new System.Drawing.Size(211, 20);
+            this.textBoxNombre.TabIndex = 14;
             // 
-            // textBox_contraseña
+            // textBoxContraseña
             // 
-            this.textBox_contraseña.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxContraseña.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_contraseña.Location = new System.Drawing.Point(73, 49);
-            this.textBox_contraseña.Name = "textBox_contraseña";
-            this.textBox_contraseña.PasswordChar = '♦';
-            this.textBox_contraseña.Size = new System.Drawing.Size(211, 20);
-            this.textBox_contraseña.TabIndex = 13;
+            this.textBoxContraseña.Location = new System.Drawing.Point(73, 49);
+            this.textBoxContraseña.Name = "textBoxContraseña";
+            this.textBoxContraseña.PasswordChar = '♦';
+            this.textBoxContraseña.Size = new System.Drawing.Size(211, 20);
+            this.textBoxContraseña.TabIndex = 13;
             // 
             // label1
             // 
@@ -153,8 +153,8 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox textBox_nombre;
-        private System.Windows.Forms.TextBox textBox_contraseña;
+        private System.Windows.Forms.TextBox textBoxNombre;
+        private System.Windows.Forms.TextBox textBoxContraseña;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button Button_Cancelar;

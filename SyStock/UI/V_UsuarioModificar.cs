@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SyStock.LogicaNegocio;
 using SyStock.Entidades;
@@ -14,12 +7,8 @@ namespace SyStock.UI
 {
     public partial class V_UsuarioModificar : Form
     {
-
-        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
-
-        public Usuario _usu = new Usuario("", "", DateTime.Now);
-
-        public bool usuarioLogeado = false;
+        public Usuario Usuario { get; set; }
+        public bool UsuarioLogeado { get; set; }
 
         public V_UsuarioModificar()
         {
@@ -34,7 +23,7 @@ namespace SyStock.UI
             }
             else
             {
-                bool verificarModificacion = Controlador.ModificarUsuario(_usu,this.textBox_contraseña_antigua.Text, this.textBox_contraseña_nueva.Text);
+                bool verificarModificacion = ControladorFachada.ModificarUsuario(this.Usuario,this.textBox_contraseña_antigua.Text, this.textBox_contraseña_nueva.Text);
                 if (verificarModificacion)
                 {
                     this.Close();
@@ -49,13 +38,13 @@ namespace SyStock.UI
 
         private void V_UsuarioModificar_Load(object sender, EventArgs e)
         {
-            if (usuarioLogeado)
+            if (this.UsuarioLogeado)
             {
-                _usu.IdUsuario = 0;
+                this.Usuario.IdUsuario = 0;
             }
             else
             {
-                _usu.IdUsuario = 1;
+                this.Usuario.IdUsuario = 1;
             }
             
         }

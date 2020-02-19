@@ -48,7 +48,7 @@
             this.Button_Eliminar = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Departamento = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Grupo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.GrupoInvestigacion = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Nombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -268,7 +268,7 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Departamento,
-            this.Grupo,
+            this.GrupoInvestigacion,
             this.Nombre});
             this.dataGridView1.Location = new System.Drawing.Point(6, 64);
             this.dataGridView1.Name = "dataGridView1";
@@ -283,11 +283,11 @@
             this.Departamento.Name = "Departamento";
             this.Departamento.ReadOnly = true;
             // 
-            // Grupo
+            // GrupoInvestigacion
             // 
-            this.Grupo.HeaderText = "Grupo Investigación";
-            this.Grupo.Name = "Grupo";
-            this.Grupo.ReadOnly = true;
+            this.GrupoInvestigacion.HeaderText = "Grupo Investigación";
+            this.GrupoInvestigacion.Name = "GrupoInvestigacion";
+            this.GrupoInvestigacion.ReadOnly = true;
             // 
             // Nombre
             // 
@@ -334,13 +334,13 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.ComboBox comboBox_area2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Departamento;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Grupo;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Nombre;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox ComboBox_grupo2;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox comboBox_area;
         private System.Windows.Forms.ComboBox comboBox_grupo;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Departamento;
+        private System.Windows.Forms.DataGridViewTextBoxColumn GrupoInvestigacion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Nombre;
     }
 }

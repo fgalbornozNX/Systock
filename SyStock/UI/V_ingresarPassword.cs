@@ -1,15 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SyStock.LogicaNegocio;
-using SyStock.Entidades;
-using SyStock.UI;
 
 namespace SyStock.UI
 {
@@ -20,28 +11,26 @@ namespace SyStock.UI
             InitializeComponent();
         }
 
-        private readonly ControladorFachada Controlador = ControladorFachada.Instancia;
+        public string Nombre { get; set; }
 
-        public string _nombre = "";
+        public string Contraseña { get; set; }
 
-        public string _contraseña = "";
+        public bool Verificar { get; set; }
 
-        public bool _verificar = false;
-
-        public bool _guardar = false;
+        public bool Guardar { get; set; }
 
         private void Button_Aceptar_Click(object sender, EventArgs e)
         {
-            _contraseña = textBox_contraseña.Text;
-            if (_contraseña != string.Empty)
+            this.Contraseña = textBoxContraseña.Text;
+            if (this.Contraseña.Length != 0)
             {
-                if (_verificar)
+                if (this.Verificar)
                 {
                     VerificarPersona();
                 }
                 else
                 {
-                    _guardar = true;
+                    this.Guardar = true;
                     this.Close();
                 }
             }  
@@ -49,28 +38,30 @@ namespace SyStock.UI
 
         private void V_ingresarPassword_Load(object sender, EventArgs e)
         {
-            this.textBox_nombre.Text = _nombre;
-            this.textBox_nombre.Enabled = false;
+            this.textBoxNombre.Text = this.Nombre;
+            this.textBoxNombre.Enabled = false;
         }
 
         private void Button_Cancelar_Click(object sender, EventArgs e)
         {
-            _guardar = false;
+            this.Guardar = false;
             this.Close();
         }
 
         private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             this.Visible = false;
-            ModificarPersona v_Persona = new ModificarPersona();
-            v_Persona._nombre = this.textBox_nombre.Text;
+            ModificarPersona v_Persona = new ModificarPersona
+            {
+                Nombre = this.textBoxNombre.Text
+            };
             v_Persona.Show();
             this.Close();
         }
 
         private void VerificarPersona()
         {
-            int verificar = Controlador.VerificarPersona(_nombre, textBox_contraseña.Text);
+            int verificar = ControladorFachada.VerificarPersona(this.Nombre, textBoxContraseña.Text);
             if (verificar == -2)
             {
                 MessageBox.Show("Ocurrió un error, inténtelo nuevamente");
@@ -79,12 +70,12 @@ namespace SyStock.UI
             {
                 if (verificar == -1)
                 {
-                    this.textBox_contraseña.Text = "";
+                    this.textBoxContraseña.Text = "";
                     MessageBox.Show("Contraseña incorrecta");
                 }
                 else
                 {
-                    _guardar = true;
+                    this.Guardar = true;
                     this.Close();
                 }
             }

@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SyStock.LogicaNegocio;
 using SyStock.Entidades;
@@ -19,13 +13,11 @@ namespace SyStock.UI
             InitializeComponent();
         }
 
-        private readonly ControladorFachada _controlador = ControladorFachada.Instancia;
-
-        private List<Usuario> _listaUsuarios = new List<Usuario>();
+        private List<Usuario> listaUsuarios = new List<Usuario>();
 
         private int idColumna = 0;
 
-        public Usuario _usuario = new Usuario("", "", DateTime.Now); 
+        public Usuario Usuario { get; set; }
 
         private void V_Usuario_Load(object sender, EventArgs e)
         {
@@ -35,22 +27,22 @@ namespace SyStock.UI
         private void RefrescarDataGrid()
         {
             this.dataGridView1.Rows.Clear();
-            _listaUsuarios.Clear();
-            _listaUsuarios = _controlador.ListarUsuarios();
+            listaUsuarios.Clear();
+            listaUsuarios = ControladorFachada.ListarUsuarios();
             this.dataGridView1.ColumnHeadersVisible = true;
 
-            foreach (var _usu in _listaUsuarios)
+            foreach (var usu in listaUsuarios)
             {
-                if (_usu != null)
+                if (usu != null)
                 {
                     String[] row;
-                    if (_usu.FechaAlta == _usu.FechaBaja)
+                    if (usu.FechaAlta == usu.FechaBaja)
                     {
-                        row = new String[] { _usu.Nombre, Convert.ToString(_usu.FechaAlta), Convert.ToString("") };
+                        row = new String[] { usu.Nombre, Convert.ToString(usu.FechaAlta), Convert.ToString("") };
                     }
                     else
                     {
-                        row = new String[] { _usu.Nombre, Convert.ToString(_usu.FechaAlta.Date), Convert.ToString(_usu.FechaBaja.Date) };
+                        row = new String[] { usu.Nombre, Convert.ToString(usu.FechaAlta.Date), Convert.ToString(usu.FechaBaja.Date) };
                     }
                     this.dataGridView1.Rows.Add(row);
                 }
@@ -60,12 +52,12 @@ namespace SyStock.UI
 
         private void DataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if ((dataGridView1.SelectedRows.Count == 1) && (e.RowIndex < _listaUsuarios.Count()))
+            if ((dataGridView1.SelectedRows.Count == 1) && (e.RowIndex < listaUsuarios.Count))
             {
                 Button_Modificar.Enabled = true;
                 Button_Eliminar.Enabled = true;
                 idColumna = e.RowIndex;
-                _usuario.Nombre = _listaUsuarios[idColumna].Nombre;
+                this.Usuario.Nombre = listaUsuarios[idColumna].Nombre;
             }
             else
             {
@@ -97,16 +89,16 @@ namespace SyStock.UI
                     }
                     else
                     {
-                        _usuario = _controlador.AgregarUsuario(this.textBox_nombre.Text, this.textBox_contraseña.Text, this.checkBox1.Checked);
+                        this.Usuario = ControladorFachada.AgregarUsuario(this.textBox_nombre.Text, this.textBox_contraseña.Text, this.checkBox1.Checked);
 
-                        if (_usuario != null)
+                        if (this.Usuario != null)
                         {
                             MessageBox.Show("Agregado con éxito");
                             this.textBox_nombre.Clear();
                             this.textBox_contraseña.Clear();
                             this.checkBox1.Checked = false;
 
-                            _listaUsuarios.Add(_usuario);
+                            listaUsuarios.Add(this.Usuario);
                             RefrescarDataGrid();
                         }
                         else
@@ -130,8 +122,8 @@ namespace SyStock.UI
         {
             V_UsuarioModificar v_modificarUsuario = new V_UsuarioModificar()
             {
-                usuarioLogeado = false,
-                _usu = _usuario,
+                UsuarioLogeado = false,
+                Usuario = this.Usuario,
             };
             v_modificarUsuario.ShowDialog(this);
             this.Show();
@@ -147,18 +139,18 @@ namespace SyStock.UI
         {
             try
             {
-                DialogResult result = MessageBox.Show("¿Seguro que desea eliminar a " + _listaUsuarios[idColumna].Nombre + " de la lista?", "Confirmación", MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show("¿Seguro que desea eliminar a " + listaUsuarios[idColumna].Nombre + " de la lista?", "Confirmación", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
-                    bool _eliminar = false;
-                    _eliminar = _controlador.EliminarUsuario(_listaUsuarios[idColumna].Nombre);
-                    if (_eliminar)
+                    bool eliminar = false;
+                    eliminar = ControladorFachada.EliminarUsuario(listaUsuarios[idColumna].Nombre);
+                    if (eliminar)
                     {
                         RefrescarDataGrid();
                     }
                     else
                     {
-                        MessageBox.Show("El usuario " + _listaUsuarios[idColumna].Nombre + " ya se encuentra dado de baja");
+                        MessageBox.Show("El usuario " + listaUsuarios[idColumna].Nombre + " ya se encuentra dado de baja");
                     }
 
                 }
